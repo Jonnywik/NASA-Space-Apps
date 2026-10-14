@@ -1,0 +1,21 @@
+{
+  "event": "karding_2022",
+  "aoi": "Pampanga-Bulacan floodplain",
+  "beforeDate": "2022-09-19",
+  "afterDate": "2022-10-01",
+  "stats": {
+    "km2Flooded": 84.49,
+    "peopleExposed": null,
+    "householdsExposed": null,
+    "waterBeforeKm2": 115.22,
+    "waterAfterKm2": 188.31
+  },
+  "polygonCount": 752,
+  "thresholdDb": -11.2,
+  "bbox": [
+    120.69707,
+    14.85432,
+    121.08956,
+    15.16821
+  ]
+}

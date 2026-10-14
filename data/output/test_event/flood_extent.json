@@ -1,0 +1,21 @@
+{
+  "event": "test_event",
+  "aoi": "Practice area",
+  "beforeDate": "2024-01-01",
+  "afterDate": "2024-01-13",
+  "stats": {
+    "km2Flooded": 119.78,
+    "peopleExposed": null,
+    "householdsExposed": null,
+    "waterBeforeKm2": 24.52,
+    "waterAfterKm2": 144.3
+  },
+  "polygonCount": 6,
+  "thresholdDb": -16.6,
+  "bbox": [
+    120.63269,
+    14.91199,
+    120.8868,
+    15.01684
+  ]
+}

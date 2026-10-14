@@ -1,0 +1,8 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+.venv/
+__pycache__/
+*.pyc
+# big radar files stay OUT of GitHub (share them through Google Drive
+instead)
+data/raw/
