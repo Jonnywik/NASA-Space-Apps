@@ -68,18 +68,18 @@ def find_threshold(db):
     return float(threshold_otsu(values))
 
 
-if args.threshold is not None:
-    threshold = args.threshold
-    print(f"Using the threshold you gave: {threshold:.1f} dB")
-else:
-    # We use the AFTER image (it has the most water) and apply the SAME threshold
-    # to both images, so the comparison is fair.
-    threshold = find_threshold(after_db)
-    print(f"Automatic (Otsu) threshold: {threshold:.1f} dB")
-    if not (-25 <= threshold <= -12):
-        print("  WARNING: this is outside the usual range (-25 to -12 dB).")
-        print("  Look at 02_water_masks.png. If it looks wrong, try --threshold -18")
-
+# if args.threshold is not None:
+#     threshold = args.threshold
+#     print(f"Using the threshold you gave: {threshold:.1f} dB")
+# else:
+#     # We use the AFTER image (it has the most water) and apply the SAME threshold
+#     # to both images, so the comparison is fair.
+#     threshold = find_threshold(after_db)
+#     print(f"Automatic (Otsu) threshold: {threshold:.1f} dB")
+#     if not (-25 <= threshold <= -12):
+#         print("  WARNING: this is outside the usual range (-25 to -12 dB).")
+#         print("  Look at 02_water_masks.png. If it looks wrong, try --threshold -18")
+threshold = -18
 
 # ---- E. water maps: 1 = water, 0 = not water, 255 = no data ----
 def make_mask(db):
