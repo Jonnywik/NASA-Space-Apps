@@ -1,0 +1,34 @@
+[
+  {
+    "id": "test_event",
+    "name": "Practice event (fake data)",
+    "aoi": "Practice area",
+    "before_date": "2024-01-01",
+    "after_date": "2024-01-13",
+    "bbox": [120.60, 14.85, 120.90, 15.05]
+  },
+  {
+    "id": "karding_2022",
+    "name": "Typhoon Karding (Noru), Sept 2022",
+    "aoi": "Pampanga-Bulacan floodplain",
+    "before_date": "2022-09-19",
+    "after_date": "2022-10-01",
+    "bbox": [120.70, 14.85, 121.10, 15.25]
+  },
+  {
+    "id": "carina_2024",
+    "name": "Typhoon Carina (Gaemi) + habagat, July 2024",
+    "aoi": "Manila Bay north coast (Bulacan-Pampanga-NCR)",
+    "before_date": "2024-07-10",
+    "after_date": "2024-07-30",
+    "bbox": [120.60, 14.70, 121.10, 15.00]
+  },
+  {
+    "id": "habagat_2025",
+    "name": "Habagat + Crising/Dante/Emong, July 2025",
+    "aoi": "Pampanga floodplain",
+    "before_date": "2025-07-11",
+    "after_date": "2025-07-31",
+    "bbox": [120.55, 14.85, 121.00, 15.25]
+  }
+]

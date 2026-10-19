@@ -1,0 +1,21 @@
+{
+  "event": "carina_2024",
+  "aoi": "Manila Bay north coast (Bulacan-Pampanga-NCR)",
+  "beforeDate": "2024-07-10",
+  "afterDate": "2024-07-30",
+  "stats": {
+    "km2Flooded": 28.9,
+    "peopleExposed": null,
+    "householdsExposed": null,
+    "waterBeforeKm2": 725.94,
+    "waterAfterKm2": 741.57
+  },
+  "polygonCount": 982,
+  "thresholdDb": -10.86,
+  "bbox": [
+    120.59666,
+    14.69932,
+    121.10247,
+    15.00386
+  ]
+}
