@@ -7,6 +7,7 @@ __pycache__/
 # Big radar files stay OUT of GitHub (share them through Google Drive instead)
 backend/data/raw/
 backend/data/processed/
+backend/data/output/*/p3/
 
 # Node modules & build outputs (Root & Subfolders)
 node_modules/

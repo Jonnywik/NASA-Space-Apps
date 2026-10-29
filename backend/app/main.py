@@ -20,6 +20,8 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
+from app.p3_api import make_router
+from processing.p3.catalog import capabilities
 
 ROOT = Path(__file__).resolve().parent.parent
 EVENTS_FILE = ROOT / "events.json"
@@ -68,6 +70,7 @@ def list_events():
             "beforeDate": e["before_date"],
             "afterDate": e["after_date"],
             "ready": has_result(e["id"]),
+            "capabilities": capabilities(e["id"], root=OUTPUT),
         }
         for e in read_events()
     ]
@@ -119,3 +122,6 @@ def overlay(event: str, which: str):
     if not path.exists():
         raise HTTPException(status_code=404, detail="Picture not made yet. Run scripts/04_export_overlays.py.")
     return FileResponse(path, media_type="image/png")
+
+
+app.include_router(make_router(OUTPUT, read_events))
