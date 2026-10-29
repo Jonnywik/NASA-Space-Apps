@@ -1,3 +1,7 @@
+## Coherence change pipeline
+
+For paired HyP3 coherence extraction, change mapping, input manifests, and verification commands, see [backend/COHERENCE_PIPELINE.md](backend/COHERENCE_PIPELINE.md).
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
