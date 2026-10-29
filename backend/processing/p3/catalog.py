@@ -11,7 +11,8 @@ from .core import OUTPUT_ROOT, digest, load_manifest, safe_name
 
 PRODUCTS = ('gunw', 'gcov', 'los-pair', 'ground-motion', 'biomass',
             'biomass_calibration', 'roots_faults_fusion',
-            'scenario-inputs', 'projection', 'briefing')
+            'scenario-inputs', 'projection', 'briefing',
+            'coherence-change', 'change-frequency', 'building-exposure')
 
 
 class ProductUnavailable(ValueError):
@@ -100,7 +101,7 @@ def select(event, product, run_id=None, root=None):
 
 def capabilities(event, root=None):
     result = {}
-    for product in ('ground-motion', 'biomass', 'scenario-inputs', 'projection'):
+    for product in ('ground-motion', 'biomass', 'scenario-inputs', 'projection', 'coherence-change', 'change-frequency', 'building-exposure'):
         try:
             manifest = select(event, product, root=root)
             result[product] = {'available': True, 'dataStatus': manifest['dataStatus'], 'dataKind': manifest['dataKind'], 'runId': manifest['runId']}
