@@ -1,23 +1,29 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+# Python / Virtual Environments
+venv/
 .venv/
 __pycache__/
 *.pyc
-# big radar files stay OUT of GitHub (share them through Google Drive
-instead)
-data/raw/
-# dependencies
-/node_modules
-/.pnp
+
+# Big radar files stay OUT of GitHub (share them through Google Drive instead)
+backend/data/raw/
+backend/data/processed/
+backend/data/output/*/p3/
+
+# Node modules & build outputs (Root & Subfolders)
+node_modules/
+frontend/node_modules/
+.pnp
 .pnp.js
 .yarn/install-state.gz
 
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# Next.js (Root & Frontend subfolder)
+.next/
+frontend/.next/
+out/
+frontend/out/
 
 # production
 /build
@@ -40,3 +46,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+backend/data/output/test_event/
