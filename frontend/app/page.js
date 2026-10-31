@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import StatsSidebar from '../components/StatsSidebar';
-import { getEvents, getFloodExtent } from '../utils/api';
+import LayerToggle from '../components/LayerToggle';
+import Tier2Panel from '../components/Tier2Panel';
+import { getCoherenceLoss, getEvents, getFloodExtent } from '../utils/api';
+import { LOSS_SLIDER_MAX, lossFloor } from '../utils/changeFilter';
+import { sampleCoherenceLoss } from '../utils/sampleData';
+import useChangeLayer from '../utils/useChangeLayer';
+import { useTier } from '../utils/useTier';
 
 // The map can roam over Metro Manila AND the floodplains north of it
 // (Pampanga, Bulacan). The old "Greater Manila only" box was too small:
@@ -45,6 +51,25 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [mapReady, setMapReady] = useState(false);
   const [split, setSplit] = useState(0.5);
+
+  // Layer switches and the Tier 2 "strength of change" filter
+  const [layers, setLayers] = useState({ flood: true, change: true });
+  const [lossFilter, setLossFilter] = useState(null); // null = use the backend's own floor
+
+  // Tier 2: coherence change (a normal "no data yet" state until a reviewed product exists)
+  const tier2 = useTier(eventId ? () => getCoherenceLoss(eventId) : null, [eventId], {
+    sampleData: sampleCoherenceLoss,
+  });
+  const tier2Ready = tier2.state === 'ready';
+  const minLoss = lossFilter ?? lossFloor(tier2.data);
+  const changeCounts = useChangeLayer({
+    mapRef,
+    leafletRef,
+    mapReady,
+    geojson: tier2Ready ? tier2.data.changeGeojson : null,
+    visible: layers.change,
+    minLoss: lossFilter, // null shows everything
+  });
 
   // 1. Ask the API which events exist
   useEffect(() => {
@@ -186,6 +211,21 @@ export default function Home() {
     };
   }, [data, mapReady]);
 
+  // New event: forget the filter the user set for the old one
+  useEffect(() => {
+    setLossFilter(null);
+  }, [eventId]);
+
+  // Tier 1 switch: hide or show the before/after panes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!mapReady || !map) return;
+    ['beforePane', 'afterPane'].forEach((name) => {
+      const pane = map.getPane(name);
+      if (pane) pane.style.display = layers.flood ? '' : 'none';
+    });
+  }, [layers.flood, mapReady]);
+
   // Dragging the divider
   function moveDivider(clientX) {
     const rect = mapElement.current.getBoundingClientRect();
@@ -195,7 +235,7 @@ export default function Home() {
     applyClip(mapRef.current, fraction);
   }
 
-  const hasSlider = Boolean(data?.overlays);
+  const hasSlider = Boolean(data?.overlays) && layers.flood;
 
   return (
     <main className="relative h-screen w-screen overflow-hidden bg-slate-950">
@@ -234,6 +274,18 @@ export default function Home() {
             <span className="inline-block h-3 w-3 rounded-sm bg-red-500" /> New flood
           </span>
         </div>
+        <LayerToggle
+          layers={layers}
+          onToggle={(key) => setLayers((prev) => ({ ...prev, [key]: !prev[key] }))}
+          changeReady={tier2Ready}
+          strength={{
+            value: minLoss,
+            min: lossFloor(tier2.data),
+            max: LOSS_SLIDER_MAX,
+            onChange: setLossFilter,
+          }}
+          counts={changeCounts}
+        />
       </div>
 
       {/* The before / after divider */}
@@ -280,7 +332,9 @@ export default function Home() {
         </div>
       )}
 
-      <StatsSidebar data={data} />
+      <StatsSidebar data={data}>
+        <Tier2Panel tier2={tier2} counts={changeCounts} />
+      </StatsSidebar>
     </main>
   );
 }
