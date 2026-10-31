@@ -7,7 +7,7 @@ Run it (from the tanaw-backend folder):
 Then open in your browser:
     http://127.0.0.1:8000/docs                     <- automatic test page
     http://127.0.0.1:8000/api/v1/events
-    http://127.0.0.1:8000/api/v1/flood-extent?event=test_event
+    http://127.0.0.1:8000/api/v1/flood-extent?event=karding_2022
 
 This API does NOT process radar data. The scripts already did that.
 It only reads the result files in data/output/ and sends them out.
@@ -49,6 +49,10 @@ def read_events():
         return json.load(f)
 
 
+def read_public_events():
+    return [e for e in read_events() if e.get("public", True)]
+
+
 def has_result(event_id: str) -> bool:
     folder = OUTPUT / event_id
     return (folder / "flood_extent.json").exists() and (folder / "flood.geojson").exists()
@@ -73,14 +77,14 @@ def list_events():
             "ready": has_result(e["id"]),
             "capabilities": capabilities(e["id"], root=OUTPUT),
         }
-        for e in read_events()
+        for e in read_public_events()
     ]
 
 
 @app.get("/api/v1/flood-extent")
 def flood_extent(event: Optional[str] = Query(default=None, description="event id, e.g. karding_2022")):
     """Flood shapes + numbers for one event (the frontend map + stats sidebar)."""
-    events = read_events()
+    events = read_public_events()
     known_ids = [e["id"] for e in events]
 
     if event is None:
@@ -115,7 +119,7 @@ def flood_extent(event: Optional[str] = Query(default=None, description="event i
 @app.get("/api/v1/overlay/{event}/{which}")
 def overlay(event: str, which: str):
     """The see-through water picture (PNG) for the slider. which = before or after."""
-    if event not in [e["id"] for e in read_events()]:
+    if event not in [e["id"] for e in read_public_events()]:
         raise HTTPException(status_code=404, detail=f"Unknown event '{event}'.")
     if which not in ("before", "after"):
         raise HTTPException(status_code=404, detail="which must be 'before' or 'after'.")
@@ -125,5 +129,5 @@ def overlay(event: str, which: str):
     return FileResponse(path, media_type="image/png")
 
 
-app.include_router(make_router(OUTPUT, read_events))
-app.include_router(make_coherence_router(OUTPUT, read_events))
+app.include_router(make_router(OUTPUT, read_public_events))
+app.include_router(make_coherence_router(OUTPUT, read_public_events))
