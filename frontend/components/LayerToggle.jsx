@@ -1,4 +1,5 @@
 import React from 'react';
+import { LOSS_BANDS } from '../utils/changeFilter';
 
 // Layer switches + the "strength of change" filter. Sits in the top-left card.
 //   layers        { flood: bool, change: bool }
@@ -29,14 +30,14 @@ export default function LayerToggle({ layers, onToggle, changeReady, strength, c
           disabled={!changeReady}
           onChange={() => onToggle('change')}
         />
-        <span className="inline-block h-3 w-3 rounded-sm bg-amber-500" />
+        <span className="inline-block h-3 w-3 rounded-sm bg-orange-500" />
         Tier 2 · Coherence change
       </label>
 
       {changeReady && layers.change && strength && (
         <div className="mt-2 pl-6">
           <label htmlFor="loss-min" className="block text-[11px] text-slate-400">
-            Only changes with coherence loss ≥ {strength.value.toFixed(2)}
+            Strength filter: coherence loss ≥ {strength.value.toFixed(2)}
           </label>
           <input
             id="loss-min"
@@ -51,6 +52,17 @@ export default function LayerToggle({ layers, onToggle, changeReady, strength, c
           <div className="text-[11px] text-slate-500">
             Showing {counts.shown} of {counts.total} areas
           </div>
+          <ul className="mt-1.5 space-y-0.5">
+            {LOSS_BANDS.map((b) => (
+              <li key={b.label} className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: b.color }} />
+                {b.label}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-1 text-[10px] italic text-slate-500">
+            Colour = strength of coherence loss, not type of change.
+          </p>
         </div>
       )}
     </div>

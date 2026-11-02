@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { featureLabel, filterChangeFeatures } from './changeFilter';
+import { featureLabel, filterChangeFeatures, lossColor } from './changeFilter';
 
 // Draws the Tier 2 "coherence loss" polygons on the Leaflet map.
 // It lives on its own pane ("changePane") ABOVE the before/after panes and is not clipped by the
@@ -29,7 +29,10 @@ export default function useChangeLayer({ mapRef, leafletRef, mapReady, geojson, 
       { type: 'FeatureCollection', features: kept },
       {
         pane: 'changePane',
-        style: { color: '#f59e0b', weight: 1.5, fillColor: '#f59e0b', fillOpacity: 0.45 },
+        style: (feature) => {
+          const c = lossColor(feature?.properties?.meanLoss);
+          return { color: c, weight: 1.5, fillColor: c, fillOpacity: 0.5 };
+        },
         onEachFeature: (feature, l) => l.bindTooltip(featureLabel(feature), { sticky: true }),
       }
     ).addTo(map);

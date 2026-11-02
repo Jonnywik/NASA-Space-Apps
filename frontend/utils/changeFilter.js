@@ -6,6 +6,18 @@
 export const DEFAULT_LOSS_MIN = 0.3;
 export const LOSS_SLIDER_MAX = 0.9;
 
+// Strength bands (colour = how strong the coherence loss is, NOT what kind of change it is).
+export const LOSS_BANDS = [
+  { min: 0.7, color: '#dc2626', label: 'Very strong (≥ 0.7)' },
+  { min: 0.5, color: '#f97316', label: 'Strong (0.5 – 0.7)' },
+  { min: 0, color: '#facc15', label: 'Moderate (< 0.5)' },
+];
+
+export function lossColor(loss) {
+  if (typeof loss !== 'number') return '#f59e0b';
+  return (LOSS_BANDS.find((b) => loss >= b.min) ?? LOSS_BANDS[LOSS_BANDS.length - 1]).color;
+}
+
 export function lossFloor(coherence) {
   const v = coherence?.parameters?.lossMin;
   return typeof v === 'number' && Number.isFinite(v) ? v : DEFAULT_LOSS_MIN;
