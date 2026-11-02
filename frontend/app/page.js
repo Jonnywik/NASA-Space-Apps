@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import StatsSidebar from '../components/StatsSidebar';
 import LayerToggle from '../components/LayerToggle';
+import BriefingCard from '../components/BriefingCard';
 import Tier3Panel from '../components/Tier3Panel';
 import TierBar from '../components/TierBar';
 import Tier2Panel from '../components/Tier2Panel';
@@ -345,6 +346,7 @@ export default function Home() {
       <StatsSidebar data={data}>
         {layers.change && <Tier2Panel tier2={tier2} counts={changeCounts} />}
         {layers.motion && <Tier3Panel eventId={eventId} point={pick.point} onClear={pick.clear} />}
+        {layers.motion && <BriefingCard eventId={eventId} />}
       </StatsSidebar>
     </main>
   );
