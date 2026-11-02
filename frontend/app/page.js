@@ -3,11 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import StatsSidebar from '../components/StatsSidebar';
 import LayerToggle from '../components/LayerToggle';
+import Tier3Panel from '../components/Tier3Panel';
+import TierBar from '../components/TierBar';
 import Tier2Panel from '../components/Tier2Panel';
 import { getCoherenceLoss, getEvents, getFloodExtent } from '../utils/api';
 import { LOSS_SLIDER_MAX, lossFloor } from '../utils/changeFilter';
 import { sampleCoherenceLoss } from '../utils/sampleData';
 import useChangeLayer from '../utils/useChangeLayer';
+import useMapPick from '../utils/useMapPick';
 import { useTier } from '../utils/useTier';
 
 // The map can roam over Metro Manila AND the floodplains north of it
@@ -53,7 +56,7 @@ export default function Home() {
   const [split, setSplit] = useState(0.5);
 
   // Layer switches and the Tier 2 "strength of change" filter
-  const [layers, setLayers] = useState({ flood: true, change: true });
+  const [layers, setLayers] = useState({ flood: true, change: true, motion: false });
   const [lossFilter, setLossFilter] = useState(null); // null = use the backend's own floor
 
   // Tier 2: coherence change (a normal "no data yet" state until a reviewed product exists)
@@ -62,12 +65,16 @@ export default function Home() {
   });
   const tier2Ready = tier2.state === 'ready';
   const minLoss = lossFilter ?? lossFloor(tier2.data);
+  const changeOn = layers.change && tier2Ready;
+
+  // Tier 3: click-a-pixel (the map listens for clicks only while Tier 3 is on)
+  const pick = useMapPick({ mapRef, leafletRef, mapReady, active: layers.motion, resetKey: eventId });
   const changeCounts = useChangeLayer({
     mapRef,
     leafletRef,
     mapReady,
     geojson: tier2Ready ? tier2.data.changeGeojson : null,
-    visible: layers.change,
+    visible: changeOn,
     minLoss: lossFilter, // null shows everything
   });
 
@@ -274,10 +281,13 @@ export default function Home() {
             <span className="inline-block h-3 w-3 rounded-sm bg-red-500" /> New flood
           </span>
         </div>
-        <LayerToggle
+        <TierBar
           layers={layers}
           onToggle={(key) => setLayers((prev) => ({ ...prev, [key]: !prev[key] }))}
-          changeReady={tier2Ready}
+          disabled={{ change: !tier2Ready }}
+        />
+        <LayerToggle
+          visible={changeOn}
           strength={{
             value: minLoss,
             min: lossFloor(tier2.data),
@@ -333,7 +343,8 @@ export default function Home() {
       )}
 
       <StatsSidebar data={data}>
-        <Tier2Panel tier2={tier2} counts={changeCounts} />
+        {layers.change && <Tier2Panel tier2={tier2} counts={changeCounts} />}
+        {layers.motion && <Tier3Panel eventId={eventId} point={pick.point} onClear={pick.clear} />}
       </StatsSidebar>
     </main>
   );

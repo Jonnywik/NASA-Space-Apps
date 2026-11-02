@@ -13,8 +13,9 @@ export default function StatsSidebar({ data, children }) {
   // Before the API answers, `data` is null: show a small loading box.
   if (!data) {
     return (
-      <div className="absolute top-4 right-4 z-[1000] w-80 bg-slate-900/90 text-white p-5 rounded-2xl shadow-xl border border-slate-700 backdrop-blur-md">
+      <div className="absolute top-4 right-4 z-[1000] max-h-[calc(100vh-2rem)] w-80 overflow-y-auto bg-slate-900/90 text-white p-5 rounded-2xl shadow-xl border border-slate-700 backdrop-blur-md">
         <div className="text-sm text-slate-400">Loading flood data…</div>
+        {children}
       </div>
     );
   }
