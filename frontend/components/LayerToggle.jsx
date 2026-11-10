@@ -1,10 +1,10 @@
 import React from 'react';
-import { LOSS_BANDS } from '../utils/changeFilter';
+import { AREA_SLIDER_MAX, LOSS_BANDS } from '../utils/changeFilter';
 
 // Tier 2 details (strength filter + colour legend). Shown only while Tier 2 is switched on.
 //   strength  { value, min, max, onChange }
 //   counts    { total, shown }
-export default function LayerToggle({ visible, strength, counts }) {
+export default function LayerToggle({ visible, strength, counts, minArea, onMinArea }) {
   if (!visible) return null;
   return (
     <div className="mt-3 border-t border-slate-700 pt-3">
@@ -19,6 +19,19 @@ export default function LayerToggle({ visible, strength, counts }) {
         step={0.05}
         value={strength.value}
         onChange={(e) => strength.onChange(parseFloat(e.target.value))}
+        className="mt-1 w-full"
+      />
+      <label htmlFor="area-min" className="mt-2 block text-[11px] text-slate-400">
+        Hide areas smaller than {minArea.toFixed(3)} km² (display filter only)
+      </label>
+      <input
+        id="area-min"
+        type="range"
+        min={0}
+        max={AREA_SLIDER_MAX}
+        step={0.005}
+        value={minArea}
+        onChange={(e) => onMinArea(parseFloat(e.target.value))}
         className="mt-1 w-full"
       />
       <div className="text-[11px] text-slate-500">

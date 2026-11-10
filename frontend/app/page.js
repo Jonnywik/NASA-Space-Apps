@@ -7,12 +7,20 @@ import BriefingCard from '../components/BriefingCard';
 import Tier3Panel from '../components/Tier3Panel';
 import TierBar from '../components/TierBar';
 import Tier2Panel from '../components/Tier2Panel';
-import { getCoherenceLoss, getEvents, getFloodExtent } from '../utils/api';
+import ProjectionPanel from '../components/ProjectionPanel';
+import RoutePanel from '../components/RoutePanel';
+import { getCoherenceLoss, getEvents, getFloodExtent, getRoute } from '../utils/api';
 import { LOSS_SLIDER_MAX, lossFloor } from '../utils/changeFilter';
 import { sampleCoherenceLoss } from '../utils/sampleData';
 import useChangeLayer from '../utils/useChangeLayer';
+import { fitOptions } from '../utils/mapPadding';
+import useGeoLayer from '../utils/useGeoLayer';
 import useMapPick from '../utils/useMapPick';
-import { useTier } from '../utils/useTier';
+import useProjection from '../utils/useProjection';
+import useRouteLayers from '../utils/useRouteLayers';
+import useRoutePins from '../utils/useRoutePins';
+import { DEMO_BOUNDS, demoHazardGeojson, demoRoute } from '../utils/routeEngine';
+import { useSampleMode, useTier } from '../utils/useTier';
 
 // The map can roam over Metro Manila AND the floodplains north of it
 // (Pampanga, Bulacan). The old "Greater Manila only" box was too small:
@@ -57,7 +65,15 @@ export default function Home() {
   const [split, setSplit] = useState(0.5);
 
   // Layer switches and the Tier 2 "strength of change" filter
-  const [layers, setLayers] = useState({ flood: true, change: true, motion: false });
+  const [layers, setLayers] = useState({ flood: true, change: true, motion: false, route: false, scenario: false });
+  const [minArea, setMinArea] = useState(0); // hide tiny change polygons (display only)
+  const [controlsOpen, setControlsOpen] = useState(true);
+  const [year, setYear] = useState(2026); // Tier 4B projection year
+  const urlSample = useSampleMode();
+  const [routeDemo, setRouteDemo] = useState(false); // DEMO needs an explicit click (or ?sample=1)
+  const [scenarioDemo, setScenarioDemo] = useState(false);
+  const routeIsDemo = urlSample || routeDemo;
+  const scenarioIsDemo = urlSample || scenarioDemo;
   const [lossFilter, setLossFilter] = useState(null); // null = use the backend's own floor
 
   // Tier 2: coherence change (a normal "no data yet" state until a reviewed product exists)
@@ -69,7 +85,91 @@ export default function Home() {
   const changeOn = layers.change && tier2Ready;
 
   // Tier 3: click-a-pixel (the map listens for clicks only while Tier 3 is on)
-  const pick = useMapPick({ mapRef, leafletRef, mapReady, active: layers.motion, resetKey: eventId });
+  const pick = useMapPick({
+    mapRef,
+    leafletRef,
+    mapReady,
+    active: layers.motion && !layers.route,
+    resetKey: eventId,
+  });
+
+  // Tier 4A: routes between two pins
+  const pins = useRoutePins({ mapRef, leafletRef, mapReady, active: layers.route, resetKey: eventId });
+  const haveTrip = layers.route && pins.from && pins.to;
+  const routeLoad = !haveTrip
+    ? null
+    : routeIsDemo
+      ? () => Promise.resolve().then(() => demoRoute(pins.from, pins.to))
+      : eventId
+        ? () => getRoute(eventId, pins.from, pins.to)
+        : null;
+  const routeTier = useTier(routeLoad, [
+    eventId,
+    routeIsDemo,
+    layers.route,
+    pins.from?.lng,
+    pins.from?.lat,
+    pins.to?.lng,
+    pins.to?.lat,
+  ]);
+  useRouteLayers({
+    mapRef,
+    leafletRef,
+    mapReady,
+    route: routeTier.state === 'ready' ? routeTier.data : null,
+    visible: layers.route,
+  });
+  const demoHazards = routeIsDemo ? demoHazardGeojson() : null;
+  const demoStyle = (f) =>
+    f.properties.kind === 'area'
+      ? { color: '#f59e0b', weight: 2, dashArray: '6 6', fill: false }
+      : f.properties.kind === 'flood'
+        ? { color: '#ef4444', weight: 1, fillColor: '#ef4444', fillOpacity: 0.45 }
+        : { color: '#f97316', weight: 1, fillColor: '#f97316', fillOpacity: 0.4 };
+  useGeoLayer({
+    mapRef,
+    leafletRef,
+    mapReady,
+    geojson: demoHazards,
+    visible: layers.route && routeIsDemo,
+    pane: 'demoHazardPane',
+    zIndex: 440,
+    style: demoStyle,
+    tooltip: (f) => `DEMO ${f.properties.kind === 'area' ? 'area' : f.properties.kind + ' (invented)'}`,
+  });
+  // real flood shapes, drawn unclipped so the route can be judged against them
+  useGeoLayer({
+    mapRef,
+    leafletRef,
+    mapReady,
+    geojson: data?.floodGeojson ?? null,
+    visible: layers.route && !routeIsDemo,
+    pane: 'hazardPane',
+    zIndex: 440,
+    style: { color: '#ef4444', weight: 1, fillColor: '#ef4444', fillOpacity: 0.4 },
+  });
+  useEffect(() => {
+    const map = mapRef.current;
+    if (mapReady && map && layers.route && routeIsDemo) map.fitBounds(DEMO_BOUNDS, fitOptions());
+  }, [mapReady, layers.route, routeIsDemo]);
+
+  // Tier 4B: projection for the chosen year
+  const proj = useProjection({ eventId, year, demo: scenarioIsDemo, active: layers.scenario });
+  useGeoLayer({
+    mapRef,
+    leafletRef,
+    mapReady,
+    geojson: proj.geojson,
+    visible: layers.scenario,
+    pane: 'projectionPane',
+    zIndex: 435,
+    style: { color: '#a78bfa', weight: 2, dashArray: '4 4', fillColor: '#8b5cf6', fillOpacity: 0.35 },
+    tooltip: (f) => `PROJECTION ${f.properties?.year ?? ''}: ${(f.properties?.areaKm2 ?? 0).toFixed(1)} km²`,
+  });
+  useEffect(() => {
+    const map = mapRef.current;
+    if (mapReady && map && layers.scenario && scenarioIsDemo) map.fitBounds([[14.86, 120.76], [14.94, 120.84]], fitOptions());
+  }, [mapReady, layers.scenario, scenarioIsDemo]);
   const changeCounts = useChangeLayer({
     mapRef,
     leafletRef,
@@ -77,7 +177,13 @@ export default function Home() {
     geojson: tier2Ready ? tier2.data.changeGeojson : null,
     visible: changeOn,
     minLoss: lossFilter, // null shows everything
+    minArea,
   });
+
+  // On a phone the controls start collapsed so the map is visible
+  useEffect(() => {
+    setControlsOpen(window.innerWidth >= 768);
+  }, []);
 
   // 1. Ask the API which events exist
   useEffect(() => {
@@ -222,6 +328,7 @@ export default function Home() {
   // New event: forget the filter the user set for the old one
   useEffect(() => {
     setLossFilter(null);
+    setMinArea(0);
   }, [eventId]);
 
   // Tier 1 switch: hide or show the before/after panes
@@ -255,10 +362,19 @@ export default function Home() {
       />
 
       {/* Title, event picker and legend */}
-      <div className="absolute left-4 top-4 z-[1000] rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-white shadow-xl backdrop-blur-md">
-        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
-          Tanaw
+      <div className="absolute left-2 top-2 z-[1000] max-h-[55vh] max-w-[calc(100vw-1rem)] overflow-y-auto rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-white shadow-xl backdrop-blur-md md:left-4 md:top-4 md:max-h-[calc(100vh-2rem)]">
+        <div className="flex items-center justify-between gap-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">Tanaw</div>
+          <button
+            type="button"
+            onClick={() => setControlsOpen((o) => !o)}
+            aria-expanded={controlsOpen}
+            className="rounded px-1.5 text-xs text-slate-300 hover:bg-slate-700"
+          >
+            {controlsOpen ? 'Hide ▴' : 'Controls ▾'}
+          </button>
         </div>
+        <div className={controlsOpen ? '' : 'hidden'}>
         <label htmlFor="event" className="mt-2 block text-xs text-slate-400">
           Flood event
         </label>
@@ -296,7 +412,10 @@ export default function Home() {
             onChange: setLossFilter,
           }}
           counts={changeCounts}
+          minArea={minArea}
+          onMinArea={setMinArea}
         />
+        </div>
       </div>
 
       {/* The before / after divider */}
@@ -339,7 +458,10 @@ export default function Home() {
 
       {error && (
         <div className="absolute bottom-16 left-1/2 z-[1000] -translate-x-1/2 rounded-lg border border-red-500/40 bg-red-950/90 px-4 py-2 text-sm text-red-200">
-          {error}
+          {error}{' '}
+          <a href="?sample=1" className="font-semibold underline">
+            Open DEMO data
+          </a>
         </div>
       )}
 
@@ -347,6 +469,24 @@ export default function Home() {
         {layers.change && <Tier2Panel tier2={tier2} counts={changeCounts} />}
         {layers.motion && <Tier3Panel eventId={eventId} point={pick.point} onClear={pick.clear} />}
         {layers.motion && <BriefingCard eventId={eventId} />}
+        {layers.route && (
+          <RoutePanel
+            pins={pins}
+            routeTier={routeTier}
+            demo={routeIsDemo}
+            onDemo={() => setRouteDemo(true)}
+            hasEvent={Boolean(eventId)}
+          />
+        )}
+        {layers.scenario && (
+          <ProjectionPanel
+            proj={proj}
+            year={year}
+            setYear={setYear}
+            demo={scenarioIsDemo}
+            onDemo={() => setScenarioDemo(true)}
+          />
+        )}
       </StatsSidebar>
     </main>
   );

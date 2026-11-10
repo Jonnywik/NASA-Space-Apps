@@ -6,6 +6,8 @@ const TIERS = [
   { key: 'flood', label: 'Tier 1', sub: 'Flood', on: 'bg-blue-600 border-blue-400' },
   { key: 'change', label: 'Tier 2', sub: 'Change', on: 'bg-orange-600 border-orange-400' },
   { key: 'motion', label: 'Tier 3', sub: 'Motion', on: 'bg-cyan-700 border-cyan-400' },
+  { key: 'route', label: 'Tier 4A', sub: 'Routes', on: 'bg-emerald-700 border-emerald-400' },
+  { key: 'scenario', label: 'Tier 4B', sub: 'Future', on: 'bg-violet-700 border-violet-400' },
 ];
 
 export default function TierBar({ layers, onToggle, disabled = {} }) {
