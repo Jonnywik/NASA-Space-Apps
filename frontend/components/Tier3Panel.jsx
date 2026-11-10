@@ -30,6 +30,10 @@ export default function Tier3Panel({ eventId, point, onClear }) {
       </div>
 
       {!point && <p className="text-xs text-slate-400">Click anywhere on the map to see how that spot moved over time.</p>}
+      <p className="mb-2 text-[10px] text-slate-500">
+        Data sources: Sentinel-1 (C-band). NISAR (L-band) public data only exists for observations from
+        17 June 2026, so the three storm events have no L-band measurements.
+      </p>
 
       {point && (
         <>

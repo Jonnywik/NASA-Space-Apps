@@ -25,14 +25,19 @@ export function lossFloor(coherence) {
 
 // Keep polygons whose mean coherence loss is at least minLoss.
 // A polygon with no meanLoss is kept (we never hide something because a number is missing).
-export function filterChangeFeatures(features, minLoss) {
+// minAreaKm2 hides tiny polygons (a display filter only: it never changes the published data).
+export function filterChangeFeatures(features, minLoss, minAreaKm2 = 0) {
   const list = Array.isArray(features) ? features : [];
-  if (minLoss == null) return list;
   return list.filter((f) => {
     const loss = f?.properties?.meanLoss;
-    return typeof loss !== 'number' || loss >= minLoss;
+    const area = f?.properties?.areaKm2;
+    if (minLoss != null && typeof loss === 'number' && loss < minLoss) return false;
+    if (minAreaKm2 > 0 && typeof area === 'number' && area < minAreaKm2) return false;
+    return true;
   });
 }
+
+export const AREA_SLIDER_MAX = 0.2;
 
 export function featureLabel(feature) {
   const p = feature?.properties ?? {};

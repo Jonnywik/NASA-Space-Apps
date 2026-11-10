@@ -10,7 +10,7 @@ import { featureLabel, filterChangeFeatures, lossColor } from './changeFilter';
 //   visible   layer toggle
 //   minLoss   hide polygons whose mean loss is below this (null = show all)
 // Returns { total, shown } so the panel can say "showing 3 of 4 areas".
-export default function useChangeLayer({ mapRef, leafletRef, mapReady, geojson, visible, minLoss }) {
+export default function useChangeLayer({ mapRef, leafletRef, mapReady, geojson, visible, minLoss, minArea = 0 }) {
   const [counts, setCounts] = useState({ total: 0, shown: 0 });
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function useChangeLayer({ mapRef, leafletRef, mapReady, geojson, 
     if (!mapReady || !map || !L) return undefined;
 
     const all = geojson?.features ?? [];
-    const kept = filterChangeFeatures(all, minLoss);
+    const kept = filterChangeFeatures(all, minLoss, minArea);
     setCounts({ total: all.length, shown: kept.length });
 
     if (!visible || kept.length === 0) return undefined;
@@ -40,7 +40,7 @@ export default function useChangeLayer({ mapRef, leafletRef, mapReady, geojson, 
     return () => {
       map.removeLayer(layer);
     };
-  }, [mapRef, leafletRef, mapReady, geojson, visible, minLoss]);
+  }, [mapRef, leafletRef, mapReady, geojson, visible, minLoss, minArea]);
 
   return counts;
 }

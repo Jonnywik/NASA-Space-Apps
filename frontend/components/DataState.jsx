@@ -26,7 +26,7 @@ const COPY = {
   error: { title: 'Something went wrong', tone: 'text-red-300', body: null },
 };
 
-export default function DataState({ state, tier = 'This panel', error = null }) {
+export default function DataState({ state, tier = 'This panel', error = null, onDemo = null }) {
   const copy = COPY[state];
   if (!copy || state === 'ready' || state === 'idle') return null;
   return (
@@ -38,6 +38,15 @@ export default function DataState({ state, tier = 'This panel', error = null }) 
         {tier}: {copy.title}
       </div>
       {copy.body && <p className="mt-1 text-xs text-slate-400">{copy.body}</p>}
+      {onDemo && ['unavailable', 'offline', 'error'].includes(state) && (
+        <button
+          type="button"
+          onClick={onDemo}
+          className="mt-2 rounded-md border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-300 hover:bg-amber-500/20"
+        >
+          Show DEMO data (invented numbers)
+        </button>
+      )}
       {error && (state === 'error' || state === 'invalid') && (
         <p className="mt-1 break-words font-mono text-[11px] text-slate-500">{error.message}</p>
       )}

@@ -27,6 +27,10 @@ export function classifyError(err) {
   switch (err.code) {
     case "data_unavailable":
     case "unknown_event":
+    case "unknown_scenario":
+    case "unsupported_year":
+    case "year_required":
+    case "roads_unavailable":
       return "unavailable";
     case "review_required":
       return "review";
@@ -182,4 +186,26 @@ export async function getBriefing(eventId, { product = "ground-motion", runId, r
     { event: eventId, product, runId, regionId, year },
     "Could not load the briefing"
   );
+}
+
+// Route: shortest route and a hazard-aware route between two points.
+//   from / to = { lng, lat }.  The backend answers 404 roads_unavailable until a road graph exists.
+export async function getRoute(eventId, from, to, { vehicle = "car" } = {}) {
+  return request(
+    "/api/v1/route",
+    { event: eventId, fromLon: from.lng, fromLat: from.lat, toLon: to.lng, toLat: to.lat, vehicle },
+    "Could not calculate the routes"
+  );
+}
+
+// Fetch a published GeoJSON asset (url already made absolute by withAssetUrls).
+export async function getGeojson(url) {
+  let res;
+  try {
+    res = await fetch(url);
+  } catch {
+    throw new ApiError("Cannot reach the backend.", { status: 0, code: "offline" });
+  }
+  if (!res.ok) throw new ApiError(`Could not load the map data (HTTP ${res.status})`, { status: res.status });
+  return res.json();
 }
