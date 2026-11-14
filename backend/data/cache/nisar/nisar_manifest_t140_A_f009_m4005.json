@@ -2,7 +2,7 @@
  "schemaVersion": "1.0",
  "kind": "nisar-cmr-manifest",
  "dataKind": "observed",
- "retrievedAt": "2026-11-14T16:19:55Z",
+ "retrievedAt": "2026-11-14T16:25:29Z",
  "source": {
   "name": "NASA CMR (ASF DAAC NISAR collections)",
   "url": "https://cmr.earthdata.nasa.gov/search",
@@ -257,6 +257,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4244943597-ASF"
@@ -278,6 +283,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4246539551-ASF"
@@ -299,6 +309,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4254853290-ASF"
@@ -320,6 +335,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4279137937-ASF"
@@ -341,6 +361,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4288837354-ASF"
@@ -362,6 +387,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4303920382-ASF"
@@ -383,6 +413,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4314540434-ASF"
@@ -404,6 +439,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4328375353-ASF"
@@ -425,6 +465,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4358868566-ASF"
@@ -446,6 +491,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4404197169-ASF"
@@ -467,6 +517,11 @@
    "frame": 9,
    "mode": "4005",
    "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4408731464-ASF"
@@ -490,6 +545,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4247654982-ASF",
@@ -518,6 +577,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4255490889-ASF",
@@ -546,6 +609,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4279404165-ASF",
@@ -574,6 +641,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4288985000-ASF",
@@ -602,6 +673,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4299477496-ASF",
@@ -630,6 +705,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4318899381-ASF",
@@ -658,6 +737,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4328741257-ASF",
@@ -686,6 +769,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4359295422-ASF",
@@ -714,6 +801,10 @@
    "frame": 9,
    "mode": "4000",
    "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
    "fullFrame": true,
    "bboxCoverageFraction": 1.0,
    "cmrConceptId": "G4409895778-ASF",

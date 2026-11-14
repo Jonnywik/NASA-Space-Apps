@@ -155,6 +155,7 @@ class Analysis:
     water: list[np.ndarray]
     flooded: list[np.ndarray]
     veg: list[np.ndarray]
+    reference: np.ndarray
     permanent: np.ndarray
     permanent_info: dict
     rhythm: water.Rhythm
@@ -230,7 +231,7 @@ def analyse(passes: list[PassInput], *, bbox=STUDY_BBOX, rule: water.WaterRule |
     if landcover_path is None:
         warnings.append("No land-cover mask supplied: possible-flooded-vegetation pixels are not restricted to cropland/wetland classes.")
     pstats = [water.pass_stats(w, v, permanent, in_area, area, vegetation=g) for w, v, g in zip(water_masks, valid, veg)]
-    return Analysis(grid, tuple(bbox), in_area, area, passes, rule, hh, hv, valid, water_masks, flooded, veg, permanent, perm_info,
+    return Analysis(grid, tuple(bbox), in_area, area, passes, rule, hh, hv, valid, water_masks, flooded, veg, reference, permanent, perm_info,
                     rhythm, pstats, water.rhythm_stats(rhythm, area), veg_info, warnings)
 
 
@@ -265,9 +266,9 @@ def export_product(a: Analysis, out_dir: Path, *, data_kind: str, source: dict, 
             hh_show = np.where(a.valid[k] & a.in_area, a.hh[k], np.nan)
             hv_show = np.where(a.valid[k] & a.in_area, a.hv[k], np.nan)
             bounds = write_png_overlay(mask_rgba(a.flooded[k] & a.in_area, COLOR_WATER), a.grid, stage / f"pass_{pid}.png")
-            write_png_overlay(backscatter_rgba(hh_show), a.grid, stage / f"hh_{pid}.png")
+            write_png_overlay(backscatter_rgba(hh_show), a.grid, stage / f"hh_{pid}.png", max_side=1400)
             write_png_overlay(mask_rgba(a.veg[k], COLOR_VEGETATION, 210), a.grid, stage / f"veg_{pid}.png")
-            write_png_overlay(polarization.polarization_rgba(hh_show, hv_show), a.grid, stage / f"pol_{pid}.png")
+            write_png_overlay(polarization.polarization_rgba(hh_show, hv_show), a.grid, stage / f"pol_{pid}.png", max_side=1400)
             write_gtiff(stage / "tif" / f"state_{pid}.tif", state, a.grid, nodata=255, dtype="uint8",
                         descriptions=["0 dry, 1 flooded open water, 2 permanent water, 3 possible flooded vegetation, 255 nodata"])
             write_gtiff(stage / "tif" / f"db_{pid}.tif", np.stack([hh_show, hv_show]).astype("float32"), a.grid, nodata=float("nan"),
@@ -294,8 +295,7 @@ def export_product(a: Analysis, out_dir: Path, *, data_kind: str, source: dict, 
         register(assets, stage, "rhythm_counts", "tif/rhythm_counts.tif", "geotiff")
         write_gtiff(stage / "tif" / "permanent_water.tif", a.permanent.astype("uint8"), a.grid, nodata=255, dtype="uint8")
         register(assets, stage, "permanent_water", "tif/permanent_water.tif", "geotiff")
-        write_gtiff(stage / "tif" / "hh_dry_reference.tif", vegetation.dry_reference_db(a.hh, a.water, min_reference_passes=a.veg_info["referenceMinPasses"]),
-                    a.grid, nodata=float("nan"), dtype="float32")
+        write_gtiff(stage / "tif" / "hh_dry_reference.tif", a.reference, a.grid, nodata=float("nan"), dtype="float32")
         register(assets, stage, "hh_dry_reference", "tif/hh_dry_reference.tif", "geotiff")
 
         warnings = list(a.warnings) + list(extra_warnings or [])

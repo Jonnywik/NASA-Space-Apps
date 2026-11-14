@@ -120,6 +120,8 @@ def parse_granule(item: dict, collection_id: str, product: str, bbox: Iterable[f
         "frame": int(match["frame"]),
         "mode": match["mode"],
         "polarizations": match["pols"],
+        "frequencyAPolarizations": attrs.get("FREQUENCY_A_POLARIZATION") or [],
+        "rangeBandwidthMHz": _first(attrs, "RANGE_BANDWIDTH_CONCAT"),
         "fullFrame": _first(attrs, "FULL_FRAME") == "TRUE",
         "bboxCoverageFraction": bbox_coverage_fraction(umm, bbox),
         "cmrConceptId": item.get("meta", {}).get("concept-id"),

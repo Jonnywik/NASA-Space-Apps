@@ -93,20 +93,33 @@ def rhythm_rgba(counts: np.ndarray, countable: np.ndarray, permanent: np.ndarray
     return rgba
 
 
-def write_rhythm_legend(path: Path, pass_count: int, half_threshold_text: str, data_kind: str) -> None:
+def write_rhythm_legend(path: Path, pass_count: int, note: str, data_kind: str) -> None:
+    """Legend PNG: one swatch per flood count (colour-blind-safe), permanent water, and a note line."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.patches import Patch
+    from matplotlib.patches import Rectangle
     colors = rhythm_colors(pass_count)
-    handles = [Patch(facecolor=c, edgecolor="#333", label=f"flooded on {k} pass{'es' if k != 1 else ''}") for k, c in enumerate(colors, start=1)]
-    handles.append(Patch(facecolor=COLOR_PERMANENT, edgecolor="#333", alpha=0.6, label="permanent water (masked)"))
-    fig, ax = plt.subplots(figsize=(3.4, 0.32 * (len(handles) + 3)))
+    rows = [(c, f"flooded on {k} pass{'es' if k != 1 else ''}", 1.0) for k, c in enumerate(colors, start=1)]
+    rows.append((COLOR_PERMANENT, "permanent water (masked)", 0.6))
+    lines = [note] + (["SYNTHETIC DEMO DATA, not NISAR observations"] if data_kind == "synthetic" else [])
+    height = 0.55 + 0.24 * len(rows) + 0.2 * len(lines) + 0.2
+    fig = plt.figure(figsize=(4.4, height), dpi=140, facecolor="white")
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 4.4)
+    ax.set_ylim(0, height)
     ax.axis("off")
-    ax.legend(handles=handles, loc="upper left", frameon=False, fontsize=8, title="Flood rhythm (NISAR passes)", title_fontsize=9)
-    note = half_threshold_text + ("\nSYNTHETIC DEMO DATA, not NISAR observations" if data_kind == "synthetic" else "")
-    ax.text(0.0, 0.0, note, fontsize=7, va="bottom", ha="left", transform=ax.transAxes, color="#8a1f11" if data_kind == "synthetic" else "#333")
-    fig.savefig(path, dpi=140, bbox_inches="tight", transparent=False, facecolor="white")
+    y = height - 0.3
+    ax.text(0.15, y, "Flood rhythm (NISAR passes)", fontsize=9, fontweight="bold", va="center")
+    for color, label, alpha in rows:
+        y -= 0.24
+        ax.add_patch(Rectangle((0.15, y - 0.08), 0.32, 0.16, facecolor=color, edgecolor="#333", alpha=alpha))
+        ax.text(0.6, y, label, fontsize=8, va="center")
+    y -= 0.3
+    for line in lines:
+        ax.text(0.15, y, line, fontsize=6.5, va="center", color="#8a1f11" if line.startswith("SYNTHETIC") else "#333")
+        y -= 0.2
+    fig.savefig(path, facecolor="white")
     plt.close(fig)
 
 

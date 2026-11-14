@@ -6,7 +6,7 @@
       "cmr": "NISAR GCOV, Sentinel-1",
       "stac": "landsat-c2-l2"
     },
-    "retrievedAt": "2026-11-14T16:22:54Z",
+    "retrievedAt": "2026-11-14T16:25:58Z",
     "sha256": "cf8953ae28254acce8c42cd526c367f7e047208ca891b4dca8f0ee70c28d2a0c"
   },
   "era5_daily": {
@@ -31,11 +31,11 @@
       "models": "ecmwf_seas5",
       "url": "https://seasonal-api.open-meteo.com/v1/seasonal"
     },
-    "retrievedAt": "2026-11-14T16:22:48Z",
-    "sha256": "6a6a053b12b9ff2bf4fa194f2b587e342f7e7ccefa711eb3bacef3e3d872dbe6"
+    "retrievedAt": "2026-11-14T16:25:51Z",
+    "sha256": "f6f17bd1ca6937229b39edc3aeb955f77af900dbf298a43133742e1c040e8fa2"
   },
   "power_daily": {
-    "bytes": 238781,
+    "bytes": 241546,
     "file": "power_daily.json",
     "query": {
       "community": "AG",
@@ -46,7 +46,7 @@
       "start": "1991-01-01",
       "url": "https://power.larc.nasa.gov/api/temporal/daily/point"
     },
-    "retrievedAt": "2026-11-14T16:22:16Z",
-    "sha256": "da7d475d8cf23915664371f399ea44f107be0bd35f5138532337a738fe828773"
+    "retrievedAt": "2026-11-14T16:25:20Z",
+    "sha256": "3eac0b4a16a85cec1ebf48c54f5ef4f3efcbb8b93bd1e2fd24cf41dd869d24ae"
   }
 }

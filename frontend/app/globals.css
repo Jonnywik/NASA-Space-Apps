@@ -35,3 +35,22 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Visible keyboard focus everywhere (U8). */
+:focus-visible {
+  outline: 3px solid #f0e442;
+  outline-offset: 2px;
+}
+.leaflet-container :focus-visible {
+  outline-offset: -2px;
+}
+/* Quieter base map so the radar layers stand out. */
+.leaflet-tile-pane {
+  filter: saturate(0.55) brightness(0.92);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

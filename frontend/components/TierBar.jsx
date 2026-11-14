@@ -10,10 +10,10 @@ const TIERS = [
   { key: 'scenario', label: 'Tier 4B', sub: 'Future', on: 'bg-violet-700 border-violet-400' },
 ];
 
-export default function TierBar({ layers, onToggle, disabled = {} }) {
+export default function TierBar({ layers, onToggle, disabled = {}, visibleKeys }) {
   return (
     <div className="mt-3 grid grid-cols-3 gap-1.5" role="group" aria-label="Tiers">
-      {TIERS.map((t) => {
+      {TIERS.filter((t) => !visibleKeys || visibleKeys.includes(t.key)).map((t) => {
         const isOff = disabled[t.key];
         const isOn = layers[t.key] && !isOff;
         return (

@@ -60,12 +60,12 @@ def classify(hh_db: np.ndarray, hv_db: np.ndarray, rule: WaterRule) -> tuple[np.
 
 
 def calibrate_rule(hh_db_passes: list[np.ndarray], hv_db_passes: list[np.ndarray], known_water: np.ndarray, *,
-                   known_land: np.ndarray | None = None, quantile: float = 0.95, description: str = "",
+                   known_land: np.ndarray | None = None, quantile: float = 0.95, margin_db: float = 1.0, description: str = "",
                    pass_ids: list[str] | None = None, round_to: float = 0.5, min_pixels: int = 500) -> tuple[WaterRule, dict]:
     """Derive the fixed HH/HV thresholds once from pixels known to be open water (e.g. Manila Bay).
 
     Each threshold is the ``quantile`` of the known-water dB distribution pooled over the given passes,
-    rounded to ``round_to`` dB. If ``known_land`` is given, the separation (land 5th percentile minus the
+    plus ``margin_db`` (tolerance for wind-roughened water), rounded to ``round_to`` dB. If ``known_land`` is given, the separation (land 5th percentile minus the
     threshold) is recorded and a warning is raised when it is not positive. Returns the rule and the record.
     """
     hh = np.concatenate([p[known_water & np.isfinite(p)] for p in hh_db_passes])
@@ -76,10 +76,12 @@ def calibrate_rule(hh_db_passes: list[np.ndarray], hv_db_passes: list[np.ndarray
     def snap(value: float) -> float:
         return float(np.round(value / round_to) * round_to)
 
-    t_hh, t_hv = snap(np.quantile(hh, quantile)), snap(np.quantile(hv, quantile))
+    t_hh, t_hv = snap(np.quantile(hh, quantile) + margin_db), snap(np.quantile(hv, quantile) + margin_db)
     record = {
         "status": "calibrated",
-        "method": f"{quantile:.0%} quantile of known open-water dB, pooled over passes, rounded to {round_to} dB",
+        "method": (f"{quantile:.0%} quantile of known open-water dB, pooled over passes, plus a {margin_db} dB margin for wind-roughened "
+                   f"water, rounded to {round_to} dB"),
+        "marginDb": margin_db, "quantile": quantile,
         "knownWater": description,
         "passes": pass_ids or [],
         "waterPixels": int(hh.size),

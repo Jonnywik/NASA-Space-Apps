@@ -53,3 +53,32 @@ export function useReportLimits(key, label, data) {
     return () => report(key, null);
   }, [report, key, label, has, sourceName, dataKind, JSON.stringify(limitations ?? []), JSON.stringify(warnings ?? [])]); // eslint-disable-line react-hooks/exhaustive-deps
 }
+
+// Same as useReportLimits for a fixed list of [key, label, data] entries (one effect, one cleanup).
+export function useReportMany(items) {
+  const { report } = useContext(Ctx) ?? {};
+  const sig = JSON.stringify(
+    items.map(([k, l, d]) => [k, l, Boolean(d), d?.source?.name ?? null, d?.dataKind ?? null, d?.limitations ?? [], d?.warnings ?? []]),
+  );
+  useEffect(() => {
+    if (!report) return undefined;
+    const keys = [];
+    items.forEach(([key, label, d]) => {
+      if (!d) {
+        report(key, null);
+        return;
+      }
+      report(key, {
+        label,
+        sourceName: d.source?.name ?? null,
+        dataKind: d.dataKind ?? null,
+        limitations: Array.isArray(d.limitations) ? d.limitations : [],
+        warnings: Array.isArray(d.warnings) ? d.warnings : [],
+      });
+      keys.push(key);
+    });
+    return () => keys.forEach((k) => report(k, null));
+    // items is described by sig
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [report, sig]);
+}

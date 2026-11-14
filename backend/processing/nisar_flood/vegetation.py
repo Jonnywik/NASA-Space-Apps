@@ -15,6 +15,8 @@ Without a land-cover mask the class can include non-vegetated change; pass a Wor
 """
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 
 from .constants import DEFAULT_VEGETATION_LANDCOVER_CLASSES, DEFAULT_VEGETATION_MARGIN_DB
@@ -29,8 +31,9 @@ def dry_reference_db(hh_db: list[np.ndarray], water: list[np.ndarray], *, min_re
         r1 = min(r0 + band_rows, stack_shape[0])
         band = np.stack([np.where(np.isfinite(h[r0:r1]) & ~w[r0:r1], h[r0:r1], np.nan) for h, w in zip(hh_db, water)])
         count = np.isfinite(band).sum(axis=0)
-        with np.errstate(all="ignore"):
-            med = np.nanmedian(band, axis=0) if band.size else np.full(band.shape[1:], np.nan)
+        with np.errstate(all="ignore"), warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)  # all-NaN columns are expected (never valid)
+            med = np.nanmedian(band, axis=0)
         med[count < min_reference_passes] = np.nan
         reference[r0:r1] = med.astype("float32")
     return reference
