@@ -7,7 +7,7 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 
 from processing.climate import stats
 from processing.climate.availability import build_catalogue
@@ -113,6 +113,17 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
                     return body
         return None
 
+    def to_int(value, name: str, default: int, lo: int, hi: int) -> int:
+        if value is None or value == "":
+            return default
+        try:
+            n = int(value)
+        except (TypeError, ValueError):
+            raise err(422, "invalid_request", f"{name} must be an integer")
+        if not lo <= n <= hi:
+            raise err(422, "invalid_request", f"{name} must be between {lo} and {hi}")
+        return n
+
     def parse_date(s: str, field: str) -> date:
         if not DATE_RE.match(s or ""):
             raise err(422, "invalid_request", f"{field} must be YYYY-MM-DD")
@@ -123,8 +134,9 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
 
     # -------------------------------------------------------------- endpoints
     @router.get("/climate/rainfall/monthly")
-    def rainfall_monthly(area: str = AREA_ID, since: int = Query(HISTORY_START_YEAR, ge=1991, le=2100)):
+    def rainfall_monthly(area: str = AREA_ID, since: str | None = None):
         check_area(area)
+        since = to_int(since, "since", HISTORY_START_YEAR, 1991, 2100)
         p, entry = power()
         rows = [r for r in p["series"] if r["year"] >= since]
         return {**power_common(entry, p["payload"]), "units": "mm",
@@ -140,7 +152,7 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
                 "limitations": POWER_LIMITS + ["anomalies are against the 1991-2020 mean of the same calendar month"]}
 
     @router.get("/climate/rainfall/daily")
-    def rainfall_daily(start: str, end: str, area: str = AREA_ID):
+    def rainfall_daily(start: str | None = None, end: str | None = None, area: str = AREA_ID):
         check_area(area)
         a, b = parse_date(start, "start"), parse_date(end, "end")
         if a > b:
@@ -160,8 +172,9 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
                 "limitations": POWER_LIMITS}
 
     @router.get("/climate/rainfall/season-rank")
-    def season_rank(area: str = AREA_ID, year: int = Query(2026, ge=1991, le=2100)):
+    def season_rank(area: str = AREA_ID, year: str | None = None):
         check_area(area)
+        year = to_int(year, "year", 2026, 1991, 2100)
         p, entry = power()
         seasons = p["seasons"]["seasons"]
         row = next((s for s in seasons if s["year"] == year), None)
@@ -291,8 +304,10 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
                                 "analog years replay observed monthly totals of NASA POWER; they carry its biases"] + POWER_LIMITS[:2]}
 
     @router.get("/climate/flood-scenario")
-    def flood_scenario(scenarioId: str, area: str = AREA_ID):
+    def flood_scenario(scenarioId: str | None = None, area: str = AREA_ID):
         check_area(area)
+        if not scenarioId:
+            raise err(422, "invalid_request", "scenarioId is required")
         body = nisar_passes()
         if body is None:
             raise err(404, "data_unavailable", "the NISAR pass list does not exist yet")

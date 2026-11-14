@@ -34,5 +34,14 @@
     "before_date": "2025-07-11",
     "after_date": "2025-07-31",
     "bbox": [120.55, 14.85, 121.00, 15.25]
+  },
+  {
+    "id": "camanava_2026",
+    "name": "CAMANAVA and the Bulacan coast: 2026 wet season (NISAR passes)",
+    "public": true,
+    "aoi": "Caloocan, Malabon, Navotas, Valenzuela, Obando, Meycauayan, Marilao",
+    "before_date": "2026-06-23",
+    "after_date": "2026-11-02",
+    "bbox": [120.88, 14.60, 121.04, 14.82]
   }
 ]
