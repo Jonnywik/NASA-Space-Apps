@@ -12,7 +12,8 @@ const MIN_EPOCHS = 6;
 const MIN_SPAN_DAYS = 90;
 
 // Time series for one clicked point. `point` is the `point` object from /ground-motion/point.
-export default function PixelChart({ point }) {
+// cumulative: the product is a short cumulative series (NISAR season): label the per-year figure as an extrapolation
+export default function PixelChart({ point, cumulative = false }) {
   if (!point) return null;
 
   if (point.status !== 'ok') {
@@ -46,7 +47,9 @@ export default function PixelChart({ point }) {
       </div>
 
       <div className="mt-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-3">
-        <div className="text-xs font-medium uppercase tracking-wider text-cyan-300">Rate along line of sight</div>
+        <div className="text-xs font-medium uppercase tracking-wider text-cyan-300">
+          {cumulative ? 'Extrapolated rate along line of sight (not measured over a year)' : 'Rate along line of sight'}
+        </div>
         {hasRate ? (
           <div className="text-xl font-black text-cyan-300">
             {point.rateMmPerYear.toFixed(1)}
@@ -66,6 +69,7 @@ export default function PixelChart({ point }) {
       <p className="mt-2 text-[11px] italic text-slate-500">
         Movement is measured along the satellite&apos;s line of sight, relative to the first date. It is not
         straight-down sinking, and it is not a prediction.
+        {cumulative && ' The per-year figure extends a short record and is shown only as an extrapolation.'}
       </p>
     </div>
   );
