@@ -23,6 +23,7 @@ from fastapi.responses import FileResponse
 from app.p3_api import make_router
 from app.coherence_api import make_router as make_coherence_router
 from app.route_api import make_router as make_route_router
+from app.places_api import make_router as make_places_router
 from processing.p3.catalog import capabilities
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -133,3 +134,4 @@ def overlay(event: str, which: str):
 app.include_router(make_router(OUTPUT, read_public_events))
 app.include_router(make_coherence_router(OUTPUT, read_public_events))
 app.include_router(make_route_router(OUTPUT, read_public_events))
+app.include_router(make_places_router(OUTPUT, read_public_events))

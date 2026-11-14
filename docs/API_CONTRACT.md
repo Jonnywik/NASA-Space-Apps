@@ -119,14 +119,25 @@ Exploratory. It combines the observed pass rainfall with flooded km² (from B's 
 
 ## D: Places and exposure (`places_api.py`)
 
+All endpoints are bundled and offline at request time (cache in `backend/data/cache/places/`, built by `backend/scripts/40_fetch_places.py`). Every success body also carries `dataKind`, `retrievedAt`, `source`, `warnings`, `limitations`. Missing cache gives 404 `data_unavailable`. Place ids are COD-AB p-codes (`PH1307502` city, `PH1307502010` barangay). Names are the official COD-AB names, so cities read "City of Malabon", "Caloocan City", "Marilao".
+
 ### `GET /places/search?q=&limit=10`
-`{ "results": [{"id", "name", "level": "barangay" | "city", "city", "province", "lon", "lat", "bbox"}] }`. Served from a bundled gazetteer; no external geocoder at request time.
+`{ "query", "results": [{"id", "name", "level": "barangay" | "city", "city", "province", "lon", "lat", "bbox": [w, s, e, n], "inStudyArea": true}] }`. Case-insensitive; ignores "Brgy.", "Barangay", "City of" and accents (n with tilde matches n); ranks exact, then prefix, word prefix, substring, then "name + city"; study-area places first on ties. `limit` 1-50, `q` required (422 `invalid_request`). Metro Manila places carry `province: "Metro Manila"`.
 
 ### `GET /places/boundaries?level=city|barangay`
-A GeoJSON FeatureCollection (simplified) with `properties: {id, name, city}`, plus `source` and `license`.
+A GeoJSON FeatureCollection (simplified to about 5 m, 5 decimals) with `properties: {id, name, level, city, province, region, inStudyArea}` (barangays also `cityId`), plus `source`, `license`, `level`. It covers every COD-AB city and barangay that intersects the study bbox, which includes neighbours outside the seven study cities; filter on `inStudyArea`.
 
-### `GET /places/exposure?area=&mask=rhythm_half|priority`
-`{ "dataKind": "derived", "zones": [{"placeId", "name", "city", "areaKm2", "population": 1234, "buildings": 321}], "totals": {"population", "buildings", "areaKm2"}, "populationSource": {"name", "year": 2020}, "buildingSource": {"snapshotDate"}, "limitations": ["exposure, not damage"] }`. It returns 404 `data_unavailable` until B's rhythm raster exists. Provide `processing/places/exposure.py::exposure_for_mask(mask_path)` so the coordinator can call it.
+### `GET /places/locate?lon=&lat=`
+`{ "lon", "lat", "barangay": {"id", "name"} | null, "city": {"id", "name", "province"} | null }`. 404 `outside_coverage` outside the study bbox; 200 with nulls and a warning inside the bbox but outside every polygon (open water).
+
+### `GET /places/exposure?area=camanava_2026&mask=rhythm_half|priority&level=barangay|city`
+`{ "dataKind": "derived" | "synthetic", "area", "mask", "level", "passCount", "zones": [{"placeId", "name", "city", "areaKm2", "population": 1234, "buildings": 321}], "totals": {"population", "buildings", "areaKm2", "unassignedAreaKm2"}, "populationSource": {"name", "year": 2020, "url", "license"}, "buildingSource": {"name", "snapshotDate", "completeness": "unknown", "url", "license"}, "populationUnavailableReason", "buildingsUnavailableReason", "limitations": ["exposure, not damage", ...] }`. Zones list only places with exposed area, sorted by population. `population`/`buildings` are `null` (with the reason field) when the clip is absent. `unassignedAreaKm2` is exposed area outside every barangay polygon (for example sea).
+
+Inputs expected from B (under `output_root/camanava_2026/nisar/`): `rhythm.tif`, a single-band count raster (flooded-pass count per pixel, nodata declared in the file or NaN); and `manifest.json` (or `rhythm_manifest.json`) with `passCount` and `dataKind`. `rhythm_half` means count >= ceil(0.5 x passCount). `dataKind: "synthetic"` in the manifest is propagated. `mask=priority` reads `priority_mask.tif` in the same folder (coordinator, wave 2). Missing raster gives 404 `data_unavailable`; unknown area 404 `unknown_area`; bad `mask`/`level` 422 `invalid_request`. The rhythm raster may be in any CRS (geographic or projected metres).
+
+Python entry point: `processing.places.exposure.exposure_for_mask(mask, level="barangay", *, transform=None, crs=None, nodata=None, threshold=None)`, where `mask` is a path, an array with `transform`, or `(array, transform[, crs])`; helper `rhythm_mask(path, pass_count, min_fraction)`. Method and partial-cell rules are in the module docstring: pixel-centre assignment to places, equal-area pixel areas, WorldPop density resampled onto the mask grid (people spread evenly in each 100 m cell), building centroid-in-pixel.
+
+Data and licences (full detail with sha256 in `backend/data/cache/places/manifest.json`): boundaries HDX COD-AB PHL v03 (valid 2025-02-13, CC BY-IGO); buildings OpenStreetMap via the HOT export on HDX (snapshot 2026-10-12, ODbL; completeness unknown; Overpass was unreachable from the build environment); population WorldPop 2020 constrained 100 m BSGM (CC BY 4.0; cells without built settlement count as zero); land cover ESA WorldCover 2021 v200 10 m (CC BY 4.0), clip `esa_worldcover_2021_clip.tif`, uint8, classes 10 tree, 20 shrub, 30 grass, 40 crop, 50 built-up, 60 bare, 80 water, 90 herbaceous wetland, 95 mangrove.
 
 ## Coordinator, wave 2
 
