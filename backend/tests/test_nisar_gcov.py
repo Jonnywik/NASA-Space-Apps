@@ -46,21 +46,22 @@ class ReaderTests(unittest.TestCase):
         self.assertEqual(w.grid.crs, f"EPSG:{EPSG}")
 
     def test_nodata_zero_negative_and_fill_value_are_nan_not_numbers(self):
+        from processing.nisar_flood.geo import window_for_bbox
+        rows, cols, _, _ = window_for_bbox(self.x, self.y, f"EPSG:{EPSG}", STUDY_BBOX, pad=4)
         hh, hv = scene(self.x, self.y)
-        hh[40:45, 40:45] = np.nan
-        hh[50, 50] = 0.0
-        hv[60, 60] = -1.0
-        hh[70, 70] = -9999.0
+        r, c = rows.start + 10, cols.start + 10
+        hh[r:r + 3, c:c + 3] = np.nan          # NaN block
+        hh[r + 5, c + 5] = 0.0                  # zero power
+        hv[r + 6, c + 6] = -1.0                 # negative power
+        hh[r + 7, c + 7] = -9999.0              # file's declared fill value
         path = write_gcov(self.dir / "b.h5", hh, hv, self.x, self.y, fill=-9999.0)
         w, _ = gcov.read_window_from_source(str(path), speckle_window=1)
         r0, c0 = w.meta["window"]["rowStart"], w.meta["window"]["colStart"]
-        def at(r, c):
-            return r - r0, c - c0
-        for (r, c), arr in (((42, 42), w.hh_db), ((50, 50), w.hh_db), ((60, 60), w.hv_db), ((70, 70), w.hh_db)):
-            i, j = at(r, c)
-            if 0 <= i < w.hh_db.shape[0] and 0 <= j < w.hh_db.shape[1]:
-                self.assertTrue(np.isnan(arr[i, j]), (r, c))
-        self.assertTrue(np.all(np.isfinite(w.hh_db[~np.isnan(w.hh_db)])))
+        for (rr, cc), arr in (((r + 1, c + 1), w.hh_db), ((r + 5, c + 5), w.hh_db), ((r + 6, c + 6), w.hv_db), ((r + 7, c + 7), w.hh_db)):
+            self.assertTrue(np.isnan(arr[rr - r0, cc - c0]), (rr, cc))
+        # neighbours of the defects are still real dB numbers
+        self.assertTrue(np.isfinite(w.hh_db[r + 9 - r0, c + 9 - c0]))
+        self.assertTrue(np.isfinite(w.hv_db[r + 5 - r0, c + 5 - c0]))
 
     def test_power_to_db(self):
         db = gcov.power_to_db(np.array([1.0, 0.1, 0.01, 0.0, -1.0, np.nan, np.inf]))
@@ -181,6 +182,7 @@ class RemoteReadTests(unittest.TestCase):
 
     def tearDown(self):
         self.origin.shutdown(); self.storage.shutdown()
+        self.origin.server_close(); self.storage.server_close()
         self.tmp.cleanup()
 
     def test_range_read_follows_redirect_and_drops_token_off_nasa_hosts(self):

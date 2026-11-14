@@ -84,7 +84,7 @@ def write_synthetic_gcov(path: Path, *, level: float, seed: int, nodata_block: t
         handle.attrs["SYNTHETIC"] = SYNTHETIC_BANNER
         group = handle.create_group(layout.base.strip("/"))
         for name, data in ((layout.hh, hh), (layout.hv, hv)):
-            ds = group.create_dataset(name, data=data, chunks=(256, 256), compression="gzip", compression_opts=4)
+            ds = group.create_dataset(name, data=data, chunks=(min(256, data.shape[0]), min(256, data.shape[1])), compression="gzip", compression_opts=4)
             ds.attrs["_FillValue"] = np.float32("nan")
             ds.attrs["description"] = f"{SYNTHETIC_BANNER}: linear power"
         xs = group.create_dataset(layout.x, data=x)

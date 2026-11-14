@@ -2,7 +2,7 @@
 
 Read this file first, then `docs/SUBMISSION_SCOPE.md` (the plan) and `docs/API_CONTRACT.md` (endpoint shapes and file ownership). Those two documents are the source of truth. If this file and they disagree, they win, and you should fix this file.
 
-**Status as of 15 Nov 2026, about 02:30 Manila time.** Pull the latest commit before you start: other agents were still writing NISAR, climate and frontend code when this was written, so section 4 may be out of date. Check it against the code.
+**Status as of 15 Nov 2026, about 00:45 Manila time.** Pull the latest commit before you start: other agents were still writing NISAR, climate and frontend code when this was written, so section 4 may be out of date. Check it against the code.
 
 ## 1. What Tanaw is
 

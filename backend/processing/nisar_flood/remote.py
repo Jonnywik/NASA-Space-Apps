@@ -62,10 +62,14 @@ _OPENER = urllib.request.build_opener(_NoRedirect)
 
 
 def open_following_redirects(url: str, token: str | None, headers: dict | None = None, *, timeout: int = 60,
-                             opener=None):
-    """GET ``url`` following redirects by hand. Returns (response, final_url). Caller closes the response."""
+                             opener=None, origin_url: str | None = None):
+    """GET ``url`` following redirects by hand. Returns (response, final_url). Caller closes the response.
+
+    ``origin_url`` is the URL the caller originally asked for. The token is only sent to its host and to NASA/ASF hosts,
+    even when ``url`` is an already-resolved pre-signed address on another host.
+    """
     opener = opener or _OPENER
-    original_host = urllib.parse.urlsplit(url).hostname or ""
+    original_host = urllib.parse.urlsplit(origin_url or url).hostname or ""
     current = url
     for _ in range(MAX_REDIRECTS + 1):
         host = urllib.parse.urlsplit(current).hostname or ""
@@ -133,7 +137,8 @@ class HttpRangeFile(io.RawIOBase):
             target = self._resolved or self._url
             try:
                 response, final = open_following_redirects(
-                    target, self._token, {"Range": f"bytes={start}-{stop - 1}"}, timeout=self._timeout, opener=self._opener)
+                    target, self._token, {"Range": f"bytes={start}-{stop - 1}"}, timeout=self._timeout, opener=self._opener,
+                    origin_url=self._url)
                 with response:
                     data = response.read()
                 self._resolved = final

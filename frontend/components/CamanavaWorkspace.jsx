@@ -507,6 +507,7 @@ function Workspace({ onRegional }) {
                     <div className="text-[11px] font-bold uppercase tracking-wider text-fuchsia-100">{t("stories.pin")}</div>
                     {activeStory.name && <div className="text-sm font-semibold text-slate-100">{activeStory.name}</div>}
                     <p className="mt-1 text-xs text-slate-200">{activeStory.text}</p>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     {activeStory.photo && <img src={activeStory.photo} alt={activeStory.photoAlt ?? ""} className="mt-2 max-h-40 rounded" />}
                   </div>
                 )}

@@ -70,7 +70,7 @@ function queryString(params = {}) {
 }
 
 async function request(path, params, label) {
-  if (FIXTURES_ON) {
+  if (process.env.NEXT_PUBLIC_USE_FIXTURES === "1") {
     const { fixtureResponse } = await import("./devFixtures");
     const hit = await fixtureResponse(path, params ?? {});
     if (hit !== undefined) return hit;
