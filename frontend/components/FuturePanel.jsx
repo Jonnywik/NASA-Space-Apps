@@ -243,6 +243,9 @@ export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, on
             <ScenarioRainChart sc={chosen} />
             <p className="text-[11px] text-slate-300">{t("future.scenario.bars")}</p>
             {chosen.isEnvelope && <p className="text-[11px] text-amber-200">{t("future.scenario.envelope")}</p>}
+            <p className="mt-1 rounded border border-amber-400/60 bg-amber-950/40 p-2 text-[11px] text-amber-100" data-testid="power-caveat">
+              <span aria-hidden="true">⚠ </span>{t("future.scenario.powerCaveat")}
+            </p>
             <SourceLine data={sd} className="mt-1" />
             <Caveats data={sd} />
           </>
