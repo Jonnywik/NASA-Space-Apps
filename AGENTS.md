@@ -1,6 +1,6 @@
 # AGENTS.md: instructions for coding agents working on Tanaw
 
-**Codex: your current assignment is `docs/CODEX_TASKS.md` (tasks T1–T7, parallel to the frontend agent). Do those, not section 5 below, which is the longer-term sequence.**
+**Current assignments:** Codex works on `docs/CODEX_TASKS.md` (T1–T7, backend and the real NISAR run). Antigravity works on `docs/ANTIGRAVITY_TASKS.md` (A1–A5, small frontend tasks; it owns `frontend/`). Do your own list, not section 5 below, which is the longer-term sequence.
 
 Read this file first, then `docs/SUBMISSION_SCOPE.md` (the plan) and `docs/API_CONTRACT.md` (endpoint shapes and file ownership). Those two documents are the source of truth. If this file and they disagree, they win, and you should fix this file.
 

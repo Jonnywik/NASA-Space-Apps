@@ -8,7 +8,8 @@ Written 15 Nov 2026, about 01:30 Manila time. Coding freezes at 17:00.
 
 | Worker | Owns | Status |
 |---|---|---|
-| Frontend agent (Claude) | **everything under `frontend/`** | Building the CAMANAVA workspace now. **Do not edit `frontend/`.** |
+| Frontend agent (Claude) | — | Finished: the CAMANAVA workspace runs on the real API. |
+| **Antigravity** | **everything under `frontend/`**, `docs/FIL_REVIEW.md`, `docs/ANTIGRAVITY_STATUS.md` | Small UI tasks in `docs/ANTIGRAVITY_TASKS.md`. **Do not edit `frontend/`.** |
 | Coordinator (Claude) | `backend/app/main.py`, `docs/SUBMISSION_SCOPE.md`, `docs/API_CONTRACT.md` sections 0–2 (shared constants and rules), `AGENTS.md` | Integration and review |
 | **Codex (you)** | **The files listed in each task below, and nothing else** | Tasks T1–T7 |
 
