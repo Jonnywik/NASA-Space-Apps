@@ -179,7 +179,7 @@ def write_chain(manifest: dict, out_dir: Path, raw_dir: Path, *, paths: dict, ph
     reference, placeholder = build_reference_config(label, reference_bbox)
     ref_name = f"reference_{label}.json"
     (out_dir / ref_name).write_text(json.dumps(reference, indent=2) + "\n")
-    rel = lambda n: os.path.relpath(out_dir / n, Path.cwd())  # noqa: E731
+    rel = lambda n: str((out_dir / n).resolve())  # noqa: E731  (absolute: the script is machine-specific)
     script = chain_shell_script(label, [rel(n) for n in files], rel(ref_name))
     (out_dir / "run_gunw_chain.sh").write_text(script)
     gaps = manifest.get("gunwChainGaps") or []
