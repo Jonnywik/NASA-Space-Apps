@@ -50,12 +50,12 @@ class Grid:
     def lonlat_to_rowcol(self, lon, lat) -> tuple[np.ndarray, np.ndarray]:
         """Fractional (row, col) of the pixel *containing* lon/lat (floor gives the index)."""
         x, y = self._to_native().transform(np.asarray(lon, dtype="float64"), np.asarray(lat, dtype="float64"))
-        col, row = ~self.affine * (x, y)
+        col, row = ~self.affine @ (x, y)
         return np.asarray(row), np.asarray(col)
 
     def rowcol_to_lonlat(self, row, col) -> tuple[np.ndarray, np.ndarray]:
         """Lon/lat of pixel centres for integer-or-float (row, col) index arrays."""
-        x, y = self.affine * (np.asarray(col, dtype="float64") + 0.5, np.asarray(row, dtype="float64") + 0.5)
+        x, y = self.affine @ (np.asarray(col, dtype="float64") + 0.5, np.asarray(row, dtype="float64") + 0.5)
         lon, lat = self._to_lonlat().transform(x, y)
         return np.asarray(lon), np.asarray(lat)
 
@@ -68,7 +68,7 @@ class Grid:
         n = 25
         cols = np.concatenate([np.linspace(0, self.width, n), np.full(n, self.width), np.linspace(self.width, 0, n), np.zeros(n)])
         rows = np.concatenate([np.zeros(n), np.linspace(0, self.height, n), np.full(n, self.height), np.linspace(self.height, 0, n)])
-        x, y = self.affine * (cols, rows)
+        x, y = self.affine @ (cols, rows)
         lon, lat = self._to_lonlat().transform(x, y)
         return float(lon.min()), float(lat.min()), float(lon.max()), float(lat.max())
 
@@ -105,7 +105,7 @@ def pixel_area_km2(grid: Grid, lattice: int = 17) -> np.ndarray:
     rr, cc = np.meshgrid(rows, cols, indexing="ij")
     corners = []
     for dr, dc in ((0, 0), (0, 1), (1, 1), (1, 0)):
-        x, y = grid.affine * (cc + dc, rr + dr)
+        x, y = grid.affine @ (cc + dc, rr + dr)
         corners.append(transformer.transform(x, y))
     xs = np.stack([c[0] for c in corners])
     ys = np.stack([c[1] for c in corners])
