@@ -13,6 +13,7 @@ This overrides sections 3, 11 and 16 of `Tanaw-final-development-plan.md`. Its h
 3. **The main feature is pure NISAR.** "Flood rhythm" counts how many of the ~11 NISAR passes in the 2026 season saw each place flooded. This replaces the multi-year Sentinel-1 recurrence. It matches the challenge's own words ("patterns and rhythms of Earth's surface at different time steps") and removes the mixed-sensor problem.
 4. **Ascending and descending tracks are both available.** If time allows, the two viewing geometries can separate vertical sinking from east–west motion, instead of assuming it.
 5. **New features:** a guided Story Mode, "Find my barangay" search, "Our stories" pins, a rain-to-flood response chart and a timelapse export. The expert quote is dropped and replaced by a 3-person user test.
+6. **Restored at the coordinator's request (v5.1):** the **historical timeline from 2000 to the present** and **long-term future conditions** (seasonal outlook plus 12-month conditional scenarios) are back in the submission as features F1–F5. NISAR stays the core. History and the future frame the 2026 NISAR season ("how unusual was this season, and what could next year look like?"). This adds workload. See the updated schedule and cut order.
 
 ## 1. The story
 
@@ -67,6 +68,16 @@ This table goes into the README and the project page.
 | C4 | **Validation.** Accuracy against an independent map: the 2026 NDRRMC/MMDA flood reports or barangay lists, Copernicus EMS or UNOSAT for any 2026 event, or the OPERA DSWx-S1 product (NASA, on a nearby date). Compare N3 with published CAMANAVA subsidence rates. | Scores and differences are shown in a validation card and in the README. |
 | C5 | Spot-check and briefing facts endpoint; data manifest. | Every value carries its source, date and resolution. |
 
+### History and future conditions (Agent A, with Agent B helping after N3)
+
+| # | Feature | Done when |
+|---|---|---|
+| **F1** | **Historical timeline, 2000 to present.** A time slider shows which data exists for each date: NASA POWER rainfall (2000–), Landsat optical imagery (2000–, via Planetary Computer STAC), ERA5 via Open-Meteo (2000–, a comparison source), Sentinel-1 (2014–) and NISAR (2025–). Tools a date can't support are disabled with the reason. | Per-dataset availability is shown. Optical, C-band and L-band are never spliced into one numeric series. Current population is never shown as if observed in 2000. |
+| **F2** | **Rainfall history and trend.** Monthly totals and anomalies from 2000 against the 1991–2020 baseline, plus a seasonally adjusted trend. Shows where 2026 ranks among wet seasons since 2000. | The mm/day → monthly conversion matches a hand check. Missing values are never counted as dry. The fitted period and caveats are shown, and no cause is claimed. |
+| F3 | **Optical then-and-now.** A dated Landsat scene from around 2000 next to a recent one over CAMANAVA (reclamation, fishponds, urban growth), as context for the N6 hypotheses. | Cloud QA is checked over the area itself. The image is labelled imagery, not a measurement, and no brightness-difference "change" is computed. |
+| **F4** | **Seasonal outlook.** Rainfall anomaly guidance for the months a free seasonal model run actually returns (Open-Meteo seasonal / ECMWF). | The run date, the horizon actually returned, the ~36 km resolution, ensemble spread and model-native anomalies are shown. It is labelled "rainfall outlook", not a street-level forecast. |
+| **F5** | **12-month conditional scenarios.** Beyond the outlook horizon, the user picks a scenario ("a normal year", "a wet year like 20XX", "the wettest season since 2000") built from the F2 history. Two linked panels: (a) **flood scenario**: expected flood-rhythm zones under that rainfall, using the C3 rain-to-flood relationship and clearly labelled as exploratory; (b) **sinking projection**: the N3 LOS trend extended 12 months using the existing `15_projection.py`, with the assumption stated. Priority-zone exposure is recomputed per scenario. | Each month is labelled observation, outlook or conditional scenario. Low/base/high vary declared assumptions and carry no probabilities. It never claims to predict next year's actual floods. Editable assumptions, plus Reset and Apply. |
+
 ### Experience (Agent C)
 
 | # | Feature | Done when |
@@ -94,7 +105,7 @@ This table goes into the README and the project page.
 
 ## 4. Cut (roadmap)
 
-City-wide and worldwide selectors, and the Civic Atlas restyle. Twelve-month scenarios, forecasts, drought screening, and loss in pesos. Section 16 of the original plan. Projection, route, vegetation and biomass panels (synthetic data only, hidden from the public build). Sentinel-1 reprocessing of past events over CAMANAVA. Flood Watch and evacuation planning.
+City-wide and worldwide selectors, and the Civic Atlas restyle. Drought screening and loss in pesos. Section 16 token-refresh plumbing beyond what F1 needs. Route, vegetation and biomass panels (synthetic data only, hidden from the public build). The projection panel is rebuilt as F5 on real N3 data only. Sentinel-1 reprocessing of past events over CAMANAVA. Flood Watch and evacuation planning.
 
 ## 5. Gates
 
@@ -110,6 +121,8 @@ Searched NASA CMR at about 00:20 on 15 Nov for the area 120.85–121.10 E, 14.55
 | G5 Validation | Not yet checked | 2026 NDRRMC or MMDA flood reports; OPERA DSWx-S1; published CAMANAVA subsidence rates |
 | G6 Buildings | Not yet checked | OSM via Overpass for the area |
 | G8 Land cover | Not yet checked | ESA WorldCover tile |
+| G9 History | Planning checks (original plan §16) found 312/312 POWER months for 2000–2025, 21 Landsat items in 2000 and ERA5 January 2000 complete | Re-run here. **Hosts to add to the environment:** `planetarycomputer.microsoft.com`, the Landsat blob storage host, `archive-api.open-meteo.com` |
+| G10 Outlook | Not yet checked | Open-Meteo seasonal API (`seasonal-api.open-meteo.com`): the run date and horizon actually returned for CAMANAVA |
 
 **Access:** NISAR data downloads redirect to Earthdata Login. They run on the coordinator's laptop with the team's own free Earthdata account (`~/.netrc` or an EDL token in an environment variable). Credentials are never committed or included in exports. The search and the browse PNGs need no login.
 
@@ -122,7 +135,9 @@ Searched NASA CMR at about 00:20 on 15 Nov for the area 120.85–121.10 E, 14.55
 | 11–16 s | N1 flood-rhythm map | "Some streets flooded on 7 of 11 passes." (Use the real number.) |
 | 16–22 s | N3 motion over the same streets, then the priority-zone count | "And the ground beneath them is sinking. N people live where both happen." |
 | 22–27 s | "Find my barangay", spot check, briefing switches EN → FIL | "Check your barangay, in English or Filipino." |
-| 27–30 s | Logo and link | "Tanaw. Open, free, built on NISAR." |
+| 27–30 s | F5 scenario slider shows "a wet year like 20XX", then the logo and link | "See what next year could bring. Tanaw: open, free, built on NISAR." |
+
+The 22–27 s shot drops the language toggle and keeps the barangay search, to make room for the future-scenario shot.
 
 Captions are burned in and the video is 1080p. Only verified values are used.
 
@@ -138,7 +153,9 @@ Captions are burned in and the video is 1080p. Only verified values are used.
 | 14:30–17:00 | Fixes only | Fixes only | Fixes from P4 | Freeze and tag at 17:00 |
 | 17:00–21:00 | — | — | — | P5 video and page; AI disclosure; private-window link test; submit |
 
-**If time slips, cut in this order:** N3+ → U1 lens → N5 → C2 → U10 → GIF export → U8 shareable URL → C3 → C4 accuracy (keep the subsidence comparison) → U9. **Never cut:** N1, N2, N3 (LOS), C1, U2, U3, U4, U6, U7, P1, P5.
+**v5.1 additions to the schedule:** Agent A adds G9/G10 at 00:30–02:00, F2 and F4 at 02:00–06:00, and F1 and F5 data at 06:00–10:00, which moves C3 and C4 later. Agent B builds the F5 sinking projection after N3. Agent C adds the F1 time slider and the F5 scenario panel at 10:00–12:30. **This is more work than three agents comfortably fit.** Expect to use the cut order.
+
+**If time slips, cut in this order:** N3+ → U1 lens → F3 Landsat → N5 → C2 → U10 → GIF export → U8 shareable URL → C4 accuracy (keep the subsidence comparison) → F1 reduced to POWER + NISAR availability only → U9. **Never cut:** N1, N2, N3 (LOS), C1, C3 (F5 depends on it), F2, F4, F5, U2, U3, U4, U6, U7, P1, P5.
 
 ## 8. Score estimate (not a guarantee)
 
