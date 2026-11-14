@@ -3,6 +3,14 @@
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
+// Study area of the submission (docs/API_CONTRACT.md, "Shared constants").
+export const AREA_ID = "camanava_2026";
+
+// Dev fixtures: ONLY when the app is started with NEXT_PUBLIC_USE_FIXTURES=1. Every fixture answer
+// carries dataKind "synthetic" and the UI shows a banner plus the synthetic badge. Without the flag
+// this constant is false at build time and the fixture module is never bundled.
+export const FIXTURES_ON = process.env.NEXT_PUBLIC_USE_FIXTURES === "1";
+
 // ---------------------------------------------------------------------------
 // Errors. The backend answers "no data yet" with HTTP 404/409 and a body like
 //   { "detail": { "code": "data_unavailable", "message": "..." } }
@@ -20,12 +28,19 @@ export class ApiError extends Error {
 }
 
 // Turn any error into one of the states the UI knows how to show:
-//   unavailable | review | invalid | offline | error
+//   unavailable | review | invalid | offline | outside | upstream | error
 export function classifyError(err) {
   if (!(err instanceof ApiError)) return "error";
   if (err.status === 0) return "offline";
   switch (err.code) {
+    case "outside_coverage":
+      return "outside";
+    case "upstream_unavailable":
+      return "upstream";
+    case "invalid_request":
+      return "invalid";
     case "data_unavailable":
+    case "unknown_area":
     case "unknown_event":
     case "unknown_scenario":
     case "unsupported_year":
@@ -40,6 +55,7 @@ export function classifyError(err) {
     case "invalid_identifier_or_catalog":
       return "invalid";
     default:
+      if (err.status === 503) return "upstream";
       return err.status === 404 ? "unavailable" : "error";
   }
 }
@@ -54,6 +70,11 @@ function queryString(params = {}) {
 }
 
 async function request(path, params, label) {
+  if (FIXTURES_ON) {
+    const { fixtureResponse } = await import("./devFixtures");
+    const hit = await fixtureResponse(path, params ?? {});
+    if (hit !== undefined) return hit;
+  }
   let res;
   try {
     res = await fetch(`${API_BASE}${path}${queryString(params)}`);
@@ -88,7 +109,7 @@ async function request(path, params, label) {
 // Backend picture/file addresses come without the server name; add it here.
 export function assetUrl(path) {
   if (!path) return path;
-  return /^https?:\/\//.test(path) ? path : API_BASE + path;
+  return /^(https?:|data:|blob:)/.test(path) ? path : API_BASE + path;
 }
 
 function withAssetUrls(data) {
@@ -208,4 +229,107 @@ export async function getGeojson(url) {
   }
   if (!res.ok) throw new ApiError(`Could not load the map data (HTTP ${res.status})`, { status: res.status });
   return res.json();
+}
+
+
+// ---------------------------------------------------------------------------
+// v5.1 contract (docs/API_CONTRACT.md). All GET, all under /api/v1.
+// Every success body carries dataKind, source, warnings and limitations.
+// ---------------------------------------------------------------------------
+const V1 = "/api/v1";
+
+// --- B: NISAR --------------------------------------------------------------
+
+// Passes with per-pass flooded km2, overlay PNG urls and the classification rule.
+export async function getNisarPasses(area = AREA_ID) {
+  const d = await request(`${V1}/nisar/passes`, { area }, "Could not load NISAR passes");
+  (d.passes ?? []).forEach((p) => {
+    p.overlayUrl = assetUrl(p.overlayUrl);
+    p.backscatterUrl = assetUrl(p.backscatterUrl);
+  });
+  return d;
+}
+
+// Flood rhythm: count of passes classified as water, per pixel.
+export async function getNisarRhythm(area = AREA_ID) {
+  const d = await request(`${V1}/nisar/flood-rhythm`, { area }, "Could not load the flood rhythm");
+  d.overlayUrl = assetUrl(d.overlayUrl);
+  return d;
+}
+
+// One map point: floodCount of validCount, per-pass state. 404 outside_coverage when off the raster.
+export async function getNisarPoint(area, lon, lat) {
+  return request(`${V1}/nisar/point`, { area, lon, lat }, "Could not sample that point");
+}
+
+// HH / HV / ratio RGB for one date.
+export async function getNisarPolarization(area, date) {
+  const d = await request(`${V1}/nisar/polarization`, { area, date }, "Could not load the polarization view");
+  d.rgbUrl = assetUrl(d.rgbUrl);
+  return d;
+}
+
+// --- A: climate, history, outlook, scenarios -------------------------------
+
+export async function getRainfallMonthly(area = AREA_ID) {
+  return request(`${V1}/climate/rainfall/monthly`, { area }, "Could not load monthly rainfall");
+}
+
+export async function getRainfallDaily(area, start, end) {
+  return request(`${V1}/climate/rainfall/daily`, { area, start, end }, "Could not load daily rainfall");
+}
+
+export async function getSeasonRank(area = AREA_ID, year = 2026) {
+  return request(`${V1}/climate/rainfall/season-rank`, { area, year }, "Could not load the season rank");
+}
+
+export async function getRainfallTrend(area = AREA_ID) {
+  return request(`${V1}/climate/rainfall/trend`, { area }, "Could not load the rainfall trend");
+}
+
+// dates: array of YYYY-MM-DD (optional; the backend falls back to the NISAR pass list)
+export async function getPassRainfall(area, dates) {
+  return request(
+    `${V1}/climate/pass-rainfall`,
+    { area, dates: Array.isArray(dates) ? dates.join(",") : dates },
+    "Could not load pass rainfall"
+  );
+}
+
+export async function getOutlook(area = AREA_ID) {
+  return request(`${V1}/climate/outlook`, { area }, "Could not load the seasonal outlook");
+}
+
+export async function getScenarios(area = AREA_ID) {
+  return request(`${V1}/climate/scenarios`, { area }, "Could not load the scenarios");
+}
+
+export async function getFloodScenario(area, scenarioId) {
+  return request(`${V1}/climate/flood-scenario`, { area, scenarioId }, "Could not load the flood scenario");
+}
+
+export async function getTimelineAvailability(area = AREA_ID) {
+  return request(`${V1}/timeline/availability`, { area }, "Could not load the data timeline");
+}
+
+// --- D: places and exposure -------------------------------------------------
+
+export async function searchPlaces(q, limit = 10) {
+  return request(`${V1}/places/search`, { q, limit }, "Could not search places");
+}
+
+// Reverse lookup: { lon, lat, barangay: {id, name} | null, city: {id, name, province} | null }.
+// 404 outside_coverage outside the study bbox; 200 with nulls and a warning over open water.
+export async function locatePlace(lon, lat) {
+  return request(`${V1}/places/locate`, { lon, lat }, "Could not look up the barangay");
+}
+
+export async function getPlaceBoundaries(level = "barangay") {
+  return request(`${V1}/places/boundaries`, { level }, "Could not load boundaries");
+}
+
+// mask: "rhythm_half" | "priority"; level: "barangay" | "city".
+// population / buildings are null (with populationUnavailableReason / buildingsUnavailableReason) when absent.
+export async function getPlaceExposure(area, mask, level = "barangay") {
+  return request(`${V1}/places/exposure`, { area, mask, level }, "Could not load exposure");
 }
