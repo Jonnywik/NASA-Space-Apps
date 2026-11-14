@@ -50,6 +50,7 @@ export default function ExposureTable({ tier, onPlace, label }) {
               )}
             </table>
           </div>
+          {d.maskDefinition && <p className="mt-1 text-[11px] text-slate-400">{t("exposure.mask")}: {d.maskDefinition}</p>}
           {(d.populationUnavailableReason || d.buildingsUnavailableReason) && (
             <p className="mt-1 text-[11px] text-slate-300">
               {[d.populationUnavailableReason, d.buildingsUnavailableReason].filter(Boolean).join(" ")}

@@ -67,6 +67,11 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
                   <div className="text-[11px] text-slate-400">
                     {t("season.acquired")}: {utcTime(cur?.acquisitionTime) ?? t("missing.noTime")} · {cur?.maturity ?? "—"}
                   </div>
+                  {cur?.acquisitionTimeManila && (
+                    <div className="text-[11px] text-slate-400">
+                      {t("season.manila")}: {String(cur.acquisitionTimeManila).replace("T", " ").slice(0, 16)}
+                    </div>
+                  )}
                   <div className="text-[11px] text-slate-400">
                     {t("season.passOf", { i: idx + 1, n: passes.length })}
                   </div>
@@ -91,6 +96,7 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
               <Stat label={t("season.vegetation")} value={fmt(cur?.floodedVegetationKm2)} unit="km²" note={t("season.vegetation.note")} />
               <Stat label={t("season.valid")} value={cur?.validFraction != null ? `${Math.round(cur.validFraction * 100)}%` : null} note={t("season.valid.note")} />
             </div>
+            {cur?.floodedKm2 == null && cur?.missingReason && <p className="mt-1 text-[11px] text-amber-200">{cur.missingReason}</p>}
             {cur?.permanentWaterKm2 != null && <p className="mt-1 text-[11px] text-slate-400">{t("season.permanent", { km2: fmt(cur.permanentWaterKm2) })}</p>}
           </>
         )}
@@ -239,9 +245,26 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
               <p className="mt-1">
                 HH {d.rule.hhThresholdDb ?? "—"} dB · HV {d.rule.hvThresholdDb ?? "—"} dB
               </p>
-              {d.rule.calibration && <p className="mt-1">{d.rule.calibration}</p>}
+              {d.rule.calibration && (
+                <p className="mt-1">
+                  {typeof d.rule.calibration === "string"
+                    ? d.rule.calibration
+                    : [d.rule.calibration.status && `${t("season.calibration")}: ${d.rule.calibration.status}`, d.rule.calibration.method, d.rule.calibration.knownWater]
+                        .filter(Boolean)
+                        .join(" · ")}
+                </p>
+              )}
+              {d.permanentWater?.fraction != null && (
+                <p className="mt-1">{t("season.permRule", { pct: Math.round(d.permanentWater.fraction * 100), n: d.permanentWater.minValidPasses ?? "—" })}</p>
+              )}
+              {d.possibleFloodedVegetation?.marginDb != null && (
+                <p className="mt-1">{t("season.vegRule", { db: d.possibleFloodedVegetation.marginDb })}</p>
+              )}
+              {d.verification?.layout && <p className="mt-1 text-slate-400">{t("season.layout", { v: d.verification.layout })}</p>}
               <p className="mt-1 text-slate-400">
-                {d.product} · track {d.track} {d.direction} · frame {d.frame} · {(d.polarizations ?? []).join("+")}
+                {d.sensor ? `${d.sensor} · ` : ""}
+                {d.product} · track {d.track} {d.direction} · frame {d.frame}
+                {d.mode ? ` · mode ${d.mode}` : ""} · {(d.polarizations ?? []).join("+")}
               </p>
             </details>
           )}

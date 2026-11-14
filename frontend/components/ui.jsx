@@ -113,6 +113,13 @@ export function fmt(n, d = 1) {
   return typeof n === "number" && Number.isFinite(n) ? n.toLocaleString(undefined, { maximumFractionDigits: d }) : null;
 }
 
+export function formatResolution(r) {
+  if (r == null) return null;
+  if (typeof r === "string" || typeof r === "number") return String(r);
+  if (typeof r === "object" && (r.x != null || r.y != null)) return `${r.x ?? "?"} × ${r.y ?? "?"} ${r.units ?? ""}`.trim();
+  return null;
+}
+
 export function SourceLine({ data, className = "" }) {
   const { t } = useLang();
   if (!data) return null;
@@ -133,7 +140,7 @@ export function SourceLine({ data, className = "" }) {
       )}
       {version ? ` (${version})` : ""}
       {when ? ` · ${String(when).slice(0, 10)}` : ""}
-      {data.nativeResolution ? ` · ${t("src.resolution")} ${data.nativeResolution}` : ""}
+      {formatResolution(data.nativeResolution) ? ` · ${t("src.resolution")} ${formatResolution(data.nativeResolution)}` : ""}
     </p>
   );
 }

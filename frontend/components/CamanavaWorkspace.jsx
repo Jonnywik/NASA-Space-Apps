@@ -84,6 +84,8 @@ function Workspace({ onRegional }) {
   const { t, lang, setLang } = useLang();
   const { entries } = useLimits();
   const limitCount = Object.values(entries).reduce((n, e) => n + e.limitations.length + e.warnings.length, 0);
+  // the REAL API marks demo products with dataKind "synthetic": say so loudly, listing what in view is synthetic
+  const syntheticLabels = [...new Set(Object.values(entries).filter((e) => e.dataKind === "synthetic").map((e) => e.label))];
 
   const [mode, setMode] = useState("season");
   const [passIdx, setPassIdx] = useState(0);
@@ -321,15 +323,19 @@ function Workspace({ onRegional }) {
     if (mode === "season" && passes.length) {
       const cur = passes[passIdx];
       const url = (p) => (polView === "hh" ? p?.backscatterUrl : p?.overlayUrl);
+      // the flood mask is the water PNG plus, when the API sends one, the separate flooded-vegetation PNG
+      const veg = (p, pane, k) =>
+        polView === "flood" && p?.floodedVegetationUrl ? [{ key: `${k}-veg-${p.id}`, url: p.floodedVegetationUrl, pane, opacity, bounds, alt: `${p.date} vegetation` }] : [];
       if (compareOn) {
         const b = passes[cmpBefore];
         const a = passes[cmpAfter];
-        out.push({ key: `b-${b?.id}-${polView}`, url: url(b), pane: "beforePane", opacity, bounds, alt: `${b?.date}` });
-        out.push({ key: `a-${a?.id}-${polView}`, url: url(a), pane: "afterPane", opacity, bounds, alt: `${a?.date}` });
+        out.push({ key: `b-${b?.id}-${polView}`, url: url(b), pane: "beforePane", opacity, bounds, alt: `${b?.date}` }, ...veg(b, "beforePane", "b"));
+        out.push({ key: `a-${a?.id}-${polView}`, url: url(a), pane: "afterPane", opacity, bounds, alt: `${a?.date}` }, ...veg(a, "afterPane", "a"));
       } else if (polView === "rgb") {
-        if (polTier.data?.rgbUrl) out.push({ key: `rgb-${polTier.data.date ?? cur?.id}`, url: polTier.data.rgbUrl, pane: "afterPane", opacity, bounds: polTier.data.bounds ?? bounds, alt: "RGB" });
+        const rgb = polTier.data?.rgbUrl ?? cur?.polarizationUrl;
+        if (rgb) out.push({ key: `rgb-${cur?.id}`, url: rgb, pane: "afterPane", opacity, bounds: polTier.data?.bounds ?? bounds, alt: "RGB" });
       } else {
-        out.push({ key: `p-${cur?.id}-${polView}`, url: url(cur), pane: "afterPane", opacity, bounds, alt: `${cur?.date}` });
+        out.push({ key: `p-${cur?.id}-${polView}`, url: url(cur), pane: "afterPane", opacity, bounds, alt: `${cur?.date}` }, ...veg(cur, "afterPane", "p"));
       }
     }
     if ((mode === "rhythm" || (mode === "motion" && rhythmUnder)) && rhythmTier.data?.overlayUrl) {
@@ -448,10 +454,16 @@ function Workspace({ onRegional }) {
         </div>
       </header>
 
-      {FIXTURES_ON && (
+      {FIXTURES_ON ? (
         <div role="status" className="border-b border-yellow-300 bg-yellow-400/20 px-3 py-1 text-center text-xs font-bold text-yellow-100" data-testid="fixture-banner">
           ▨ {t(FIXTURE_SCOPE === "nisar" ? "fixtures.banner.nisar" : "fixtures.banner")}
         </div>
+      ) : (
+        syntheticLabels.length > 0 && (
+          <div role="status" className="border-b border-yellow-300 bg-yellow-400/20 px-3 py-1 text-center text-xs font-bold text-yellow-100" data-testid="synthetic-banner">
+            ▨ {t("synthetic.banner", { what: syntheticLabels.join(", ") })}
+          </div>
+        )
       )}
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">

@@ -252,6 +252,8 @@ export async function getNisarPasses(area = AREA_ID) {
   (d.passes ?? []).forEach((p) => {
     p.overlayUrl = assetUrl(p.overlayUrl);
     p.backscatterUrl = assetUrl(p.backscatterUrl);
+    p.floodedVegetationUrl = assetUrl(p.floodedVegetationUrl);
+    p.polarizationUrl = assetUrl(p.polarizationUrl);
   });
   return d;
 }
@@ -260,6 +262,7 @@ export async function getNisarPasses(area = AREA_ID) {
 export async function getNisarRhythm(area = AREA_ID) {
   const d = await request(`${V1}/nisar/flood-rhythm`, { area }, "Could not load the flood rhythm");
   d.overlayUrl = assetUrl(d.overlayUrl);
+  d.legendUrl = assetUrl(d.legendUrl);
   return d;
 }
 

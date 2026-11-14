@@ -2,7 +2,7 @@
 
 import React from "react";
 import PixelChart from "./PixelChart";
-import { Caveats, Section, SourceLine, StateNote, fmt, reasonFor } from "./ui";
+import { Caveats, Section, SourceLine, StateNote, fmt } from "./ui";
 import { AREA_ID, getGroundMotionPoint, getNisarPoint, getPassRainfall, locatePlace } from "../utils/api";
 import { useLang } from "../utils/LangContext";
 import { useReportLimits } from "../utils/LimitsContext";
@@ -71,8 +71,14 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
         {nd && (
           <>
             <p className="text-sm text-slate-100" data-testid="flood-count">
-              {nd.permanentWater ? t("spot.permanent") : t("spot.floodCount", { k: nd.floodCount ?? "—", n: nd.validCount ?? "—" })}
+              {nd.permanentWater
+                ? t("spot.permanent")
+                : nd.floodCount == null
+                  ? `${t("spot.noCount")}${nd.floodCountReason ? `: ${nd.floodCountReason}` : ""}`
+                  : t("spot.floodCount", { k: nd.floodCount, n: nd.validCount ?? "—" })}
             </p>
+            {nd.permanentWater && nd.floodCountReason && <p className="text-[11px] text-slate-400">{nd.floodCountReason}</p>}
+            {nd.possibleFloodedVegetationPasses > 0 && <p className="text-[11px] text-amber-100">◆ {t("spot.vegPasses", { n: nd.possibleFloodedVegetationPasses })}</p>}
             {nd.cellCenter && <p className="text-[11px] text-slate-400">{t("spot.cell", { lon: nd.cellCenter.lon?.toFixed?.(5), lat: nd.cellCenter.lat?.toFixed?.(5) })}</p>}
             <div className="mt-2 flex flex-wrap gap-1" role="list" aria-label={t("spot.perPass")} data-testid="per-pass">
               {(nd.perPass ?? []).map((p) => (
@@ -80,15 +86,20 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
                   key={p.date}
                   role="listitem"
                   className={`w-[54px] rounded border px-1 py-0.5 text-center text-[11px] ${p.date === selectedDate ? "border-yellow-300 bg-slate-700" : "border-slate-600 bg-slate-800"}`}
-                  title={`${p.date}: ${t(`spot.state.${p.state}`)}`}
+                  title={`${p.date}: ${t(`spot.state.${p.state}`)}${p.possibleFloodedVegetation ? ` · ${t("season.vegetation")}` : ""}${p.reason ? ` · ${p.reason}` : ""}`}
                 >
-                  <div className="text-sm leading-none" aria-hidden="true">{STATE_GLYPH[p.state] ?? "?"}</div>
+                  <div className="text-sm leading-none" aria-hidden="true">
+                    {STATE_GLYPH[p.state] ?? "?"}
+                    {p.possibleFloodedVegetation ? "◆" : ""}
+                  </div>
                   <div className="text-slate-200">{t(`spot.state.${p.state}.short`)}</div>
                   <div className="text-slate-400">{p.date.slice(5)}</div>
                 </div>
               ))}
             </div>
-            <p className="mt-1 text-[11px] text-slate-400">■ {t("spot.state.water")} · □ {t("spot.state.dry")} · ▨ {t("spot.state.nodata")}</p>
+            <p className="mt-1 text-[11px] text-slate-400">
+              ■ {t("spot.state.water")} · □ {t("spot.state.dry")} · ▨ {t("spot.state.nodata")} · ◆ {t("season.vegetation")}
+            </p>
             <details className="mt-1 text-[11px] text-slate-300">
               <summary className="cursor-pointer">{t("spot.db")}</summary>
               <table className="mt-1 w-full text-left">
@@ -104,7 +115,11 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
                   {(nd.perPass ?? []).map((p) => (
                     <tr key={p.date}>
                       <td>{p.date}</td>
-                      <td>{t(`spot.state.${p.state}`)}</td>
+                      <td>
+                        {t(`spot.state.${p.state}`)}
+                        {p.possibleFloodedVegetation ? " ◆" : ""}
+                        {p.reason ? <span className="block text-slate-400">{p.reason}</span> : null}
+                      </td>
                       <td>{p.hhDb ?? <span title={t("spot.noValue")}>—</span>}</td>
                       <td>{p.hvDb ?? <span title={t("spot.noValue")}>—</span>}</td>
                     </tr>
@@ -188,7 +203,6 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
             <Caveats data={los.data} />
           </>
         )}
-        {los.state !== "ready" && los.state !== "loading" && <p className="mt-1 text-[11px] text-slate-400">{reasonFor(los, t)}</p>}
       </Section>
     </div>
   );
