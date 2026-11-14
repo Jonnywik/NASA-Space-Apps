@@ -93,7 +93,7 @@ function AnomalyChart({ series }) {
         <BarChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }} barCategoryGap={0}>
           <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
           <XAxis dataKey="label" tick={{ fill: "#cbd5e1", fontSize: 10 }} tickFormatter={(l) => l.slice(0, 4)} interval={59} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={42} unit=" mm" />
+          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" mm" />
           <Tooltip
             contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}
@@ -121,7 +121,7 @@ function RankChart({ d }) {
         <BarChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
           <XAxis dataKey="year" tick={{ fill: "#cbd5e1", fontSize: 10 }} interval={4} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={42} unit=" mm" />
+          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" mm" />
           <Tooltip
             contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}

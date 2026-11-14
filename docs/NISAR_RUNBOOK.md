@@ -10,7 +10,7 @@ The contract default is track 133 descending, frame 81. The real catalogue footp
 
 | Stack | GCOV dates | GUNW pairs | Share of bbox in footprint | GCOV size each |
 |---|---|---|---|---|
-| 133 D, frame 81, mode 4005 (contract default) | 11 (23 Jun–2 Nov) | 9 | 35–36 % | ~3.6 GB |
+| 133 D, frame 81, mode 4005 (former default) | 11 (23 Jun–2 Nov) | 9 | 35–36 % | ~3.6 GB |
 | **032 D, frame 81, mode 4005** | 10 (28 Jun–26 Oct) | 8 | 100 % | ~5.5 GB |
 | **140 A, frame 9, mode 4005** | 11 (23 Jun–2 Nov) | 9 | 100 % | ~5.4 GB |
 | 039 A, frame 9 | 10 | 8 | 0 % | — |
@@ -33,8 +33,8 @@ All stacks have one 24-day step (no pass around 29 Jul–3 Aug). Each mixes Prov
 ## 2. Search (no login)
 
 ```sh
-python scripts/19_nisar_search.py --track 32 --direction D --frame 81     # or: --track 140 --direction A --frame 9
-MANIFEST=data/cache/nisar/nisar_manifest_t032_D_f081_m4005.json
+python scripts/19_nisar_search.py --track 140 --direction A --frame 9     # alternative with full coverage: --track 32 --direction D --frame 81
+MANIFEST=data/cache/nisar/nisar_manifest_t140_A_f009_m4005.json
 ```
 This rewrites the manifest and prints every stack with its coverage. Manifests for 133 D, 032 D and 140 A from 14 Nov are already committed.
 
@@ -101,7 +101,7 @@ python scripts/21_nisar_gunw_chain.py --manifest $MANIFEST --download --max-pair
 python scripts/21_nisar_gunw_chain.py --manifest $MANIFEST --download                    # all pairs: about 18–21 GB
 python scripts/21_nisar_gunw_chain.py --manifest $MANIFEST --fill-hashes \
     --phase-sign <+1 or -1> --reference-bbox <W S E N>
-bash data/raw/nisar/gunw_chain/t032_D_f081/run_gunw_chain.sh      # runs 10 and 11 per pair, then 12
+bash data/raw/nisar/gunw_chain/t140_A_f009/run_gunw_chain.sh      # runs 10 and 11 per pair, then 12
 ```
 (or add `--execute` to the third command to run 10 → 11 → 12 in-process).
 

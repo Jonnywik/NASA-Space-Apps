@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from processing.nisar_flood import pipeline, synthetic  # noqa: E402
 from processing.nisar_flood.constants import BACKEND_DIR, STUDY_BBOX  # noqa: E402
 
-DEFAULT_MANIFEST = BACKEND_DIR / "data" / "cache" / "nisar" / "nisar_manifest_t133_D_f081_m4005.json"
+DEFAULT_MANIFEST = BACKEND_DIR / "data" / "cache" / "nisar" / "nisar_manifest_t140_A_f009_m4005.json"
 FIXTURE_DIR = BACKEND_DIR / "data" / "raw" / "nisar_synthetic"
 
 

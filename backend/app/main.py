@@ -25,6 +25,7 @@ from app.coherence_api import make_router as make_coherence_router
 from app.route_api import make_router as make_route_router
 from app.places_api import make_router as make_places_router
 from app.climate_api import make_router as make_climate_router
+from app.nisar_api import make_router as make_nisar_router
 from processing.p3.catalog import capabilities
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -137,3 +138,4 @@ app.include_router(make_coherence_router(OUTPUT, read_public_events))
 app.include_router(make_route_router(OUTPUT, read_public_events))
 app.include_router(make_places_router(OUTPUT, read_public_events))
 app.include_router(make_climate_router(OUTPUT, read_public_events))
+app.include_router(make_nisar_router(OUTPUT, read_public_events))

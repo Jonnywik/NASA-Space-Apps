@@ -483,7 +483,7 @@ function Workspace({ onRegional }) {
 
         {/* findings */}
         <aside
-          className={`${panelOpen ? "h-[46vh]" : "h-0 overflow-hidden border-0"} shrink-0 overflow-y-auto border-t border-slate-700 bg-slate-900 md:h-auto md:w-[400px] md:border-l md:border-t-0`}
+          className={`${panelOpen ? "h-[42vh]" : "h-0 overflow-hidden border-0"} shrink-0 overflow-y-auto border-t border-slate-700 bg-slate-900 md:h-auto md:w-[400px] md:border-l md:border-t-0`}
           aria-label={t("panel.findings")}
           data-testid="findings"
         >

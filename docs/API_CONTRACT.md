@@ -11,7 +11,7 @@ The coordinator owns this file. Agents may refine field details **inside their o
 | Bbox (W, S, E, N; WGS84) | `[120.88, 14.60, 121.04, 14.82]` |
 | Representative climate point | lon `120.96`, lat `14.70` |
 | Wet season | June–November |
-| NISAR default track | 133 descending, frame 081, mode 4005 DHDH (HH+HV), 23 Jun–2 Nov 2026 |
+| NISAR default track | **140 ascending, frame 009**, mode 4005 DHDH (HH+HV), 11 GCOV dates 23 Jun–2 Nov 2026, 9 GUNW pairs; ~100% bbox coverage by catalogue footprint (133 D covered only ~35%) |
 | Climate baseline | 1991–2020 |
 | History start | 2000-01-01 |
 
@@ -44,7 +44,7 @@ Each router module exposes `make_router(output_root, read_public_events)`, like 
 
 Served from `<output>/camanava_2026/nisar/manifest.json` (written by scripts 20 or 22). `area` defaults to `camanava_2026`. Until a product exists every route returns 404 `data_unavailable`. A synthetic product returns `dataKind: "synthetic"` on every route and `warnings[0]` starts with `SYNTHETIC DEMO DATA`. Every body also carries `source`, `generatedAt`, `nativeResolution`, `units`, `warnings`, `limitations`.
 
-**Open issue for the coordinator:** the catalogue footprint of the default stack (133 D, frame 81) covers about 35 % of the bbox. Stacks 032 D / frame 81 and 140 A / frame 9 cover 100 %. See `docs/NISAR_RUNBOOK.md` section 0. `track`, `frame` and the dates below come from the manifest, so they follow whichever stack is run.
+**Resolved (15 Nov):** the default stack is now 140 A / frame 9, because 133 D / frame 81 covers only about 35 % of the bbox. Stacks 032 D / frame 81 and 140 A / frame 9 cover 100 %. See `docs/NISAR_RUNBOOK.md` section 0. `track`, `frame` and the dates below come from the manifest, so they follow whichever stack is run.
 
 ### `GET /nisar/passes?area=camanava_2026`
 ```json

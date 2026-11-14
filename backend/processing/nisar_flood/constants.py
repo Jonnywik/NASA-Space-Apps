@@ -19,9 +19,9 @@ CATALOGUE_CHECK_BBOX = (120.85, 14.55, 121.10, 14.95)
 
 # Contract default track. NOTE: the real CMR footprints show this track covers
 # only about a third of STUDY_BBOX (see data/cache/nisar manifests and the runbook).
-DEFAULT_TRACK = 133
-DEFAULT_DIRECTION = "D"
-DEFAULT_FRAME = 81
+DEFAULT_TRACK = 140
+DEFAULT_DIRECTION = "A"
+DEFAULT_FRAME = 9
 DEFAULT_MODE = "4005"
 
 # NASA CMR collections (verified 15 Nov 2026).

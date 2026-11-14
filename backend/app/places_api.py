@@ -126,7 +126,10 @@ def make_router(output_root, read_public_events, places_root=None):
                 break
         from processing.places.exposure import exposure_for_mask, rhythm_mask
         try:
-            if mask == 'rhythm_half':
+            if mask == 'rhythm_half' and (d / 'rhythm_half.tif').exists():
+                # NISAR's own mask: flooded on >= half of each pixel's VALID passes
+                res = exposure_for_mask(str(d / 'rhythm_half.tif'), level, root=root)
+            elif mask == 'rhythm_half':
                 arr = rhythm_mask(raster, nm.get('passCount'), 0.5)
                 res = exposure_for_mask(arr, level, root=root)
             else:
