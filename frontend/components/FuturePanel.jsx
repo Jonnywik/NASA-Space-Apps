@@ -40,7 +40,13 @@ export function PhaseBand({ months, startMonth }) {
 
 function OutlookChart({ d }) {
   const { t } = useLang();
-  const rows = d.months.map((m) => ({ label: ym(m), spread: [m.memberMinMm, m.memberMaxMm], mean: m.meanMm }));
+  const rows = d.months.map((m) => ({
+    label: `${ym(m)}${m.fullMonth === false ? "*" : ""}`,
+    spread: m.memberMinMm != null && m.memberMaxMm != null ? [m.memberMinMm, m.memberMaxMm] : null,
+    mean: m.meanMm,
+    anomaly: m.anomalyVsModelClimatologyMm,
+    partial: m.fullMonth === false ? `${m.coveredDays}/${m.monthDays}` : null,
+  }));
   return (
     <div className="h-44 w-full" role="img" aria-label={t("future.outlook.aria", { n: rows.length })} data-testid="outlook-chart">
       <ResponsiveContainer width="100%" height="100%">
@@ -51,7 +57,11 @@ function OutlookChart({ d }) {
           <Tooltip
             contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}
-            formatter={(v, name) => (name === "spread" ? [`${v[0]} … ${v[1]} mm`, t("future.outlook.spread")] : [`${v} mm`, t("future.outlook.mean")])}
+            formatter={(v, name, p) =>
+              name === "spread"
+                ? [`${v[0]} … ${v[1]} mm`, t("future.outlook.spread")]
+                : [`${v} mm${p?.payload?.partial ? ` (${t("future.outlook.partial", { days: p.payload.partial })})` : ""}${p?.payload?.anomaly != null ? ` · ${t("future.outlook.anom", { mm: p.payload.anomaly })}` : ""}`, t("future.outlook.mean")]
+            }
           />
           <Bar dataKey="spread" name="spread" fill="#fbbf24" fillOpacity={0.3} stroke="#fcd34d" strokeDasharray="4 3" isAnimationActive={false} />
           <Line dataKey="mean" name="mean" stroke="#fde68a" strokeWidth={0} dot={{ r: 5, fill: "#fde68a", stroke: "#0f172a", strokeWidth: 1 }} isAnimationActive={false} />
@@ -63,7 +73,8 @@ function OutlookChart({ d }) {
 
 function ScenarioRainChart({ sc }) {
   const { t } = useLang();
-  const rows = sc.months.map((m) => ({ label: ym(m), mm: m.rainfallMm, status: m.status }));
+  const rows = sc.months.map((m) => ({ label: ym(m), mm: m.rainfallMm, status: m.status, outlookMean: m.outlook?.meanMm ?? null }));
+  const hasOutlook = rows.some((r) => r.outlookMean != null);
   const firstScn = rows.find((r) => r.status === "scenario");
   return (
     <div className="h-44 w-full" role="img" aria-label={t("future.scenario.aria", { label: sc.label })} data-testid="scenario-chart">
@@ -75,7 +86,9 @@ function ScenarioRainChart({ sc }) {
           <Tooltip
             contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}
-            formatter={(v, _n, p) => [`${v} mm`, p?.payload?.status === "outlook" ? t("future.status.outlook") : t("future.status.scenario")]}
+            formatter={(v, name, p) =>
+              name === "outlookMean" ? [`${v} mm`, t("future.outlook.mean")] : [`${v} mm`, p?.payload?.status === "outlook" ? t("future.status.outlook") : t("future.status.scenario")]
+            }
           />
           {firstScn && <ReferenceLine x={firstScn.label} stroke="#f0abfc" strokeWidth={2} strokeDasharray="2 3" label={{ value: t("future.boundary"), fill: "#f0abfc", fontSize: 10, position: "insideTopRight" }} />}
           <Bar dataKey="mm" isAnimationActive={false}>
@@ -90,6 +103,7 @@ function ScenarioRainChart({ sc }) {
               />
             ))}
           </Bar>
+          {hasOutlook && <Line dataKey="outlookMean" name="outlookMean" strokeWidth={0} dot={{ r: 4, fill: "#fde68a", stroke: "#0f172a", strokeWidth: 1 }} isAnimationActive={false} />}
         </ComposedChart>
       </ResponsiveContainer>
     </div>
@@ -100,8 +114,8 @@ function FloodScenarioChart({ d }) {
   const { t } = useLang();
   const rows = d.months.map((m) => ({
     label: ym(m),
-    band: [m.expectedFloodedKm2?.low, m.expectedFloodedKm2?.high],
-    base: m.expectedFloodedKm2?.base,
+    band: m.expectedFloodedKm2 ? [m.expectedFloodedKm2.low, m.expectedFloodedKm2.high] : null,
+    base: m.expectedFloodedKm2?.base ?? null,
     status: m.status,
   }));
   const firstScn = rows.find((r) => r.status === "scenario");
@@ -161,17 +175,43 @@ export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, on
             <OutlookChart d={o} />
             <dl className="mt-1 grid grid-cols-[auto,1fr] gap-x-3 text-[11px]">
               <dt className="text-slate-400">{t("future.outlook.model")}</dt>
-              <dd className="text-slate-100">{o.model ?? t("missing.notReported")}</dd>
+              <dd className="text-slate-100" data-testid="outlook-model">
+                {o.model ?? (o.modelRequested ? t("future.outlook.requested", { model: o.modelRequested }) : t("missing.notReported"))}
+                {!o.model && o.modelNote && <span className="block text-slate-400">{o.modelNote}</span>}
+              </dd>
               <dt className="text-slate-400">{t("future.outlook.run")}</dt>
-              <dd className="text-slate-100">{o.runDate ?? t("missing.notReported")}</dd>
+              <dd className="text-slate-100" data-testid="outlook-run">
+                {o.runDate ?? t("missing.notReported")}
+                {!o.runDate && o.runDateReason && <span className="block text-slate-400">{o.runDateReason}</span>}
+              </dd>
+              {o.firstForecastDate && (
+                <>
+                  <dt className="text-slate-400">{t("future.outlook.days")}</dt>
+                  <dd className="text-slate-100">
+                    {o.firstForecastDate} … {o.lastForecastDate ?? "—"}
+                  </dd>
+                </>
+              )}
               <dt className="text-slate-400">{t("future.outlook.horizon")}</dt>
-              <dd className="text-slate-100">{o.horizonMonths ?? o.months?.length} {t("future.months")}</dd>
+              <dd className="text-slate-100">
+                {o.horizonMonths ?? o.months?.length} {t("future.months")}
+                {o.fullMonths != null ? ` (${t("future.outlook.full", { n: o.fullMonths })})` : ""}
+              </dd>
               <dt className="text-slate-400">{t("future.outlook.res")}</dt>
               <dd className="text-slate-100">{o.nativeResolution ?? t("missing.notReported")}</dd>
               <dt className="text-slate-400">{t("future.outlook.members")}</dt>
-              <dd className="text-slate-100">{o.months?.[0]?.members ?? t("missing.notReported")}</dd>
+              <dd className="text-slate-100">{o.ensembleMembers ?? o.months?.[0]?.members ?? t("missing.notReported")}</dd>
+              {o.anomaly && (
+                <>
+                  <dt className="text-slate-400">{t("future.outlook.anomaly")}</dt>
+                  <dd className="text-slate-100">{o.anomaly.available ? o.anomaly.basis : o.anomaly.reason ?? t("missing.notReported")}</dd>
+                </>
+              )}
             </dl>
-            <p className="mt-1 text-[11px] text-slate-300">{t("future.outlook.note")}</p>
+            <p className="mt-1 text-[11px] text-slate-300">
+              {t("future.outlook.note")}
+              {o.months?.some((m) => m.fullMonth === false) ? ` ${t("future.outlook.star")}` : ""}
+            </p>
             <SourceLine data={o} className="mt-1" />
             <Caveats data={o} />
           </>
@@ -201,6 +241,8 @@ export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, on
             </div>
             <PhaseBand months={chosen.months} startMonth={sd.startMonth} />
             <ScenarioRainChart sc={chosen} />
+            <p className="text-[11px] text-slate-300">{t("future.scenario.bars")}</p>
+            {chosen.isEnvelope && <p className="text-[11px] text-amber-200">{t("future.scenario.envelope")}</p>}
             <SourceLine data={sd} className="mt-1" />
             <Caveats data={sd} />
           </>
@@ -216,6 +258,15 @@ export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, on
           <>
             <FloodScenarioChart d={f} />
             <p className="text-[11px] text-slate-300">{t("future.flood.legend")}</p>
+            {(() => {
+              const gaps = f.months.filter((m) => !m.expectedFloodedKm2);
+              if (!gaps.length) return null;
+              return (
+                <p className="mt-1 text-[11px] text-amber-200" data-testid="flood-gaps">
+                  {t("future.flood.gaps", { n: gaps.length, of: f.months.length })} {gaps[0].reason ?? ""}
+                </p>
+              );
+            })()}
             {f.assumptions?.length > 0 && (
               <ul className="mt-1 list-disc pl-4 text-[11px] text-slate-400">
                 {f.assumptions.map((a) => (

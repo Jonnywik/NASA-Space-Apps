@@ -152,8 +152,11 @@ function monthlySeries() {
         year: y,
         month: m,
         totalMm: total,
-        anomalyMm: Math.round((total - BASELINE[m - 1]) * 10) / 10,
-        anomalyPct: Math.round(((total - BASELINE[m - 1]) / BASELINE[m - 1]) * 1000) / 10,
+        totalMm: missing ? null : total,
+        partialMm: missing ? total : null,
+        complete: !missing,
+        anomalyMm: missing ? null : Math.round((total - BASELINE[m - 1]) * 10) / 10,
+        anomalyPct: missing ? null : Math.round(((total - BASELINE[m - 1]) / BASELINE[m - 1]) * 1000) / 10,
         missingDays: missing,
       });
     }
@@ -166,11 +169,11 @@ function seasons() {
   s.forEach((r) => {
     if (r.month >= 6 && r.month <= 11) {
       by[r.year] = by[r.year] ?? { year: r.year, totalMm: 0, n: 0 };
-      by[r.year].totalMm += r.totalMm;
+      by[r.year].totalMm += r.totalMm ?? r.partialMm ?? 0;
       by[r.year].n += 1;
     }
   });
-  return Object.values(by).map((r) => ({ year: r.year, totalMm: Math.round(r.totalMm), complete: r.n === 6 }));
+  return Object.values(by).map((r) => ({ year: r.year, totalMm: Math.round(r.totalMm), toDateMm: Math.round(r.totalMm), complete: r.n === 6 }));
 }
 
 // ---- places -----------------------------------------------------------------------------------
@@ -402,13 +405,13 @@ export async function fixtureResponse(path, q) {
       const list = seasons();
       const cur = list.find((r) => r.year === Number(q.year ?? 2026)) ?? list[list.length - 1];
       const rank = 1 + list.filter((r) => r.totalMm > cur.totalMm).length;
-      return base({ season: "Jun-Nov", year: cur.year, totalMm: cur.totalMm, rank, of: list.length, complete: cur.complete, seasons: list });
+      return base({ season: "Jun-Nov", year: cur.year, totalMm: cur.complete ? cur.totalMm : null, toDateMm: cur.totalMm, observedThrough: "2026-10-31", rank, of: list.length, rankBasis: cur.complete ? "full_season_total" : "to_date_same_window", rankMeaning: "1 = wettest", complete: cur.complete, seasons: list });
     }
     case "/api/v1/climate/rainfall/trend": {
       const s = monthlySeries();
       const n = s.length;
       const xs = s.map((_, i) => i / 120);
-      const ys = s.map((r) => r.anomalyMm);
+      const ys = s.map((r) => r.anomalyMm ?? 0);
       const mx = xs.reduce((a, b) => a + b, 0) / n;
       const my = ys.reduce((a, b) => a + b, 0) / n;
       const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0);
@@ -446,9 +449,9 @@ export async function fixtureResponse(path, q) {
       const months = [12, 1, 2, 3, 4, 5].map((mo, i) => {
         const yr = mo === 12 ? 2026 : 2027;
         const mean = Math.round(BASELINE[mo - 1] * (0.8 + 0.4 * hash(i + 90)));
-        return { year: yr, month: mo, meanMm: mean, memberMinMm: Math.round(mean * 0.5), memberMaxMm: Math.round(mean * 1.7), anomalyVsModelClimatologyMm: null, members: 51 };
+        return { year: yr, month: mo, fullMonth: true, meanMm: mean, memberMinMm: Math.round(mean * 0.5), memberMaxMm: Math.round(mean * 1.7), anomalyVsModelClimatologyMm: null, members: 51 };
       });
-      return base({ dataKind: "synthetic", model: "Dev fixture ensemble (not a real model)", runDate: "2026-11-01", nativeResolution: "~36 km (fixture)", months, horizonMonths: 6, limitations: ["Fixture outlook months. Not a street-level forecast."] });
+      return base({ dataKind: "synthetic", model: "Dev fixture ensemble (not a real model)", runDate: "2026-11-01", ensembleMembers: 51, nativeResolution: "~36 km (fixture)", months, horizonMonths: 6, limitations: ["Fixture outlook months. Not a street-level forecast."] });
     }
     case "/api/v1/climate/scenarios": {
       const outlook = await fixtureResponse("/api/v1/climate/outlook", { area });
@@ -459,12 +462,12 @@ export async function fixtureResponse(path, q) {
         basis,
         months: monthsOrder.map((mo, i) => {
           const yr = mo === 12 ? 2026 : 2027;
-          return i < 6
-            ? { year: yr, month: mo, rainfallMm: outlook.months[i].meanMm, status: "outlook" }
-            : { year: yr, month: mo, rainfallMm: Math.round(valueFor(mo, yr) * 10) / 10, status: "scenario" };
+          const row = { year: yr, month: mo, rainfallMm: Math.round(valueFor(mo, yr) * 10) / 10, rainfallSource: "scenario_value", status: i < 6 ? "outlook" : "scenario" };
+          return i < 6 ? { ...row, outlook: outlookOf(i) } : row;
         }),
       });
       const like = (y) => (mo) => monthlySeries().find((r) => r.year === y && r.month === mo)?.totalMm ?? BASELINE[mo - 1];
+      const outlookOf = (i) => ({ meanMm: outlook.months[i].meanMm, memberMinMm: outlook.months[i].memberMinMm, memberMaxMm: outlook.months[i].memberMaxMm, members: 51 });
       const ss = seasons().filter((r) => r.complete);
       const wettest = ss.reduce((a, b) => (b.totalMm > a.totalMm ? b : a));
       const driest = ss.reduce((a, b) => (b.totalMm < a.totalMm ? b : a));

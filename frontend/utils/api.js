@@ -9,7 +9,10 @@ export const AREA_ID = "camanava_2026";
 // Dev fixtures: ONLY when the app is started with NEXT_PUBLIC_USE_FIXTURES=1. Every fixture answer
 // carries dataKind "synthetic" and the UI shows a banner plus the synthetic badge. Without the flag
 // this constant is false at build time and the fixture module is never bundled.
-export const FIXTURES_ON = process.env.NEXT_PUBLIC_USE_FIXTURES === "1";
+// "1" = all v5.1 endpoints; "nisar" = only /nisar/* and camanava_2026 ground motion (the rest is the real backend).
+export const FIXTURE_SCOPE =
+  process.env.NEXT_PUBLIC_USE_FIXTURES === "1" ? "all" : process.env.NEXT_PUBLIC_USE_FIXTURES === "nisar" ? "nisar" : null;
+export const FIXTURES_ON = FIXTURE_SCOPE !== null;
 
 // ---------------------------------------------------------------------------
 // Errors. The backend answers "no data yet" with HTTP 404/409 and a body like
@@ -70,10 +73,13 @@ function queryString(params = {}) {
 }
 
 async function request(path, params, label) {
-  if (process.env.NEXT_PUBLIC_USE_FIXTURES === "1") {
-    const { fixtureResponse } = await import("./devFixtures");
-    const hit = await fixtureResponse(path, params ?? {});
-    if (hit !== undefined) return hit;
+  if (process.env.NEXT_PUBLIC_USE_FIXTURES === "1" || process.env.NEXT_PUBLIC_USE_FIXTURES === "nisar") {
+    const nisarOnly = process.env.NEXT_PUBLIC_USE_FIXTURES === "nisar";
+    if (!nisarOnly || path.startsWith("/api/v1/nisar") || path.startsWith("/api/v1/ground-motion")) {
+      const { fixtureResponse } = await import("./devFixtures");
+      const hit = await fixtureResponse(path, params ?? {});
+      if (hit !== undefined) return hit;
+    }
   }
   let res;
   try {
@@ -271,8 +277,9 @@ export async function getNisarPolarization(area, date) {
 
 // --- A: climate, history, outlook, scenarios -------------------------------
 
-export async function getRainfallMonthly(area = AREA_ID) {
-  return request(`${V1}/climate/rainfall/monthly`, { area }, "Could not load monthly rainfall");
+// Incomplete months have totalMm null, a partialMm and no anomaly.
+export async function getRainfallMonthly(area = AREA_ID, since = 2000) {
+  return request(`${V1}/climate/rainfall/monthly`, { area, since }, "Could not load monthly rainfall");
 }
 
 export async function getRainfallDaily(area, start, end) {
@@ -281,6 +288,11 @@ export async function getRainfallDaily(area, start, end) {
 
 export async function getSeasonRank(area = AREA_ID, year = 2026) {
   return request(`${V1}/climate/rainfall/season-rank`, { area, year }, "Could not load the season rank");
+}
+
+// Extra endpoint: ERA5 next to POWER, never merged. { series, meanByCalendarMonth2000to2020, gridCell }
+export async function getEra5Compare(area = AREA_ID) {
+  return request(`${V1}/climate/rainfall/era5-compare`, { area }, "Could not load the ERA5 comparison");
 }
 
 export async function getRainfallTrend(area = AREA_ID) {

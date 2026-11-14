@@ -42,51 +42,70 @@ Each router module exposes `make_router(output_root, read_public_events)`, like 
 
 ## B: NISAR (`nisar_api.py`)
 
+Served from `<output>/camanava_2026/nisar/manifest.json` (written by scripts 20 or 22). `area` defaults to `camanava_2026`. Until a product exists every route returns 404 `data_unavailable`. A synthetic product returns `dataKind: "synthetic"` on every route and `warnings[0]` starts with `SYNTHETIC DEMO DATA`. Every body also carries `source`, `generatedAt`, `nativeResolution`, `units`, `warnings`, `limitations`.
+
+**Open issue for the coordinator:** the catalogue footprint of the default stack (133 D, frame 81) covers about 35 % of the bbox. Stacks 032 D / frame 81 and 140 A / frame 9 cover 100 %. See `docs/NISAR_RUNBOOK.md` section 0. `track`, `frame` and the dates below come from the manifest, so they follow whichever stack is run.
+
 ### `GET /nisar/passes?area=camanava_2026`
 ```json
 {
   "area": "camanava_2026", "dataKind": "observed", "sensor": "NISAR L-band SAR",
-  "product": "L2 GCOV", "track": 133, "direction": "descending", "frame": 81,
+  "product": "L2 GCOV", "track": 133, "direction": "descending", "frame": 81, "mode": "4005",
   "polarizations": ["HH", "HV"],
-  "rule": {"description": "...", "hhThresholdDb": -18.0, "hvThresholdDb": -26.0, "calibration": "..."},
+  "rule": {"description": "...", "hhThresholdDb": -18.0, "hvThresholdDb": -26.0,
+           "calibration": {"status": "calibrated | uncalibrated-default", "method": "...", "knownWater": "...", "waterPixels": 0}},
+  "permanentWater": {"fraction": 0.9, "minValidPasses": 3},
+  "possibleFloodedVegetation": {"marginDb": 3.0, "label": "possible flooded vegetation (L-band)", "landCoverMask": null},
+  "verification": {"layout": "unverified | verified | synthetic", "evidence": []},
+  "studyAreaKm2": 419.5,
   "passes": [{
     "id": "20260623", "date": "2026-06-23", "acquisitionTime": "2026-06-23T10:32:20Z",
-    "productId": "NISAR_L2_PR_GCOV_...", "maturity": "provisional",
+    "acquisitionTimeManila": "2026-06-23T18:32:20+08:00",
+    "productId": "NISAR_L2_PR_GCOV_...", "maturity": "provisional | v1 | synthetic",
     "floodedKm2": 12.3, "permanentWaterKm2": 40.1, "floodedVegetationKm2": 1.2,
-    "validKm2": 380.0, "validFraction": 0.97,
+    "validKm2": 380.0, "validFraction": 0.97, "missingReason": null,
     "overlayUrl": "/api/v1/nisar/overlay/camanava_2026/pass_20260623.png",
-    "backscatterUrl": "/api/v1/nisar/overlay/camanava_2026/hh_20260623.png"
+    "backscatterUrl": "/api/v1/nisar/overlay/camanava_2026/hh_20260623.png",
+    "floodedVegetationUrl": "/api/v1/nisar/overlay/camanava_2026/veg_20260623.png",
+    "polarizationUrl": "/api/v1/nisar/overlay/camanava_2026/pol_20260623.png"
   }],
   "bounds": [[14.60, 120.88], [14.82, 121.04]],
   "source": {}, "generatedAt": "...", "warnings": [], "limitations": []
 }
 ```
+`date` is the UTC date. Areas cover only pixels inside the bbox; `validFraction` is valid area over bbox area. A pass with no valid pixels has `floodedKm2: null` and a `missingReason`. `permanentWaterKm2` is the permanent-water area seen as water on that pass.
 
 ### `GET /nisar/flood-rhythm?area=`
 ```json
 {
-  "area": "camanava_2026", "dataKind": "derived", "passCount": 11,
+  "area": "camanava_2026", "dataKind": "derived", "passCount": 11, "minValidPasses": 3,
   "overlayUrl": "/api/v1/nisar/overlay/camanava_2026/rhythm.png",
+  "legendUrl": "/api/v1/nisar/overlay/camanava_2026/rhythm_legend.png",
   "bounds": [[14.60, 120.88], [14.82, 121.04]],
   "legend": [{"count": 1, "color": "#..."}],
   "km2ByCount": [{"count": 1, "km2": 5.2}],
-  "halfOrMoreKm2": 3.4, "permanentWaterMasked": true,
+  "halfOrMoreKm2": 3.4, "countableKm2": 250.0, "floodedAtLeastOnceKm2": 20.1,
+  "byValidPasses": [{"validPasses": 11, "km2": 240.0, "floodedAtLeastOnceKm2": 19.0}],
+  "permanentWaterMasked": true,
   "method": "count of passes classified as water, over the count of valid passes, per pixel; permanent water excluded",
   "source": {}, "generatedAt": "...", "warnings": [], "limitations": []
 }
 ```
+`halfOrMoreKm2` uses each pixel's own valid-pass count as the denominator. Pixels with fewer than `minValidPasses` valid passes, and permanent water, are not counted. The legend is viridis (colour-blind safe); permanent water is drawn grey in the PNG.
+
+Files other modules read in the same folder: `rhythm.tif` (band 1 = passes flooded, int16, nodata −1), `rhythm_half.tif` (1 = half or more of the pixel's own valid passes, nodata 255), and `manifest.json` with top-level `dataKind`, `passCount`, `version` and `passes[{date, floodedKm2}]`. Note: `places/exposure?mask=rhythm_half` currently thresholds `rhythm.tif` at `ceil(passCount / 2)`, which differs from `halfOrMoreKm2` where some passes are nodata; `rhythm_half.tif` is the matching mask.
 
 ### `GET /nisar/point?area=&lon=&lat=`
-Returns `{ "lon", "lat", "cellCenter", "floodCount", "validCount", "permanentWater": false, "perPass": [{"date": "2026-06-23", "state": "water" | "dry" | "nodata", "hhDb": -19.2, "hvDb": -27.0}], "dataKind" }`. Outside coverage gives 404 `outside_coverage`.
+Returns `{ "lon", "lat", "cellCenter": {"lon", "lat"}, "floodCount", "validCount", "floodCountReason", "permanentWater": false, "possibleFloodedVegetationPasses": 0, "perPass": [{"date": "2026-06-23", "state": "water" | "dry" | "nodata", "hhDb": -19.2, "hvDb": -27.0, "possibleFloodedVegetation": false, "reason": null}], "dataKind" }`. `floodCount` is `null` with `floodCountReason` for permanent water and for pixels with too few valid passes. Missing or non-numeric `lon`/`lat` gives 422 `invalid_request`. A point outside the bbox or grid gives 404 `outside_coverage`.
 
 ### `GET /nisar/overlay/{area}/{name}.png`
-Serves a PNG. `name` must come from a registered manifest; arbitrary paths are refused.
+Serves a PNG whose `name` is registered in the manifest as an overlay and whose SHA-256 still matches. Registered names: `pass_<id>`, `hh_<id>`, `veg_<id>`, `pol_<id>`, `rhythm`, `rhythm_legend`. Anything else: 404 `data_unavailable` (unknown, missing or failed hash) or 422 `invalid_request` (malformed name). Response header `X-Tanaw-Data-Kind` repeats the data kind.
 
-### `GET /nisar/polarization?area=&date=`
-Returns `{ "rgbUrl", "bounds", "channels": {"r": "HH", "g": "HV", "b": "HH/HV"}, "explanation": ["...", "...", "..."] }`.
+### `GET /nisar/polarization?area=&date=YYYY-MM-DD`
+Returns `{ "date", "acquisitionTime", "rgbUrl", "bounds", "channels": {"r": "HH", "g": "HV", "b": "HH/HV"}, "stretchDb": {"r": [-25, 0], "g": [-35, -10], "b": [0, 20]}, "explanation": ["...", "...", "..."], "dataKind" }`. Missing or malformed `date`: 422 `invalid_request`. No pass on that date: 404 `data_unavailable` with `availableDates`. The explanation text still needs reviewer sign-off (flagged in `warnings`).
 
 ### Ground motion
-This reuses the existing P3 routes with `event=camanava_2026`: `/ground-motion` and `/ground-motion/point`. B registers the event and provides `scripts/21_nisar_gunw_chain.py`, which builds the pair configs for scripts 10–12 from the CMR listing.
+This reuses the existing P3 routes with `event=camanava_2026`: `/ground-motion` and `/ground-motion/point`. B registers the event and provides `scripts/21_nisar_gunw_chain.py`, which builds the script-10 source manifests, the script-11 reference config and a run script for 10 → 11 → 12 from the CMR listing. No GUNW file has been read yet; the phase sign and the reference area must be set by a person (runbook section 6). Real products stay `needs-review` until promoted with `scripts/17_review_product.py`.
 
 ## A: Climate, history, outlook, scenarios (`climate_api.py`)
 

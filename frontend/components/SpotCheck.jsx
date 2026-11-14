@@ -141,6 +141,7 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
                     <div className="font-bold text-slate-100" title={v == null ? t("spot.rain.missing") : undefined}>
                       {v == null ? "—" : `${fmt(v)} mm`}
                     </div>
+                    {v == null && <div className="text-[10px] text-amber-200">{t("spot.rain.missing")}</div>}
                   </div>
                 ))}
               </div>
@@ -170,6 +171,7 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
                 </tbody>
               </table>
             </details>
+            {rain.data.windowDefinition && <p className="mt-1 text-[11px] text-slate-400">{rain.data.windowDefinition}</p>}
             <SourceLine data={rain.data} className="mt-1" />
             <Caveats data={rain.data} />
           </>

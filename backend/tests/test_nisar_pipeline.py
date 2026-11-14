@@ -29,6 +29,11 @@ class PipelineProductTests(unittest.TestCase):
         self.assertIn("not NISAR", m["sensor"])
         for key, entry in m["assets"].items():
             self.assertEqual(export.sha256_path(self.out / entry["path"]), entry["sha256"], key)
+        self.assertEqual(m["passCount"], 4)
+        self.assertTrue((self.out / "rhythm.tif").is_file() and (self.out / "rhythm_half.tif").is_file())
+        with rasterio.open(self.out / "rhythm.tif") as ds:
+            self.assertEqual(ds.nodata, -1)
+            self.assertEqual(ds.count, 1)
         for expected in ("rhythm", "rhythm_legend", "rhythm_counts", "permanent_water"):
             self.assertIn(expected, m["assets"])
         for p in m["passes"]:

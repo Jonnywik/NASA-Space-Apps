@@ -246,6 +246,18 @@ def state_codes(a: Analysis, k: int) -> np.ndarray:
     return state
 
 
+def _public_stats(stats: dict) -> dict:
+    """A pass with no valid pixels has unknown flooded area: null with a reason, never 0."""
+    if stats.get("validKm2"):
+        return dict(stats)
+    out = dict(stats)
+    for key in ("floodedKm2", "permanentWaterKm2", "floodedVegetationKm2"):
+        if key in out:
+            out[key] = None
+    out["missingReason"] = "no valid pixels on this pass inside the study area"
+    return out
+
+
 def export_product(a: Analysis, out_dir: Path, *, data_kind: str, source: dict, extra_warnings: list[str] | None = None,
                    provenance: dict | None = None, verification: dict | None = None, track: dict | None = None) -> Path:
     """Write every asset plus manifest.json into ``out_dir`` (atomically replacing a previous product)."""
@@ -280,7 +292,7 @@ def export_product(a: Analysis, out_dir: Path, *, data_kind: str, source: dict, 
             pass_entries.append({
                 "id": pid, "date": p.date, "acquisitionTime": p.acquisition_time,
                 "acquisitionTimeManila": p.source.get("acquisitionTimeManila"),
-                "productId": p.product_id, "maturity": p.maturity, **a.pass_stats[k],
+                "productId": p.product_id, "maturity": p.maturity, **_public_stats(a.pass_stats[k]),
                 "assets": {"overlay": f"pass_{pid}", "backscatter": f"hh_{pid}", "vegetation": f"veg_{pid}", "polarization": f"pol_{pid}",
                            "state": f"state_{pid}", "db": f"db_{pid}"},
                 "source": p.source})
@@ -293,6 +305,15 @@ def export_product(a: Analysis, out_dir: Path, *, data_kind: str, source: dict, 
         write_gtiff(stage / "tif" / "rhythm_counts.tif", np.stack([a.rhythm.flood_count, a.rhythm.valid_count]).astype("int16"), a.grid,
                     nodata=-1, dtype="int16", descriptions=["passes flooded (-1 = not countable)", "valid passes (0 = not countable)"])
         register(assets, stage, "rhythm_counts", "tif/rhythm_counts.tif", "geotiff")
+        # Names other modules read: rhythm.tif (band 1 = passes flooded, -1 = nodata) for the exposure endpoint.
+        write_gtiff(stage / "rhythm.tif", a.rhythm.flood_count.astype("int16"), a.grid, nodata=-1, dtype="int16",
+                    descriptions=["passes flooded (-1 = nodata: permanent water, outside area or too few valid passes)"])
+        register(assets, stage, "rhythm_tif", "rhythm.tif", "geotiff")
+        fc, vc = a.rhythm.flood_count, a.rhythm.valid_count
+        half = np.where(a.rhythm.countable, ((fc >= 1) & (2 * fc >= vc)).astype("uint8"), 255).astype("uint8")
+        write_gtiff(stage / "rhythm_half.tif", half, a.grid, nodata=255, dtype="uint8",
+                    descriptions=["1 = flooded on half or more of the pixel's own valid passes, 0 = not, 255 = nodata"])
+        register(assets, stage, "rhythm_half_tif", "rhythm_half.tif", "geotiff")
         write_gtiff(stage / "tif" / "permanent_water.tif", a.permanent.astype("uint8"), a.grid, nodata=255, dtype="uint8")
         register(assets, stage, "permanent_water", "tif/permanent_water.tif", "geotiff")
         write_gtiff(stage / "tif" / "hh_dry_reference.tif", a.reference, a.grid, nodata=float("nan"), dtype="float32")
@@ -304,7 +325,7 @@ def export_product(a: Analysis, out_dir: Path, *, data_kind: str, source: dict, 
                                "must not be published as real.")
         manifest = {
             "schemaVersion": "1.0", "kind": "nisar-flood-rhythm", "area": AREA_ID, "dataKind": data_kind,
-            "codeVersion": CODE_VERSION, "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "codeVersion": CODE_VERSION, "version": CODE_VERSION, "passCount": a.rhythm.pass_count, "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "sensor": "NISAR L-band SAR" if data_kind == "observed" else "SYNTHETIC GCOV-like fixture (not NISAR)",
             "product": "L2 GCOV", "polarizations": ["HH", "HV"],
             "track": track or {}, "source": source,

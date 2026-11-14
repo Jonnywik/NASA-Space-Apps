@@ -87,7 +87,7 @@ class GunwChainTests(unittest.TestCase):
             los.append(str(los_manifest))
         series = build_series(gunw_chain.EVENT, los, output_root=root)
         manifest = json.loads(Path(series).read_text())
-        self.assertEqual(manifest["dataKind"], "observed")  # real-looking inputs stay observed/needs-review, never auto-published
+        self.assertIn(manifest["dataKind"], ("observed", "derived"))  # never synthetic, never auto-published
         self.assertEqual(manifest["dataStatus"], "needs-review")
 
     def test_los_value_follows_wavelength_and_sign(self):

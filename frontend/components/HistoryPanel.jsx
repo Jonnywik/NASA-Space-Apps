@@ -66,6 +66,7 @@ export function AvailabilityStrip({ tier, date }) {
                 <span>
                   {cat ? "▨ " : "■ "}
                   {cat ? t("hist.catalogueOnly") : t("hist.integrated")} · {ds.cadence}
+                  {ds.note ? ` · ${ds.note}` : ""}
                 </span>
                 {at && <span className={at.ok ? "text-emerald-200" : "text-amber-200"}>{at.ok ? `✓ ${t("hist.atDate.yes")}` : `✗ ${t(`hist.atDate.${at.why}`, { when: at.when })}`}</span>}
               </div>
@@ -101,7 +102,7 @@ function AnomalyChart({ series }) {
           <ReferenceLine y={0} stroke="#e2e8f0" />
           <Bar dataKey="anomaly" isAnimationActive={false}>
             {rows.map((r) => (
-              <Cell key={r.label} fill={r.anomaly >= 0 ? PALETTE.sky : PALETTE.orange} fillOpacity={r.missing ? 0.35 : 0.95} />
+              <Cell key={r.label} fill={r.anomaly >= 0 ? PALETTE.sky : PALETTE.orange} />
             ))}
           </Bar>
         </BarChart>
@@ -112,7 +113,8 @@ function AnomalyChart({ series }) {
 
 function RankChart({ d }) {
   const { t } = useLang();
-  const rows = d.seasons ?? [];
+  const toDate = d.rankBasis === "to_date_same_window";
+  const rows = (d.seasons ?? []).map((s) => ({ ...s, value: toDate ? s.toDateMm : s.totalMm }));
   return (
     <div className="h-40 w-full" role="img" aria-label={t("hist.rank.aria", { year: d.year, rank: d.rank, of: d.of })} data-testid="rank-chart">
       <ResponsiveContainer width="100%" height="100%">
@@ -123,16 +125,16 @@ function RankChart({ d }) {
           <Tooltip
             contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}
-            formatter={(v, _n, p) => [`${v} mm${p?.payload?.complete ? "" : ` (${t("hist.rank.incomplete")})`}`, t("hist.rank.total")]}
+            formatter={(v) => [`${v} mm`, toDate ? t("hist.rank.todate") : t("hist.rank.total")]}
           />
-          <Bar dataKey="totalMm" isAnimationActive={false}>
+          <Bar dataKey="value" isAnimationActive={false}>
             {rows.map((r) => (
               <Cell
                 key={r.year}
                 fill={r.year === d.year ? PALETTE.vermillion : PALETTE.sky}
-                fillOpacity={r.complete ? 0.95 : 0.35}
-                stroke={r.year === d.year ? "#fff" : r.complete ? "none" : "#e2e8f0"}
-                strokeDasharray={r.complete ? undefined : "3 2"}
+                fillOpacity={0.95}
+                stroke={r.year === d.year ? "#fff" : "none"}
+                strokeWidth={r.year === d.year ? 2 : 0}
               />
             ))}
           </Bar>
@@ -159,7 +161,7 @@ export default function HistoryPanel({ availabilityTier, monthlyTier, rankTier, 
         {m && (
           <>
             <p className="mb-1 text-[11px] text-slate-300">{t("hist.monthly.lead", { period: m.baseline?.period ?? "1991-2020" })}</p>
-            <AnomalyChart series={(m.series ?? []).filter((x) => x.anomalyMm != null || x.totalMm == null)} />
+            <AnomalyChart series={m.series ?? []} />
             <p className="text-[11px] text-slate-400">{t("hist.monthly.missing")}</p>
             <SourceLine data={m} className="mt-1" />
             <Caveats data={m} />
@@ -173,10 +175,19 @@ export default function HistoryPanel({ availabilityTier, monthlyTier, rankTier, 
           <>
             <div className="mb-2 grid grid-cols-2 gap-1.5">
               <Stat label={t("hist.rank.year", { year: r.year })} value={`${r.rank} / ${r.of}`} note={r.complete ? t("hist.rank.complete") : t("hist.rank.incomplete")} />
-              <Stat label={t("hist.rank.total")} value={fmt(r.totalMm, 0)} unit="mm" note={r.season} />
+              <Stat
+                label={r.rankBasis === "to_date_same_window" ? t("hist.rank.todate") : t("hist.rank.total")}
+                value={fmt(r.rankBasis === "to_date_same_window" ? r.toDateMm : r.totalMm, 0)}
+                unit="mm"
+                note={r.rankBasis === "to_date_same_window" && r.observedThrough ? t("hist.rank.window", { date: r.observedThrough }) : r.season}
+              />
             </div>
+            <p className="mb-1 text-[11px] text-slate-300">
+              {t("hist.rank.meaning", { year: r.year, rank: r.rank, of: r.of })}
+              {r.rankBasis === "to_date_same_window" && r.observedThrough ? ` ${t("hist.rank.partial", { date: r.observedThrough })}` : ""}
+            </p>
             <RankChart d={r} />
-            {!r.complete && <p className="text-[11px] text-amber-200">{t("hist.rank.partial")}</p>}
+            <p className="text-[11px] text-slate-400">■ {t("hist.rank.highlight", { year: r.year })}</p>
             <SourceLine data={r} className="mt-1" />
             <Caveats data={r} />
           </>
@@ -195,6 +206,11 @@ export default function HistoryPanel({ availabilityTier, monthlyTier, rankTier, 
               {tr.significant ? t("hist.trend.sig") : t("hist.trend.notsig")}
             </p>
             <p className="mt-1 text-[11px] text-slate-400">{tr.method}</p>
+            {(tr.effectiveN != null || tr.lag1Autocorrelation != null) && (
+              <p className="mt-1 text-[11px] text-slate-400">
+                {t("hist.trend.auto", { eff: fmt(tr.effectiveN, 0) ?? "—", r: fmt(tr.lag1Autocorrelation, 2) ?? "—" })}
+              </p>
+            )}
             <p className="mt-1 text-[11px] text-slate-300">{t("hist.trend.nocause")}</p>
             <SourceLine data={tr} className="mt-1" />
             <Caveats data={tr} />

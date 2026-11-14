@@ -19,6 +19,7 @@ import { fmt } from "./ui";
 import {
   AREA_ID,
   FIXTURES_ON,
+  FIXTURE_SCOPE,
   getFloodScenario,
   getGroundMotion,
   getNisarPasses,
@@ -449,7 +450,7 @@ function Workspace({ onRegional }) {
 
       {FIXTURES_ON && (
         <div role="status" className="border-b border-yellow-300 bg-yellow-400/20 px-3 py-1 text-center text-xs font-bold text-yellow-100" data-testid="fixture-banner">
-          ▨ {t("fixtures.banner")}
+          ▨ {t(FIXTURE_SCOPE === "nisar" ? "fixtures.banner.nisar" : "fixtures.banner")}
         </div>
       )}
 
