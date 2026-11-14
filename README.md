@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/Jonnywik/NASA-Space-Apps/actions/workflows/ci.yml/badge.svg)](https://github.com/Jonnywik/NASA-Space-Apps/actions/workflows/ci.yml)
 
-> Replace `Jonnywik/NASA-Space-Apps` in the badge above with the real repository path.
 
 **Tanaw** is an entry to NASA Space Apps "Dancing with the SARs". We grew up wading through the floods of CAMANAVA (Caloocan, Malabon, Navotas, Valenzuela) and the Bulacan coast north of it, one of the most flood-prone and fastest-sinking urban coasts in the Philippines. NASA-ISRO's NISAR satellite revisits the area about every 12 days. Tanaw is an interactive map that uses those L-band radar passes to show how often each place flooded during the 2026 wet season and how the ground moved, then turns that into plain-language briefings for the people who live there.
 
