@@ -40,7 +40,7 @@ export { PhaseBand };
 
 function OutlookChart({ d }) {
   const { t } = useLang();
-  const rows = d.months.map((m) => ({
+  const rows = (d.months ?? []).map((m) => ({
     label: `${ym(m)}${m.fullMonth === false ? "*" : ""}`,
     spread: m.memberMinMm != null && m.memberMaxMm != null ? [m.memberMinMm, m.memberMaxMm] : null,
     mean: m.meanMm,
@@ -73,7 +73,7 @@ function OutlookChart({ d }) {
 
 function ScenarioRainChart({ sc }) {
   const { t } = useLang();
-  const rows = sc.months.map((m) => ({ label: ym(m), mm: m.rainfallMm, status: m.status, outlookMean: m.outlook?.meanMm ?? null }));
+  const rows = (sc.months ?? []).map((m) => ({ label: ym(m), mm: m.rainfallMm, status: m.status, outlookMean: m.outlook?.meanMm ?? null }));
   const hasOutlook = rows.some((r) => r.outlookMean != null);
   const firstScn = rows.find((r) => r.status === "scenario");
   return (
@@ -112,7 +112,7 @@ function ScenarioRainChart({ sc }) {
 
 function FloodScenarioChart({ d }) {
   const { t } = useLang();
-  const rows = d.months.map((m) => ({
+  const rows = (d.months ?? []).map((m) => ({
     label: ym(m),
     band: m.expectedFloodedKm2 ? [m.expectedFloodedKm2.low, m.expectedFloodedKm2.high] : null,
     base: m.expectedFloodedKm2?.base ?? null,
@@ -359,7 +359,7 @@ export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, on
                   </p>
                 )}
                 {(() => {
-                  const gaps = f.months.filter((m) => !m.expectedFloodedKm2);
+                  const gaps = (f.months ?? []).filter((m) => !m.expectedFloodedKm2);
                   if (!gaps.length) return null;
                   return (
                     <p className="mt-1 rounded-md bg-[#FFF6DE] px-2 py-1 text-[11px] text-[#5A4300]" data-testid="flood-gaps">

@@ -244,7 +244,6 @@ export default function TimeBar({ mode, passes, idx, onIdx, playing, onPlaying, 
               type="button"
               onClick={() => onPlaying(!playing)}
               disabled={!n}
-              aria-pressed={playing}
               aria-label={playing ? t("season.pause") : t("season.play")}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1E5B3A] text-xs font-bold text-white shadow-sm hover:bg-[#123B25] disabled:opacity-40"
             >

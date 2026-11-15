@@ -80,7 +80,7 @@ export default function LimitsDrawer({ open, onClose, downloadsTier = null, focu
         <h3 className="mt-5 font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("sources.title")}</h3>
         <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[12px] text-[#4A5850]" data-testid="data-credits">
           {[
-            ["NASA–ISRO NISAR · ASF", "https://asf.alaska.edu/datasets/daac/nisar/"],
+            ["NASA–ISRO NISAR · ASF", "https://nisar-docs.asf.alaska.edu/"],
             ["NASA POWER", "https://power.larc.nasa.gov/"],
             ["NASA GPM IMERG · GES DISC", "https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_07/summary"],
             ["NASA OPERA DSWx-S1 · PO.DAAC", "https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1"],

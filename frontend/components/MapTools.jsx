@@ -16,7 +16,7 @@ export const OVERLAY_FOR_MODE = {
   rhythm: "rhythm",
   season: "pass",
   motion: "motion",
-  history: "rhythm",
+  history: "none", // History draws no radar layer on the map
   future: "scenario",
 };
 
@@ -82,6 +82,7 @@ export default function MapTools({
     coherenceChange: t("map.tools.overlay.coherenceChange"),
     motion: t("mode.motion"),
     scenario: t("map.tools.overlay.scenario"),
+    none: t("map.tools.overlay.none"),
   }[overlay] ?? t("mode.rhythm");
   const modeShort = t(`map.tools.mode.${mapMode}`);
   const summaryText = `${overlayShort}${isDemoOverlay ? ` (${t("demo.tag").toLowerCase()})` : ""} · ${modeShort} · ${t("map.tools.layersCount", { n: activeLayerCount })}`;

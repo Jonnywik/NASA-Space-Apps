@@ -58,10 +58,11 @@ def make_router(output_root, read_public_events):
         if cached and cached[0] == key:
             return cached[1]
         try:
-            manifest = json.loads(path.read_text())
+            manifest = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             raise _error(404, "data_unavailable", "The NISAR product manifest is unreadable") from None
-        if manifest.get("kind") != "nisar-flood-rhythm" or manifest.get("area") != area or "passes" not in manifest:
+        if (not isinstance(manifest, dict) or manifest.get("kind") != "nisar-flood-rhythm" or manifest.get("area") != area
+                or not isinstance(manifest.get("passes"), list) or not isinstance(manifest.get("assets"), dict)):
             raise _error(404, "data_unavailable", "The NISAR product manifest is not a flood-rhythm product for this area")
         manifest_cache[area] = (key, manifest)
         return manifest
@@ -272,7 +273,7 @@ def make_router(output_root, read_public_events):
         if not path.is_file():
             raise _error(404, "data_unavailable", f"{what} has not been computed yet")
         try:
-            return json.loads(path.read_text())
+            return json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             raise _error(503, "upstream_unavailable", f"the cached {what} file could not be read")
 
@@ -308,6 +309,13 @@ def make_router(output_root, read_public_events):
         path = extra_path(filename[:-4])
         if path is None or not path.is_file():
             raise _error(404, "data_unavailable", "Unknown or missing overlay")
-        return FileResponse(path, media_type="image/png", headers={"X-Tanaw-Data-Kind": "derived", "Cache-Control": "public, max-age=300"})
+        kind = "derived"
+        if filename.startswith("sm_"):
+            # soil-moisture overlays carry the dataKind of their own manifest (observed, or synthetic in demos)
+            try:
+                kind = json.loads((path.parent / "manifest.json").read_text(encoding="utf-8")).get("dataKind") or "observed"
+            except (OSError, ValueError, AttributeError):
+                kind = "observed"
+        return FileResponse(path, media_type="image/png", headers={"X-Tanaw-Data-Kind": kind, "Cache-Control": "public, max-age=300"})
 
     return router

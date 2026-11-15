@@ -85,8 +85,9 @@ def summarise(series: list[dict], pass_time: datetime) -> dict:
     def total(hours):
         rows = [s for s in series if datetime.fromisoformat(s["end"].replace("Z", "+00:00")) > pass_time - timedelta(hours=hours)]
         vals = [s["meanMmHr"] for s in rows]
-        if not rows or any(v is None for v in vals):
-            return None  # incomplete window: unknown, not zero
+        # incomplete window (a half-hour missing from the catalogue, or a null value): unknown, not a smaller total
+        if len(rows) < hours * 2 or any(v is None for v in vals):
+            return None
         return round(sum(v * 0.5 for v in vals), 2)  # mm/hr over half an hour -> mm
 
     known = [s for s in series if s["meanMmHr"] is not None]

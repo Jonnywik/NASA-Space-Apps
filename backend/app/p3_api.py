@@ -17,7 +17,9 @@ def make_router(output_root, read_events):
             return catalog.select(event, product, run_id, root=output_root)
         except catalog.ProductUnavailable as exc:
             raise HTTPException(exc.status, detail={'code': exc.code, 'message': str(exc)}) from exc
-        except (ValueError, KeyError, OSError, json.JSONDecodeError) as exc:
+        except OSError as exc:  # a missing or unreadable product file is unavailable data, not a bad request
+            raise HTTPException(404, detail={'code': 'data_unavailable', 'message': 'product files are missing or unreadable'}) from exc
+        except (ValueError, KeyError, json.JSONDecodeError) as exc:
             raise HTTPException(422, detail={'code': 'invalid_identifier_or_catalog'}) from exc
 
     def public(manifest):

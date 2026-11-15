@@ -10,12 +10,12 @@ export const DEFAULT_PASS_LEGEND = [
   { id: "vegetation", label: "Possible flooded vegetation (L-band)", color: "#E69F00", shape: "diamond" },
 ];
 
-function formatManilaTime(iso) {
+function formatManilaTime(iso, lang = "en") {
   if (!iso) return "—";
   const ms = Date.parse(iso);
   if (!Number.isFinite(ms)) return iso;
   const m = new Date(ms + 8 * 3600000);
-  const day = m.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const day = m.toLocaleDateString(lang === "fil" ? "fil-PH" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
   const hhmm = `${String(m.getUTCHours()).padStart(2, "0")}:${String(m.getUTCMinutes()).padStart(2, "0")}`;
   return `${day}, ${hhmm} Manila`;
 }
@@ -57,18 +57,18 @@ function ImergSparkline({ series, passLabel, maxLabel }) {
   );
 }
 
-function shortDate(iso) {
+function shortDate(iso, lang = "en") {
   if (!iso) return "—";
   const d = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  return d.toLocaleDateString(lang === "fil" ? "fil-PH" : "en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
-function shortMonthDay(iso) {
+function shortMonthDay(iso, lang = "en") {
   if (!iso) return "—";
   const d = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  return d.toLocaleDateString(lang === "fil" ? "fil-PH" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
 function passClockLine(cur) {
@@ -85,7 +85,7 @@ function passClockLine(cur) {
   return { utcHHMM, manilaHHMM };
 }
 
-function rainWindow7d(days, targetIso) {
+function rainWindow7d(days, targetIso, lang = "en") {
   if (!Array.isArray(days) || !targetIso) return null;
   const endMs = Date.parse(`${targetIso}T00:00:00Z`);
   if (!Number.isFinite(endMs)) return null;
@@ -97,7 +97,7 @@ function rainWindow7d(days, targetIso) {
   if (!inWin.length || inWin.some((r) => r.mm == null)) return null;
   const sum = inWin.reduce((acc, r) => acc + r.mm, 0);
   const startIso = new Date(startMs).toISOString().slice(0, 10);
-  return { sum, from: shortMonthDay(startIso), to: shortMonthDay(targetIso) };
+  return { sum, from: shortMonthDay(startIso, lang), to: shortMonthDay(targetIso, lang) };
 }
 
 export default function SeasonPanel({
@@ -118,14 +118,14 @@ export default function SeasonPanel({
   timelapseUrl = null,
   timelapseAvailable = false,
 }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const d = passesTier.data;
   const passes = d?.passes ?? [];
   const cur = passes[idx];
   const prev = idx > 0 ? passes[idx - 1] : null;
   const isDemo = d?.dataKind === "synthetic";
   const clock = passClockLine(cur);
-  const rain7 = rainWindow7d(rainTier.data?.days, cur?.date);
+  const rain7 = rainWindow7d(rainTier.data?.days, cur?.date, lang);
   const imergData = imergTier?.data;
   const imergPass = imergData?.passes?.find((p) => p.date === cur?.date) ?? null;
   const smPass = (soilMoistureTier?.data?.passes ?? []).find((p) => p.date === cur?.date);
@@ -149,7 +149,7 @@ export default function SeasonPanel({
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-baseline gap-2">
               <h1 className="m-0 font-serif text-[25px] font-semibold leading-[1.2] text-[#16231B]" data-testid="pass-date">
-                {shortDate(cur.date)}
+                {shortDate(cur.date, lang)}
               </h1>
               {isDemo && <DemoTag />}
             </div>
@@ -172,7 +172,7 @@ export default function SeasonPanel({
             <Stat
               compact
               isDemo={isDemo}
-              label={prev ? t("season.v2.changeSince", { date: shortMonthDay(prev.date) }) : t("season.passOf", { i: 1, n: passes.length })}
+              label={prev ? t("season.v2.changeSince", { date: shortMonthDay(prev.date, lang) }) : t("season.passOf", { i: 1, n: passes.length })}
               value={deltaStr}
               unit={deltaKm2 != null ? "km²" : undefined}
               note={prev && cur.floodedKm2 != null && prev.floodedKm2 != null ? `${fmt(prev.floodedKm2)} → ${fmt(cur.floodedKm2)} km²` : cur?.missingReason ?? undefined}
@@ -204,8 +204,8 @@ export default function SeasonPanel({
             <h2 className="m-0 font-serif text-[16px] font-semibold text-[#16231B]">{t("rhythm.v2.plainTitle")}</h2>
             <p className="m-0 text-[13px] leading-[1.6] text-[#16231B]">
               {cur.floodedKm2 != null && rain7
-                ? t("season.v2.plainBody", { rain: fmt(rain7.sum, 0), km2: fmt(cur.floodedKm2), date: shortDate(cur.date) })
-                : t("season.v2.plainNoRain", { date: shortDate(cur.date), km2: fmt(cur.floodedKm2) ?? "—" })}
+                ? t("season.v2.plainBody", { rain: fmt(rain7.sum, 0), km2: fmt(cur.floodedKm2), date: shortDate(cur.date, lang) })
+                : t("season.v2.plainNoRain", { date: shortDate(cur.date, lang), km2: fmt(cur.floodedKm2) ?? "—" })}
             </p>
           </div>
 
@@ -238,7 +238,7 @@ export default function SeasonPanel({
                       {imergPass.peakMmHr != null ? `${fmt(imergPass.peakMmHr, 1)} mm/hr` : "—"}
                     </div>
                     {imergPass.peakAt && (
-                      <div className="text-[10px] text-[#4A5850]">{formatManilaTime(imergPass.peakAt)}</div>
+                      <div className="text-[10px] text-[#4A5850]">{formatManilaTime(imergPass.peakAt, lang)}</div>
                     )}
                   </div>
                 </div>

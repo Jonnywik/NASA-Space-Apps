@@ -6,6 +6,7 @@ import math
 from functools import lru_cache
 from pathlib import Path
 
+import rasterio
 from fastapi import APIRouter, HTTPException, Query
 
 from processing.places import BBOX, PLACES_DIR, STUDY_AREA_ID, gazetteer, path_for
@@ -144,7 +145,7 @@ def make_router(output_root, read_public_events, places_root=None):
                 res = exposure_for_mask(arr, level, root=root)
             else:
                 res = exposure_for_mask(str(raster), level, root=root)
-        except (ValueError, OSError):
+        except (ValueError, OSError, rasterio.errors.RasterioError):
             # The mask is product data, not client input: never echo the library's text or server paths.
             raise _err(404, 'data_unavailable', f'{mask} raster could not be read; rebuild the NISAR product')
         kind = 'synthetic' if nm.get('dataKind') == 'synthetic' else 'derived'

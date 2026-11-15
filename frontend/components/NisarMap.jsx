@@ -351,7 +351,7 @@ export default function NisarMap({
   }, [ready, layers.bgy, boundariesGeojson]);
 
   // 2. raster overlays
-  const overlayKey = JSON.stringify((overlays ?? []).map((o) => [o.key, o.url, o.pane, o.opacity]));
+  const overlayKey = JSON.stringify((overlays ?? []).map((o) => [o.key, o.url, o.pane, o.opacity, o.bounds]));
   useEffect(() => {
     const map = mapRef.current;
     const L = leafletRef.current;

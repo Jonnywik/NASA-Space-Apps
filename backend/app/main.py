@@ -19,7 +19,9 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import FileResponse, JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.p3_api import make_router
 from app.coherence_api import make_router as make_coherence_router
 from app.route_api import make_router as make_route_router
@@ -36,6 +38,26 @@ EVENTS_FILE = ROOT / "events.json"
 OUTPUT = ROOT / "data" / "output"
 
 app = FastAPI(title="Tanaw API", version="0.1")
+
+
+# One error shape for every route: {"detail": {"code": ..., "message": ...}} (docs/API_CONTRACT.md).
+# FastAPI's own validation errors (a list) and the legacy string details are wrapped; structured details pass through.
+@app.exception_handler(RequestValidationError)
+async def _validation_error(_request, exc: RequestValidationError):
+    parts = []
+    for err in exc.errors()[:3]:
+        where = ".".join(str(x) for x in err.get("loc", ())[1:]) or "request"
+        parts.append(f"{where}: {err.get('msg', 'invalid value')}")
+    return JSONResponse(status_code=422, content={"detail": {"code": "invalid_request", "message": "; ".join(parts) or "Invalid request"}})
+
+
+@app.exception_handler(StarletteHTTPException)
+async def _http_error(_request, exc: StarletteHTTPException):
+    detail = exc.detail
+    if not isinstance(detail, dict):
+        code = {404: "data_unavailable", 405: "method_not_allowed"}.get(exc.status_code, "invalid_request")
+        detail = {"code": code, "message": str(detail)}
+    return JSONResponse(status_code=exc.status_code, content={"detail": detail}, headers=getattr(exc, "headers", None))
 
 # Make big responses smaller on the wire
 app.add_middleware(GZipMiddleware, minimum_size=1000)

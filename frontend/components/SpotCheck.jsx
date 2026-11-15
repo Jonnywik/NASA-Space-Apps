@@ -84,11 +84,12 @@ export function SpotCard({ point, placeHint, spotTier, imergTier, mode, selected
     const span = Math.max(1, max - min);
     return motionPts
       .map((v, i) => {
+        if (typeof v !== "number") return null; // a missing sample is skipped, never drawn as 0 mm
         const x = (i / Math.max(1, motionPts.length - 1)) * 280;
-        const val = typeof v === "number" ? v : 0;
-        const y = 30 - ((val - min) / span) * 24;
+        const y = 30 - ((v - min) / span) * 24;
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
+      .filter(Boolean)
       .join(" ");
   })();
 

@@ -10,14 +10,14 @@ function span(epochs) {
   return Math.round((Date.parse(epochs[epochs.length - 1]) - Date.parse(epochs[0])) / 86400000);
 }
 
-function monthRange(epochs) {
+function monthRange(epochs, lang = "en") {
   if (!Array.isArray(epochs) || !epochs.length) return "—";
-  const fmtMonth = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" });
+  const fmtMonth = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(lang === "fil" ? "fil-PH" : "en-GB", { month: "short", timeZone: "UTC" });
   return `${fmtMonth(epochs[0])} – ${fmtMonth(epochs[epochs.length - 1])}`;
 }
 
 export default function MotionPanel({ tier, scale, rhythmUnder, onRhythmUnder, priorityTier, onHelp, onPlace, onSources }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const d = tier.data;
   const none = t("missing.notReported");
   const days = span(d?.epochs);
@@ -93,7 +93,7 @@ export default function MotionPanel({ tier, scale, rhythmUnder, onRhythmUnder, p
             <Stat
               compact
               label={t("motion.v2.stat.period")}
-              value={monthRange(d.epochs)}
+              value={monthRange(d.epochs, lang)}
               note={days != null ? t("motion.span", { days }) : undefined}
             />
             <Stat

@@ -609,6 +609,7 @@ function Workspace({ onRegional }) {
           {point && (
             <div className="mb-3 min-[900px]:hidden">
               <SpotCard
+                key={`${point.lon},${point.lat}`}
                 point={point}
                 placeHint={placeHint}
                 spotTier={spotTier}
@@ -687,7 +688,7 @@ function Workspace({ onRegional }) {
             />
           )}
 
-          {mode === "motion" && (
+          {!extraOverlay && mode === "motion" && (
             <>
               <MotionPanel
                 tier={motionTier}
@@ -704,7 +705,7 @@ function Workspace({ onRegional }) {
             </>
           )}
 
-          {mode === "history" && (
+          {!extraOverlay && mode === "history" && (
             <HistoryPanel
               availabilityTier={availability}
               monthlyTier={monthly}
@@ -716,7 +717,7 @@ function Workspace({ onRegional }) {
             />
           )}
 
-          {mode === "future" && (
+          {!extraOverlay && mode === "future" && (
             <FuturePanel
               outlookTier={outlook}
               scenariosTier={scenarios}
@@ -1030,6 +1031,7 @@ function Workspace({ onRegional }) {
                 point ? (
                   <div className="hidden min-[900px]:block">
                     <SpotCard
+                      key={`${point.lon},${point.lat}`}
                       point={point}
                       placeHint={placeHint}
                       spotTier={spotTier}

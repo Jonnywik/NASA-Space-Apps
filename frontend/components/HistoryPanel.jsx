@@ -48,7 +48,7 @@ export function AvailabilityStrip({ tier, date }) {
               <div className="flex items-baseline justify-between gap-2 text-[12px]">
                 <span className="font-semibold text-[#16231B]">{ds.label}</span>
                 <span className="shrink-0 text-[11px] text-[#4A5850] tabular-nums">
-                  {t(KIND_LABEL[ds.kind] ?? "kind.other")} · {ds.start.slice(0, 4)}–{ds.end ? ds.end.slice(0, 4) : t("hist.now")}
+                  {t(KIND_LABEL[ds.kind] ?? "kind.other")} · {ds.start ? ds.start.slice(0, 4) : "—"}–{ds.end ? ds.end.slice(0, 4) : t("hist.now")}
                 </span>
               </div>
               <div

@@ -5,15 +5,15 @@ import ExposureTable from "./ExposureTable";
 import { Caveats, DemoTag, HelpButton, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
 
-function shortMonthDay(iso) {
+function shortMonthDay(iso, lang = "en") {
   if (!iso) return "—";
   const d = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  return d.toLocaleDateString(lang === "fil" ? "fil-PH" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
 function RainWaterScatter({ passes, imergPasses }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [showTable, setShowTable] = useState(false);
   const [activeDate, setActiveDate] = useState(null);
 
@@ -143,7 +143,7 @@ function RainWaterScatter({ passes, imergPasses }) {
                     fontWeight="600"
                     fill="#16231B"
                   >
-                    {shortMonthDay(pt.date)}
+                    {shortMonthDay(pt.date, lang)}
                   </text>
                 )}
               </g>
@@ -181,15 +181,15 @@ function RainWaterScatter({ passes, imergPasses }) {
 
 // N1 flood rhythm: "flooded on k of n passes".
 export default function RhythmPanel({ tier, exposureTier, passes = [], imergTier, onHelp, onPlace, onSources }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [more, setMore] = useState(false);
   const d = tier.data;
   const n = d?.passCount ?? passes.length ?? null;
   const max = d ? Math.max(0.0001, ...((d.km2ByCount ?? []).map((r) => r.km2 ?? 0))) : 1;
   const firstDate = passes[0]?.date;
   const lastDate = passes[passes.length - 1]?.date;
-  const fromLabel = shortMonthDay(firstDate);
-  const toLabel = shortMonthDay(lastDate);
+  const fromLabel = shortMonthDay(firstDate, lang);
+  const toLabel = shortMonthDay(lastDate, lang);
   const isDemo = d?.dataKind === "synthetic";
   const isExpDemo = exposureTier.data?.dataKind === "synthetic";
   const halfKm2 = fmt(d?.halfOrMoreKm2);

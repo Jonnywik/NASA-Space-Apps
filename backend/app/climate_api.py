@@ -308,15 +308,15 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
         check_area(area)
         if not scenarioId:
             raise err(422, "invalid_request", "scenarioId is required")
+        sc = scenarios(area)
+        chosen = next((s for s in sc["scenarios"] if s["id"] == scenarioId), None)
+        if chosen is None:  # a bad scenarioId is the client's error, whatever data exists
+            raise err(422, "invalid_request", f"unknown scenarioId '{scenarioId}'",
+                      validIds=[s["id"] for s in sc["scenarios"]])
         body = nisar_passes()
         if body is None:
             raise err(404, "data_unavailable", "the NISAR pass list does not exist yet")
         p, entry = power()
-        sc = scenarios(area)
-        chosen = next((s for s in sc["scenarios"] if s["id"] == scenarioId), None)
-        if chosen is None:
-            raise err(422, "invalid_request", f"unknown scenarioId '{scenarioId}'",
-                      validIds=[s["id"] for s in sc["scenarios"]])
         passes = [q for q in body["passes"] if q.get("date")]
         rain = {r["date"]: r for r in stats.pass_rainfall(p["daily"], [q["date"] for q in passes])}
         pts = [(q["date"], rain[q["date"]]["prior7DayMm"], q.get("floodedKm2")) for q in passes]
