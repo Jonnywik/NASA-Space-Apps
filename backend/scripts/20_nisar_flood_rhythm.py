@@ -122,6 +122,7 @@ def main(argv=None):
               "cmrManifest": manifest_path.name,
               "cmrManifestSha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(), "cmrRetrievedAt": manifest["retrievedAt"]}
     provenance = {"layout": layout.__dict__, "speckleWindow": args.speckle_window,
+                  "permanentWaterMaskSha256": hashlib.sha256(Path(args.permanent_mask).read_bytes()).hexdigest() if args.permanent_mask else None,
                   "accessModes": sorted({p.source["access"]["mode"] for p in passes}), "options": {k: v for k, v in vars(args).items() if k != "manifest"}}
     out_dir = Path(args.out_dir)
     path = pipeline.export_product(analysis, out_dir, data_kind="observed", source=source, extra_warnings=extra,

@@ -1,0 +1,121 @@
+[
+  {
+    "granuleId": "G4290912954-POCLOUD",
+    "acquisitionTime": "2026-06-23T21:54:59.000Z",
+    "validPixels": 0,
+    "sourceMd5": "cf32f711f990028f35de9965b9477019",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4230192523-POCLOUD",
+    "acquisitionTime": "2026-06-24T21:54:05.000Z",
+    "validPixels": 0,
+    "sourceMd5": "870145d2ff5d66a0a30362ae1906d0ba",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4233277774-POCLOUD",
+    "acquisitionTime": "2026-06-24T21:54:05.000Z",
+    "validPixels": 0,
+    "sourceMd5": "74f97fd4d0a67e253cca4fcff1642459",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4288703755-POCLOUD",
+    "acquisitionTime": "2026-06-24T21:54:05.000Z",
+    "validPixels": 0,
+    "sourceMd5": "aee21a49a23ac3e532611a9ebd23e2ec",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4252982074-POCLOUD",
+    "acquisitionTime": "2026-07-06T21:54:05.000Z",
+    "validPixels": 0,
+    "sourceMd5": "192aa82e033f4492456293e715c7538c",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4253239449-POCLOUD",
+    "acquisitionTime": "2026-07-06T21:54:05.000Z",
+    "validPixels": 0,
+    "sourceMd5": "fd3eac1bb15bf2e870f14b778f8a4eb5",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4260277403-POCLOUD",
+    "acquisitionTime": "2026-07-18T21:54:06.000Z",
+    "validPixels": 0,
+    "sourceMd5": "f19389925e45eeb8eb4f142490411100",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4277380929-POCLOUD",
+    "acquisitionTime": "2026-08-11T21:54:08.000Z",
+    "validPixels": 0,
+    "sourceMd5": "701e8e0a3505c2ba020327e8d6e5f4dc",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4286875035-POCLOUD",
+    "acquisitionTime": "2026-08-23T21:54:08.000Z",
+    "validPixels": 0,
+    "sourceMd5": "a3e5c977218f3d21a8b489ab9cf9fe75",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4342355404-POCLOUD",
+    "acquisitionTime": "2026-09-04T21:54:09.000Z",
+    "validPixels": 0,
+    "sourceMd5": "6df2a624ae718a3a8044c0542de1444f",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4316204600-POCLOUD",
+    "acquisitionTime": "2026-09-04T21:54:11.000Z",
+    "validPixels": 0,
+    "sourceMd5": "b0823c178c72a9f754db10a44910b513",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4361329706-POCLOUD",
+    "acquisitionTime": "2026-09-17T21:46:11.000Z",
+    "validPixels": 475494,
+    "sourceMd5": "dd591e020bd9385ebcaaecbcb4cd9036",
+    "binarySha256": "b9717025857bbee17d43f6c9752608d3bc34a4d612c6bbba41900cbc45566bf1"
+  },
+  {
+    "granuleId": "G4361859956-POCLOUD",
+    "acquisitionTime": "2026-10-10T21:54:09.000Z",
+    "validPixels": 0,
+    "sourceMd5": "2603b15c2daacc6286d12278cae3e38a",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4361778874-POCLOUD",
+    "acquisitionTime": "2026-10-11T21:46:11.000Z",
+    "validPixels": 475494,
+    "sourceMd5": "e7c59b06b1d7aa040c1d97a19d46d678",
+    "binarySha256": "1bfff899f1f6a11846b2b54754c9e136057bceb119dd381eaa2a8d25047d737a"
+  },
+  {
+    "granuleId": "G4385358344-POCLOUD",
+    "acquisitionTime": "2026-10-22T21:54:09.000Z",
+    "validPixels": 0,
+    "sourceMd5": "fb8e40e529a1ee8f2a7cb7fecf64b3ff",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4408049669-POCLOUD",
+    "acquisitionTime": "2026-11-03T21:54:09.000Z",
+    "validPixels": 0,
+    "sourceMd5": "6d1293f20fb97e9e21cf92a5938f7911",
+    "binarySha256": "32690a14666575fdfc62a43765ab5f10ff70c5a9a676d77af1000858274fcce7"
+  },
+  {
+    "granuleId": "G4408674689-POCLOUD",
+    "acquisitionTime": "2026-11-04T21:46:11.000Z",
+    "validPixels": 475494,
+    "sourceMd5": "3380ea5469bd8023b24c32c83e718e06",
+    "binarySha256": "eedb9a6ff860a9eb9a4755189c92e96b843e68f4daa5cdb869e3aee30b51e617"
+  }
+]

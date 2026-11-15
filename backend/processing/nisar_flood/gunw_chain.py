@@ -32,6 +32,7 @@ SHA_PLACEHOLDER = "PENDING-download-then-rerun-with---fill-hashes"
 # Dataset paths follow the public NISAR GUNW spec layout. UNVERIFIED until checked on a real file.
 GUNW_BASE = "/science/LSAR/GUNW/grids/frequencyA/unwrappedInterferogram"
 GUNW_POL = "HH"
+CENTER_FREQUENCY = "/science/LSAR/GUNW/grids/frequencyA/centerFrequency"
 
 
 def gunw_paths(base: str = GUNW_BASE, pol: str = GUNW_POL) -> dict:
@@ -53,15 +54,21 @@ def inspect_local_file(path: Path, paths: dict, bbox=STUDY_BBOX) -> dict:
         for key in ("x", "y", "phase", "coherence", "components"):
             if paths[key] not in handle:
                 raise ValueError(f"{paths[key]!r} is not in {path.name}; fix --gunw-base/--gunw-pol after inspecting the file")
+        wavelength = None
+        if CENTER_FREQUENCY in handle:
+            frequency = np.asarray(handle[CENTER_FREQUENCY][()])
+            if frequency.shape != () or frequency.dtype.kind not in "iuf" or not np.isfinite(frequency) or frequency <= 0:
+                raise ValueError(f"{CENTER_FREQUENCY} must be a finite positive scalar frequency in Hz")
+            wavelength = SPEED_OF_LIGHT / float(frequency)
         x = np.asarray(handle[paths["x"]][...], dtype="float64")
         y = np.asarray(handle[paths["y"]][...], dtype="float64")
         crs, how = _read_crs(handle, layout)
         try:
             rows, cols, _, info = window_for_bbox(x, y, crs, bbox, pad=8)
         except OutsideGrid:
-            return {"crs": crs, "crsSource": how, "window": None, "outside": True, "shape": [int(y.size), int(x.size)]}
+            return {"crs": crs, "crsSource": how, "window": None, "outside": True, "shape": [int(y.size), int(x.size)], "wavelengthMetres": wavelength}
         return {"crs": crs, "crsSource": how, "shape": [int(y.size), int(x.size)],
-                "window": {"rowStart": rows.start, "rowStop": rows.stop, "colStart": cols.start, "colStop": cols.stop}, "outside": False}
+                "window": {"rowStart": rows.start, "rowStop": rows.stop, "colStart": cols.start, "colStop": cols.stop}, "outside": False, "wavelengthMetres": wavelength}
 
 
 def build_ingest_config(row: dict, *, config_dir: Path, raw_dir: Path, paths: dict, phase_sign=None,
@@ -85,6 +92,12 @@ def build_ingest_config(row: dict, *, config_dir: Path, raw_dir: Path, paths: di
         status["problems"].append("sha256 not filled (run with --fill-hashes)")
     if phase_sign not in (-1, 1):
         status["problems"].append("phaseToAwaySign is a placeholder: set --phase-sign after checking the product spec")
+    wavelength = (inspected or {}).get("wavelengthMetres")
+    wavelength_warning = None
+    if wavelength is None:
+        wavelength = WAVELENGTH_M
+        wavelength_warning = f"centerFrequency unavailable; using nominal wavelength {WAVELENGTH_M} m"
+        status.setdefault("warnings", []).append(wavelength_warning)
     profile = {
         "id": "nisar-gunw-unwrapped-hh", "version": "1", "adapter": "hdf5", "status": "needs-review", "evidence": [],
         "arrayAxisOrder": "yx", "crs": (inspected or {}).get("crs", "EPSG:32651"),
@@ -106,7 +119,7 @@ def build_ingest_config(row: dict, *, config_dir: Path, raw_dir: Path, paths: di
             "orbit": f"track {row['track']} {'descending' if row['direction'] == 'D' else 'ascending'}", "frame": str(row["frame"]),
             "processingVersion": str(row.get("productVersion") or row["collectionShortName"]), "maturity": row["maturity"],
             "acquisitionDates": [row["referenceTime"], row["secondaryTime"]],
-            "wavelengthMetres": WAVELENGTH_M, "wavelengthUnits": "metre",
+            "wavelengthMetres": wavelength, "wavelengthUnits": "metre",
             "phaseToAwaySign": phase_sign if phase_sign in (-1, 1) else SIGN_PLACEHOLDER, "phaseUnits": "radian",
             "correctionsApplied": list(corrections_applied or []),
             "quality": {"cmrBboxCoverageFraction": row.get("bboxCoverageFraction"), "pairDays": row.get("pairDays")},
@@ -114,10 +127,11 @@ def build_ingest_config(row: dict, *, config_dir: Path, raw_dir: Path, paths: di
         "sourceProfile": profile,
         "_unverified": [
             "dataset paths, units and CRS follow the public spec and have not been read from a real file",
-            f"wavelength {WAVELENGTH_M} m is c / {L_BAND_CENTER_HZ / 1e9} GHz; confirm against the file's centre-frequency metadata",
             "correctionsApplied is the empty list unless --corrections-applied was given; check what the provisional GUNW already applied",
         ],
     }
+    if wavelength_warning:
+        config["_unverified"].append(wavelength_warning)
     return config, status
 
 

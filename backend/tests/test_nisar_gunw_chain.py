@@ -1,5 +1,7 @@
 import json
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -57,6 +59,40 @@ class GunwChainTests(unittest.TestCase):
 
     def test_wavelength_is_l_band(self):
         self.assertAlmostEqual(gunw_chain.WAVELENGTH_M, 0.2384, places=4)
+
+    def test_file_frequency_drives_wavelength(self):
+        path = self.raw / gunw_chain.local_name(self.rows[0])
+        with h5py.File(path, "a") as f:
+            f.create_dataset(gunw_chain.CENTER_FREQUENCY, data=1.239e9)
+        config, status = gunw_chain.build_ingest_config(self.rows[0], config_dir=self.dir, raw_dir=self.raw, paths=self.paths)
+        self.assertAlmostEqual(config["source"]["wavelengthMetres"], 299792458 / 1.239e9)
+        self.assertNotIn("warnings", status)
+        self.assertFalse(any("wavelength" in warning for warning in config["_unverified"]))
+
+    def test_missing_frequency_warns_and_uses_nominal(self):
+        config, status = gunw_chain.build_ingest_config(self.rows[0], config_dir=self.dir, raw_dir=self.raw, paths=self.paths)
+        self.assertEqual(config["source"]["wavelengthMetres"], gunw_chain.WAVELENGTH_M)
+        self.assertIn("nominal wavelength", status["warnings"][0])
+        self.assertIn(status["warnings"][0], config["_unverified"])
+
+    def test_cli_prints_missing_frequency_warning(self):
+        manifest = self.dir / "manifest.json"
+        manifest.write_text(json.dumps(self.manifest))
+        script = Path(__file__).resolve().parents[1] / "scripts" / "21_nisar_gunw_chain.py"
+        result = subprocess.run([sys.executable, str(script), "--manifest", str(manifest), "--raw-dir", str(self.raw),
+                                 "--out-dir", str(self.dir / "chain")], capture_output=True, text=True, check=True)
+        self.assertIn("WARNING: 2026-06-28_2026-07-10: centerFrequency unavailable", result.stderr)
+
+    def test_invalid_frequency_is_rejected(self):
+        path = self.raw / gunw_chain.local_name(self.rows[0])
+        for value in (0, -1, float("nan"), float("inf"), b"invalid", [1.239e9], True):
+            with self.subTest(value=value):
+                with h5py.File(path, "a") as f:
+                    if gunw_chain.CENTER_FREQUENCY in f:
+                        del f[gunw_chain.CENTER_FREQUENCY]
+                    f.create_dataset(gunw_chain.CENTER_FREQUENCY, data=value)
+                with self.assertRaisesRegex(ValueError, "centerFrequency"):
+                    gunw_chain.build_ingest_config(self.rows[0], config_dir=self.dir, raw_dir=self.raw, paths=self.paths)
 
     def test_placeholders_block_everything_and_ingest_refuses(self):
         summary = gunw_chain.write_chain(self.manifest, self.dir / "chain", self.raw, paths=self.paths)

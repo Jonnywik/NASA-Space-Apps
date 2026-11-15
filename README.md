@@ -1,50 +1,63 @@
 # Tanaw
 
-[![CI](https://github.com/Jonnywik/NASA-SA-Final/actions/workflows/ci.yml/badge.svg)](https://github.com/Jonnywik/NASA-SA-Final/actions/workflows/ci.yml)
-
-Tanaw is a work-in-progress NASA Space Apps entry for exploring flood and land-motion data in CAMANAVA and the Bulacan coast.
+NISAR sees CAMANAVA and the Bulacan coast through clouds and rain. Tanaw explores what its L-band radar can show about water and wetness, and what it cannot yet see. Eleven track 140 ascending passes from 23 June to 2 November 2026 capture open water outside the usual water mask, mainly at the urban fringe, wetlands and coast. In the regenerated v6 product, 0.3721 km² (about 0.37 km²) is classified as open water on at least half of valid passes, and 0.9919 km² at least once. These are rule-dependent measurements and do not map flooded city streets. See the [real-run notes](docs/NISAR_RUNBOOK.md#real-run-results-15-nov-2026-coordinator-first-real-nisar-read).
 
 ## Limitations first
 
-- **No real NISAR run yet.** Earthdata access is deferred. The catalogue contains real granule metadata, but no NISAR flood, motion or priority result has been verified from those files. Generated flood fixtures are explicitly synthetic and are not observations.
-- **Validation remains incomplete.** No independent agreement or threshold-sensitivity result can be claimed without real NISAR outputs. See [validation](docs/VALIDATION.md).
-- **Motion is line-of-sight**, not necessarily vertical motion. A short seasonal record is not a long-term rate. Exposure is not damage, and conditional scenarios are not predictions.
-- NASA POWER, Open-Meteo and places caches contain retrieved data; their resolution, age and coverage limit interpretation. OSM building completeness is unknown. Sentinel-1 is separate context, never relabelled as NISAR.
-- Filipino text awaits the user's review; the complete [review sheet](docs/FIL_REVIEW.md) includes UI strings, hypotheses and briefing templates. No personal stories are invented. Frontend integration builds, but visual and keyboard checks remain unverified because laptop browser control stopped; no public demo was deployed.
+- **Urban street flooding is not visible in this open-water layer.** Water between buildings can brighten radar returns, while narrow streets, shadow and layover complicate detection. A missing signal does not mean the city did not flood.
+- Passes were around **05:30 Manila time**, roughly every 12 days; floods between passes or after the morning acquisition can be missed. IMERG gives coarse rainfall timing, not street-level rain.
+- **Ground motion and priority zones are unavailable.** The short GUNW record is dominated by ionospheric noise and the phase sign and correction state need further work; no motion measurement is presented. Exposure is not damage.
+- Most selected GCOV products and all selected SME2 products are provisional and may change. Water thresholds and the 2021 WorldCover mask affect the result. Three OPERA comparisons are more than 48 hours apart from the NISAR passes, compare total water including coast and permanent water, and are not flood accuracy. See [validation](docs/VALIDATION.md).
+- Soil moisture is a provisional 200 m product with recommended retrievals on only about 5–7% of study cells; it is not served as a flood layer. NASA POWER can overestimate dry-season rain, WorldPop is a 2020 model, and OSM building completeness is unknown. Conditional scenarios are not predictions.
+- Filipino wording, independent user testing, public deployment and the recording require confirmation; none is claimed here. Sentinel-1 is separate context, never NISAR.
 
 ## Challenge mapping
 
-Statuses describe software and available evidence, not a verified submission. Feature codes are in [the scope](docs/SUBMISSION_SCOPE.md).
+Statuses describe the evidence and implementation; they do not imply a verified deployment. See the [scope](docs/SUBMISSION_SCOPE.md) and [API contract](docs/API_CONTRACT.md).
 
 | Challenge asks for | Tanaw | Status |
 |---|---|---|
-| NISAR surface change, flood extent and animation | Flood rhythm and pass views | Done with synthetic data; real processing blocked |
-| Coastal deformation | GUNW processing and line-of-sight series | Partial; real motion unverified |
-| Agricultural and vegetation change | Flooded vegetation and polarization processing | Done with synthetic data; real results unverified |
-| Maps, time series and accessible summaries | Workspace, search, spot check and bilingual briefing | Software integrated and built; browser and Filipino review pending |
-| Actionable information | Priority-mask and exposure software, briefing exports | Partial; no observed priority result |
-| Supplemental GIS and rainfall | Places and climate caches and processing | Done with retrieved data; subject to source limitations |
-| Independent validation | Comparison software and source research | Partial; no real NISAR comparison |
-| Physical drivers and personal context | Referenced hypotheses and team stories | Four sourced hypotheses integrated; hypotheses are not findings; stories require team-authored text |
-| Other sensors and future applications | Sentinel-1 context and future ideas | Partial; separate from NISAR |
-| Open source and public access | MIT licence; public demo | Partial; demo not verified |
+| NISAR surface water and time series | GCOV open water outside usual water over 11 passes | real-but-limited |
+| Agricultural and vegetation change | Possible flooded vegetation and polarizations | real-but-limited |
+| Coastal deformation | GUNW examined; no defensible motion result | unavailable |
+| Maps, search and summaries | Workspace, places, spot check and briefing | real-but-limited |
+| Actionable information | Place exposure and briefing; priority zones require motion | real-but-limited |
+| Rainfall and GIS context | IMERG, POWER, WorldCover, WorldPop, boundaries and OSM | real-but-limited |
+| Independent validation | Three near-date OPERA total-water comparisons | real-but-limited |
+| Physical drivers | Sourced hypotheses, not established causes | real-but-limited |
+| Personal context | Team-authored stories | unavailable |
+| Other sensors | Sentinel-1 historical context | real-but-limited |
+| Vertical motion | Requires compatible multi-geometry evidence | cut |
+| Open source and public access | MIT licence; deployed demo not verified | real-but-limited |
 
 ## Data sources
 
-See [the data manifest](docs/DATA_MANIFEST.md) for sources, dates, hashes and gaps. The default NISAR catalogue selection is track 140 ascending, frame 009; catalogue coverage does not prove usable pixel coverage.
+The [data manifest](docs/DATA_MANIFEST.md) records granules, versions, retrieval dates and source limitations. The derived NISAR product is large and gitignored; the cached catalogue and rule do not themselves contain its pixels.
+
+For NISAR passes on 15 September, 9 October and 2 November, agreement with OPERA was 0.8712, 0.8499 and 0.8750; F1 was 0.7291, 0.6662 and 0.7386; IoU was 0.5737, 0.4994 and 0.5855. Each reference was acquired about 48 hours 15 minutes later. The comparison includes coastal and permanent water; OPERA may also include inundated vegetation. These scores are not ground-truth flood accuracy.
+
+Changing both thresholds by -1, 0 and +1 dB yields half-or-more areas of 0.0230, 0.3721 and 0.3588 km². Permanent water is recalculated for each threshold, so the results are not necessarily monotonic and are not a confidence interval.
 
 ## Reproduce locally on Windows
 
-From PowerShell at the repository root, install Python 3.12 and Node 20, then:
+Use Python 3.12 and Node 20. An Earthdata account and access to ASF and NASA GES DISC are needed for remote reads. Set `EARTHDATA_TOKEN` privately in the **same PowerShell session** used for processing; never save or print it in the repository. Range reads require network access. Script 20 replaces the existing local NISAR output. Fresh catalogue queries can select newly released products, so retain the committed manifest to reproduce the recorded selection; compare it with the refreshed manifest before using new results.
+
+From the repository root:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -r backend/requirements-dev.txt
 cd backend
+..\.venv\Scripts\python scripts/19_nisar_search.py --track 140 --direction A --frame 9 --out data/cache/nisar/nisar_manifest_refresh.json
+..\.venv\Scripts\python scripts/23_worldcover_water_mask.py --dilate-px 1
+..\.venv\Scripts\python scripts/20_nisar_flood_rhythm.py --manifest data/cache/nisar/nisar_manifest_t140_A_f009_m4005.json --rule-file data/cache/nisar/water_rule_t140_A_f009.json --permanent-mask data/cache/places/worldcover_water_mask.tif --landcover data/cache/places/esa_worldcover_2021_clip.tif
+..\.venv\Scripts\python scripts/61_opera_comparison.py
+..\.venv\Scripts\python scripts/25_nisar_soil_moisture.py --track 140 --direction A --frame 9
+..\.venv\Scripts\python scripts/31_fetch_imerg_passes.py --hours 48 --workers 12
 ..\.venv\Scripts\python -m uvicorn app.main:app --reload
 ```
 
-In a second PowerShell window at the repository root:
+Scripts 25 and 31 refresh their caches and may reflect newer upstream data. Check [the runbook](docs/NISAR_RUNBOOK.md) for the first-file checks and scientific interpretation. In a second PowerShell window at the repository root:
 
 ```powershell
 cd frontend
@@ -52,19 +65,9 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000; backend API documentation is at http://127.0.0.1:8000/docs. The frontend defaults to that API; NEXT_PUBLIC_USE_FIXTURES=1 enables synthetic frontend fixtures for development.
-
-To generate **synthetic development flood output** from the cached catalogue dates, with the backend stopped, run from `backend/`:
-
-```powershell
-..\.venv\Scripts\python scripts/22_nisar_synthetic_demo.py
-```
-
-This creates synthetic pixels, not NISAR observations, and refuses to replace an observed product unless forced. Climate and places caches can be refreshed with scripts 30_fetch_climate.py and 40_fetch_places.py; refreshing may change data and requires network access. Their existing manifests record the retrieved versions. Real NISAR processing requires Earthdata access, first-file checks and calibration described in [the runbook](docs/NISAR_RUNBOOK.md); it has not been performed for this build. Thus there is no sequence yet that reproduces submitted real NISAR products.
+Open http://localhost:3000; the API documentation is at http://127.0.0.1:8000/docs. The frontend defaults to this API. `NEXT_PUBLIC_USE_FIXTURES=1` enables synthetic development fixtures; they are not observations.
 
 ## Tests
-
-From the repository root:
 
 ```powershell
 cd backend
@@ -75,41 +78,12 @@ npm run test:api
 npm run build
 ```
 
-CI is configured in .github/workflows/ci.yml; run results depend on the current checkout.
+## Further documentation
 
-## Integration checks and recording
+- [Data manifest](docs/DATA_MANIFEST.md), [validation](docs/VALIDATION.md), [source review](docs/SOURCE_REVIEW.md), and [integration checks](docs/INTEGRATION_CHECK.md)
+- [NISAR runbook](docs/NISAR_RUNBOOK.md), [API contract](docs/API_CONTRACT.md), and [submission scope](docs/SUBMISSION_SCOPE.md)
+- [Coherence pipeline](backend/COHERENCE_PIPELINE.md), [P2 pipeline](backend/DREI_P2_PIPELINE.md), and [P3 pipeline](backend/P3_PIPELINE.md)
 
-The spot-check card uses `/api/v1/spot-check` for its facts. It offers English and Filipino printable HTML briefings and a CSV download. The real cached boundary lookup places the test point `120.957, 14.665` in Niugan, City of Malabon. Exports were checked directly against those API facts; unavailable NISAR, motion and priority values remain missing with reasons. The Independent comparison card stays unavailable until a compatible observed comparison exists.
+## AI assistance and licence
 
-The pass legend now uses the backend renderer's shared colours. Data credits are reachable in the Limits drawer. Source findings and unresolved coverage checks are in [SOURCE_REVIEW.md](docs/SOURCE_REVIEW.md); the remaining laptop and recording checks are in [INTEGRATION_CHECK.md](docs/INTEGRATION_CHECK.md). These checks do not establish a working observed NISAR submission.
-
-## Repository layout
-
-| Path | Contents |
-|---|---|
-| `backend/app/` | FastAPI application |
-| `backend/scripts/` | Numbered offline processing scripts |
-| `backend/processing/` | Processing modules |
-| `backend/tests/` | Backend unit tests |
-| `backend/data/` | Local data and outputs (large raw products are not committed) |
-| `frontend/` | Next.js web app |
-| `docs/` | Scope, API contract and data manifest |
-
-## Pipeline documentation
-
-- [backend/COHERENCE_PIPELINE.md](backend/COHERENCE_PIPELINE.md): paired HyP3 coherence extraction, change mapping, input manifests and verification commands.
-- [backend/DREI_P2_PIPELINE.md](backend/DREI_P2_PIPELINE.md)
-- [backend/P3_PIPELINE.md](backend/P3_PIPELINE.md): NISAR ground-motion, vegetation, scenario and briefing modules.
-- [docs/API_CONTRACT.md](docs/API_CONTRACT.md) and [docs/SUBMISSION_SCOPE.md](docs/SUBMISSION_SCOPE.md)
-
-## Future of NISAR
-
-Future work, not part of the current build: near-real-time flood alerts for local government units, nationwide subsidence monitoring, and crop-loss warning. Flood watch and evacuation planning are the first roadmap items.
-
-## AI assistance
-
-AI coding assistants were used in development; see the submission page for the full disclosure.
-
-## Licence
-
-[MIT](LICENSE). Copyright 2026 Tanaw contributors.
+AI coding assistants were used in development. Record the full disclosure on the submission page. [MIT licence](LICENSE), copyright 2026 Tanaw contributors.

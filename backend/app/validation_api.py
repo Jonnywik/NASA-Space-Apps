@@ -1,5 +1,6 @@
 """Read-only validation results; calculations are performed offline."""
 import json
+import hashlib
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
 
@@ -17,7 +18,11 @@ def make_router(output_root, read_public_events):
             try:
                 result = json.loads(path.read_text(encoding="utf-8"))
                 sources = result.get("source", {})
+                product = Path(output_root) / area / "nisar" / "manifest.json"
+                expected = sources.get("nisar", {}).get("productManifestSha256") if isinstance(sources, dict) else None
+                current = hashlib.sha256(product.read_bytes()).hexdigest() if product.is_file() else None
                 if (result.get("area") == area and result.get("dataKind") == "derived"
+                        and expected and expected == current
                         and result.get("status") == "partial" and isinstance(sources, dict)
                         and all(isinstance(sources.get(name), dict)
                                 and sources[name].get("dataKind") in ("observed", "derived")

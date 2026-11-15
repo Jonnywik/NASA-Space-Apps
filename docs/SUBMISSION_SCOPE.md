@@ -35,7 +35,7 @@ This is honest and still NISAR-centred. Judges score Validity and Relevance high
 - **New:** IMERG rain timing per pass (`GET /api/v1/climate/imerg/passes`, see `docs/API_CONTRACT.md`).
 
 ### Getting the real product on another machine
-The real product folder (`backend/data/output/camanava_2026/nisar/`, 376 MB) is gitignored. Regenerate it in about 5 minutes with an Earthdata token; the exact rule is committed:
+The real product folder (`backend/data/output/camanava_2026/nisar/`, 376 MB) is gitignored. Regenerate it in about 5 minutes with an Earthdata token; the exact rule is committed. **If a real product already exists on a machine, don't regenerate it:** the OPERA validation results are bound to the product manifest's SHA-256 (`productManifestSha256` in `backend/data/cache/validation/camanava_2026.json`). After any regeneration, re-run `python scripts/61_opera_comparison.py` to rebuild validation for the new product.
 
 ```
 cd backend

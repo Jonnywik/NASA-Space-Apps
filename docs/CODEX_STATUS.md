@@ -1,5 +1,21 @@
 # Codex implementation status — 15 November 2026
 
+## Round 2 update
+
+This update supersedes the older status below: real GCOV windows were processed, and GUNW windows were examined without producing a defensible motion product. The coordinator regenerated the canonical v6 product using the committed rule and one-pixel-dilated WorldCover mask: 0.3721 km² on at least half of valid passes and 0.9919 km² at least once. Do not use an older local output as that product.
+
+| Task | Status | Evidence / blocker |
+|---|---|---|
+| R2.1 GUNW wavelength | Complete | File frequency gives 0.2419632429378531 m; 12 focused tests passed. No public motion result is authorized. |
+| R2.2 OPERA comparison | Complete, limited | Three usable near matches compared with the regenerated v6 product; results and sensitivity are in [validation](VALIDATION.md). All 355 backend tests passed. |
+| R2.3 README truth pass | Complete in working tree | README and data manifest describe real data, limitations, granules, validation and reproduction. No commit or push by this agent. |
+
+No additional phase-sign or motion research, priority output, user research or video is claimed by this update.
+
+Final Round 2 verification: all **355 backend tests passed** on the current checkout. Live API checks returned three qualified comparisons, sensitivity baseline 0.3721 km² matching the canonical rhythm, and eleven IMERG pass records. The wavelength reader was checked on an actual GUNW subset: 0.2419632429378531 m. Frontend A7 remains with Antigravity; no frontend files were changed in Round 2. Ground-motion research and promotion remain deferred under R2.4.
+
+## Earlier implementation status (historical)
+
 Base: `81cf929`. Terra agents implemented T3 (xhigh), T4 (high), T5/T6 (high), and T7 (low). Root coordinated integration and review. The user explicitly chose to continue without Earthdata access for now. No actual NISAR flood or motion result is claimed.
 
 | Task | Status | Evidence / blocker |

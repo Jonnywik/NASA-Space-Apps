@@ -79,6 +79,9 @@ def main(argv=None):
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(f"Wrote {len(summary['ingestConfigs'])} ingest configs, {summary['referenceConfig']} and {summary['shellScript']} in {out_dir}")
+    for pair in summary["pairs"]:
+        for warning in pair.get("warnings", []):
+            print(f"WARNING: {pair['pair']}: {warning}", file=sys.stderr)
     if summary["chainGaps"]:
         print("WARNING: pairs do not chain without gaps:", summary["chainGaps"])
     problems = gunw_chain.blocking_problems(summary)
