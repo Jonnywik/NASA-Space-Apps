@@ -161,3 +161,35 @@ Run from the cloud session with the proxy-held Earthdata token, track 140 A / fr
 ### Open
 - The rule was calibrated on the bay with a margin chosen for wind roughening. A stricter or looser margin changes the totals only slightly because most permanent water is masked, but it has not been tested against an independent flood map (OPERA DSWx-S1 matches 10 of 11 passes in the catalogue, not yet downloaded).
 - Ground motion (T2) has not been run.
+
+## Ground motion (T2): first real look, 15 Nov 2026 (coordinator)
+
+**Status: stopped at the planned approval point. No ground-motion product was produced, and none is served.** The two decisions script 21 refuses to guess (phase sign, stable reference area) could not be settled from the evidence below.
+
+### What was done
+- `scripts/24_nisar_gunw_subset.py` (new) saved only the study window of all 9 real GUNW pairs on track 140 A / frame 9, 23 Jun → 21 Oct 2026. That is 339 × 251 pixels at 80 m, about 0.9 MB per pair instead of 2.3 GB, with the same internal paths, so scripts 21 and 10–12 can read them. The files are in `data/raw/nisar/gunw/` (gitignored). Each records its source URL, the full granule's MD5 and the window.
+- **Layout verified on the real file:** `science/LSAR/GUNW/grids/frequencyA/unwrappedInterferogram/{xCoordinates,yCoordinates,projection}` and `.../HH/{unwrappedPhase,coherenceMagnitude,connectedComponents,ionospherePhaseScreen}`, phase in radians, posting 80 m.
+- **Wavelength:** the file's `centerFrequency` is 1.239 GHz, so **λ = 0.2420 m**. `gunw_chain.py` hard-codes 0.2384 m (1.2575 GHz nominal), which must be changed before any run.
+- **Corrections:** the processing metadata says ionospheric and tropospheric corrections were applied **to geolocation only**. The ionosphere phase screen is a separate layer, **not applied to the unwrapped phase**.
+- **Sign convention:** the GUNW product specification (JPL D-102272 Rev E, Nov 2024; downloaded from the NISAR sample-docs folder) describes the unwrapped phase in radians but **does not state whether positive phase means motion toward or away from the satellite.** The ASF GUNW user-guide page doesn't state it either.
+
+### Evidence gathered (window statistics, 9 pairs)
+- **Coherence:** mean 0.38–0.46 per pair; 54–65 % of the window has coherence ≥ 0.3. Urban inland areas are high (Valenzuela about 0.67; east Caloocan about 0.70); the Navotas/Malabon coast is about 0.33; the Obando/Bulacan fishpond coast is about 0.19, too low for reliable unwrapping.
+- **Ionosphere:** within this 25 km window, the difference between "raw" and "ionosphere-subtracted" relative phase is 2–3 radians (about 40–60 mm) in every test region over the chain. L-band ionosphere dominates the signal here.
+- **Sign check against known subsidence:** summed phase over the chain relative to a north-east reference box (121.00–121.04 E, 14.76–14.82 N), converted at 19.25 mm/rad:
+
+| Region | Raw | Ionosphere-subtracted |
+|---|---|---|
+| Navotas/Malabon coast | −47 mm | +5 mm |
+| Obando/Bulacan coast | −30 mm | −1 mm |
+| Valenzuela inland | −35 mm | +30 mm |
+| East Caloocan | −44 mm | +15 mm |
+
+  Per-pair signs alternate in every region. Published InSAR studies place the fastest subsidence on the coast, but here the inland region moves more than the coast after ionosphere subtraction. That points to residual ionospheric or tropospheric noise, not deformation. **The empirical check doesn't establish the sign, and the 4-month signal is not separable from noise with this approach.**
+
+### What a defensible result would need
+1. The phase sign from an authoritative source: the NISAR RIFG/RUNW product spec or ATBD, or ISCE3's interferogram convention confirmed against a documented example.
+2. The ionosphere screen's sign relative to the phase (`--ionosphere-sign`), confirmed the same way, then applied.
+3. Tropospheric correction (wet season), redundancy (NISAR provides only 12-day nearest-neighbour GUNW pairs, so no redundant network), and a longer record than 4 months. A real reference area should be chosen on ground with independent evidence of stability.
+
+Until then, Ground motion shows "not available yet", and priority zones (which need motion) stay unavailable.
