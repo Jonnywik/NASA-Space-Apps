@@ -143,8 +143,9 @@ export default function SearchBox({ onSelect, inputRef, highlight = false }) {
               <span className="font-semibold">{r.name}</span>
               <span className="ml-2 text-xs text-[#4A5850]">
                 {t(`search.level.${r.level}`)}
-                {r.city && r.city !== r.name ? ` · ${r.city}` : ""}
+                {r.city && r.city !== r.name ? ` · ${r.city === r.province ? t("search.townOf", { town: r.city }) : r.city}` : ""}
                 {r.province ? ` · ${r.province}` : ""}
+                {r.inStudyArea === false ? ` · ${t("search.outside")}` : ""}
               </span>
             </li>
           ))}

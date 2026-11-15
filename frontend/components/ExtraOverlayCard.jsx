@@ -3,6 +3,7 @@
 import React from "react";
 import { Caveats, Section, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
+import { landCoverName } from "../utils/reasons";
 
 function ExtraOverlayCard({ tier, title, testId, stats, medianCol, medianValue, caption, onSources }) {
   const { t } = useLang();
@@ -37,7 +38,7 @@ function ExtraOverlayCard({ tier, title, testId, stats, medianCol, medianValue, 
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.class ?? r.name} className="border-t border-[#DCE3DB]">
-                      <td className="px-2.5 py-1.5 font-medium">{r.name ?? r.class}</td>
+                      <td className="px-2.5 py-1.5 font-medium">{landCoverName(t, r)}</td>
                       <td className="px-2.5 py-1.5 text-right tabular-nums text-[#4A5850]">{fmt(r.cells, 0) ?? "—"}</td>
                       <td className="px-2.5 py-1.5 text-right font-semibold tabular-nums">{fmt(medianValue(r), 3) ?? "—"}</td>
                     </tr>

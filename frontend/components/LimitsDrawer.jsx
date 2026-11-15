@@ -17,10 +17,19 @@ function formatBytes(bytes) {
 }
 
 // U8 Limits drawer: standing caveats plus every limitation / warning string returned by APIs in view.
-export default function LimitsDrawer({ open, onClose, downloadsTier = null }) {
+export default function LimitsDrawer({ open, onClose, downloadsTier = null, focusDownloads = false }) {
   const { t } = useLang();
   const { entries } = useLimits();
   const closeRef = useRef(null);
+  const downloadsRef = useRef(null);
+  const downloadCount = Array.isArray(downloadsTier) ? downloadsTier.length : downloadsTier?.data?.length ?? 0;
+
+  useEffect(() => {
+    if (!open || !focusDownloads) return undefined;
+    // after the drawer has focused its Close button (which would scroll back to the top)
+    const id = window.setTimeout(() => downloadsRef.current?.scrollIntoView({ block: "start" }), 60);
+    return () => window.clearTimeout(id);
+  }, [open, focusDownloads, downloadCount]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -128,7 +137,7 @@ export default function LimitsDrawer({ open, onClose, downloadsTier = null }) {
         ))}
 
         {downloads.length > 0 && (
-          <section className="mt-6 border-t border-[#DCE3DB] pt-4" data-testid="downloads-list">
+          <section ref={downloadsRef} className="mt-6 border-t border-[#DCE3DB] pt-4" data-testid="downloads-list">
             <h3 className="font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("downloads.title")}</h3>
             <p className="mt-1 text-[12px] text-[#4A5850]">{t("downloads.lead")}</p>
             <ul className="mt-2.5 space-y-2">

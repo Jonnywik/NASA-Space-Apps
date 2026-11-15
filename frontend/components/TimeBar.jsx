@@ -271,6 +271,16 @@ export default function TimeBar({ mode, passes, idx, onIdx, playing, onPlaying, 
             <div className="text-[11px] text-[#4A5850]">
               {passWindowStart && passWindowEnd ? `${passWindowStart.slice(5)} → ${passWindowEnd.slice(5)}` : "2026"}
             </div>
+            <div className="mt-0.5 hidden items-center gap-2 text-[10px] text-[#4A5850] lg:flex 2xl:hidden" aria-hidden="true">
+              <span className="flex items-center gap-1">
+                <span className="h-2 w-1.5 rounded-sm bg-[#6BAED6]" />
+                {t("time.v2.rainShort")}
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-[#1E5B3A]" />
+                {t("time.v2.passShort")}
+              </span>
+            </div>
           </div>
         )}
 
@@ -299,13 +309,13 @@ export default function TimeBar({ mode, passes, idx, onIdx, playing, onPlaying, 
               const active = i === idx;
               const pctPos = ((Date.parse(`${p.date}T00:00:00Z`) - rainRange.t0) / (rainRange.t1 - rainRange.t0)) * 100;
               return (
-                <li key={p.id} className="min-w-[56px] flex-1" data-pos={Math.round(pctPos)}>
+                <li key={p.id} className="min-w-[46px] flex-1" data-pos={Math.round(pctPos)}>
                   <button
                     type="button"
                     onClick={() => onIdx(i)}
                     aria-current={active ? "true" : undefined}
                     aria-label={`${t("time.pass")} ${p.date}`}
-                    className={`flex w-full items-center justify-center gap-1 whitespace-nowrap rounded-md border px-1.5 py-1 text-[11px] font-medium tabular-nums transition-colors ${
+                    className={`flex w-full items-center justify-center gap-1 whitespace-nowrap rounded-md border px-1 py-1 text-[11px] font-medium tabular-nums transition-colors ${
                       active && isSeason
                         ? "border-[#1E5B3A] bg-[#E3EFE7] font-bold text-[#123B25]"
                         : "border-[#DCE3DB] bg-white text-[#4A5850] hover:bg-[#F2F5F1]"
@@ -324,7 +334,7 @@ export default function TimeBar({ mode, passes, idx, onIdx, playing, onPlaying, 
           </ol>
         </div>
 
-        <div className="hidden shrink-0 flex-col gap-0.5 text-[11px] text-[#4A5850] lg:flex" aria-hidden="true">
+        <div className="hidden shrink-0 flex-col gap-0.5 text-[11px] text-[#4A5850] 2xl:flex" aria-hidden="true">
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2 rounded-sm bg-[#6BAED6]" />
             {t("time.v2.dailyRain")}

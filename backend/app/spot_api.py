@@ -140,7 +140,7 @@ def make_router(output_root, read_public_events, places_root=None, climate_root=
                                          kind=priority_meta.get('dataKind') if priority_meta else None)
         try:
             from processing.places.exposure import exposure_for_mask
-            barangay = streams['place']['value']['barangay']
+            barangay = (streams['place']['value'] or {}).get('barangay')
             if not barangay:
                 raise ValueError('the point has no containing barangay')
             if streams['priority']['value'] is None:
@@ -153,8 +153,10 @@ def make_router(output_root, read_public_events, places_root=None, climate_root=
             streams['exposure'] = stream(zone, source={'mask': streams['priority']['source'], 'population': 'WorldPop 2020', 'buildings': 'OpenStreetMap'},
                                          kind=streams['priority']['dataKind'], resolution=streams['priority']['nativeResolution'], units={'areaKm2': 'km2', 'population': 'people', 'buildings': 'footprints'})
             limits.extend(result.get('limitations', [])); warnings.extend(result.get('warnings', []))
-        except (ValueError, OSError, KeyError, TypeError, rasterio.errors.RasterioError) as exc:
+        except ValueError as exc:
             streams['exposure'] = stream(reason=str(exc) or 'barangay exposure is unavailable')
+        except (OSError, KeyError, TypeError, rasterio.errors.RasterioError):
+            streams['exposure'] = stream(reason='barangay exposure is unavailable')
         synthetic = any(s['dataKind'] == 'synthetic' for s in streams.values())
         if synthetic:
             warnings.insert(0, 'SYNTHETIC DEMO DATA: one or more streams are synthetic.')

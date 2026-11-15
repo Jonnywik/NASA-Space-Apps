@@ -162,6 +162,7 @@ function Workspace({ onRegional }) {
   const [bare, setBare] = useState(false);
   const [rhythmUnder, setRhythmUnder] = useState(false);
   const [limitsOpen, setLimitsOpen] = useState(false);
+  const [limitsFocusDownloads, setLimitsFocusDownloads] = useState(false);
   const [radar, setRadar] = useState({ open: false, card: "water" });
   const [copied, setCopied] = useState(false);
   const [scenarioId, setScenarioId] = useState(null);
@@ -524,7 +525,10 @@ function Workspace({ onRegional }) {
 
   const openHelp = useCallback((card) => setRadar({ open: true, card: card ?? "water" }), []);
   const closeHelp = useCallback(() => setRadar((r) => ({ ...r, open: false })), []);
-  const closeLimits = useCallback(() => setLimitsOpen(false), []);
+  const closeLimits = useCallback(() => {
+    setLimitsOpen(false);
+    setLimitsFocusDownloads(false);
+  }, []);
 
   function onZone(z) {
     searchPlaces(z.name, 1)
@@ -743,7 +747,7 @@ function Workspace({ onRegional }) {
             <span className="text-[17px] font-bold tracking-[0.14em] text-[#16231B]">TANAW</span>
           </div>
           <span className="hidden h-5 w-px bg-[#DCE3DB] sm:inline-block" aria-hidden="true" />
-          <span className="truncate text-[13px] font-medium text-[#4A5850]">{areaTitle}</span>
+          <span className="line-clamp-2 min-w-0 text-[12px] font-medium leading-tight text-[#4A5850] sm:line-clamp-none sm:truncate sm:text-[13px]">{areaTitle}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -766,6 +770,18 @@ function Workspace({ onRegional }) {
             data-testid="open-limits"
           >
             {t("header.sources")} ({limitCount})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setLimitsFocusDownloads(true);
+              setLimitsOpen(true);
+            }}
+            className="hidden h-9 items-center rounded-lg border border-[#DCE3DB] bg-white px-3 text-[13px] font-medium text-[#16231B] transition-colors hover:bg-[#F2F5F1] min-[900px]:inline-flex"
+            data-testid="open-downloads"
+          >
+            {t("downloads.title")}
           </button>
 
           <div className="relative" ref={settingsRef}>
@@ -1125,7 +1141,7 @@ function Workspace({ onRegional }) {
       </nav>
 
       <RadarCards open={radar.open} initial={radar.card} onClose={closeHelp} />
-      <LimitsDrawer open={limitsOpen} onClose={closeLimits} downloadsTier={downloadsTier} />
+      <LimitsDrawer open={limitsOpen} onClose={closeLimits} downloadsTier={downloadsTier} focusDownloads={limitsFocusDownloads} />
     </div>
   );
 }

@@ -7,13 +7,14 @@ import { classifyError, exportPlaceBriefing, getPlaceBriefing, getSpotCheck } fr
 import { useLang } from "../utils/LangContext";
 import { useReportLimits } from "../utils/LimitsContext";
 import { useTier } from "../utils/useTier";
+import { reasonText } from "../utils/reasons";
 
 const STATE_GLYPH = { water: "■", dry: "□", nodata: "▨" };
 
-function streamTier(tier, key, wrap) {
+function streamTier(tier, key, wrap, t) {
   const stream = tier.data?.streams?.[key];
   if (!stream) return tier;
-  if (stream.value == null) return { state: "unavailable", data: null, error: { detail: { message: stream.reason } } };
+  if (stream.value == null) return { state: "unavailable", data: null, error: { detail: { message: t ? reasonText(t, stream.reason) : stream.reason } } };
   return { state: "ready", data: { ...stream, ...(wrap ? wrap(stream.value) : stream.value) }, error: null };
 }
 
@@ -33,9 +34,9 @@ export function SpotCard({ point, placeHint, spotTier, imergTier, mode, selected
   if (!point) return null;
 
   const { lon, lat } = point;
-  const nisar = streamTier(spotTier, "nisar");
-  const locate = streamTier(spotTier, "place");
-  const los = streamTier(spotTier, "motion", (pt) => ({ point: pt }));
+  const nisar = streamTier(spotTier, "nisar", undefined, t);
+  const locate = streamTier(spotTier, "place", undefined, t);
+  const los = streamTier(spotTier, "motion", (pt) => ({ point: pt }), t);
   const imergPasses = imergTier?.data?.passes ?? [];
   const imergPass = imergPasses.find((p) => p.date === selectedDate) ?? imergPasses[imergPasses.length - 1];
   const imerg24h = imergPass ? (imergPass.last24hMm != null ? `${fmt(imergPass.last24hMm, 1)} mm` : t("imerg.incomplete")) : null;
@@ -129,7 +130,7 @@ export function SpotCard({ point, placeHint, spotTier, imergTier, mode, selected
               <polyline fill="none" stroke="#7B3294" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={polyPoints} />
             </svg>
           ) : (
-            <div className="text-[11px] text-[#4A5850]">{los.data?.point?.reason ?? t("spot.noValue")}</div>
+            <div className="text-[11px] text-[#4A5850]">{reasonText(t, los.data?.point?.reason) ?? t("spot.noValue")}</div>
           )}
           {motionEpochs.length >= 2 && (
             <span className="text-[11px] text-[#4A5850]">
@@ -228,10 +229,10 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
   const spot = externalSpot ?? fallbackSpot;
   const briefing = externalBriefing ?? fallbackBriefing;
   const [exportState, setExportState] = useState({ state: "idle" });
-  const nisar = streamTier(spot, "nisar");
-  const locate = streamTier(spot, "place");
-  const rain = streamTier(spot, "rainfall", (passes) => ({ passes }));
-  const los = streamTier(spot, "motion", (pt) => ({ point: pt }));
+  const nisar = streamTier(spot, "nisar", undefined, t);
+  const locate = streamTier(spot, "place", undefined, t);
+  const rain = streamTier(spot, "rainfall", (passes) => ({ passes }), t);
+  const los = streamTier(spot, "motion", (pt) => ({ point: pt }), t);
   const priority = spot.data?.streams?.priority;
   const exposure = spot.data?.streams?.exposure;
   const imergPasses = imergTier?.data?.passes ?? [];
@@ -366,7 +367,7 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
                   key={p.date}
                   role="listitem"
                   className={`w-[54px] rounded-md border px-1 py-1 text-center text-[11px] ${p.date === selectedDate ? "border-[#1E5B3A] bg-[#E3EFE7] font-semibold text-[#123B25]" : "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]"}`}
-                  title={`${p.date}: ${t(`spot.state.${p.state}`)}${p.possibleFloodedVegetation ? ` · ${t("season.vegetation")}` : ""}${p.reason ? ` · ${p.reason}` : ""}`}
+                  title={`${p.date}: ${t(`spot.state.${p.state}`)}${p.possibleFloodedVegetation ? ` · ${t("season.vegetation")}` : ""}${p.reason ? ` · ${reasonText(t, p.reason)}` : ""}`}
                 >
                   <div className="text-sm leading-none" aria-hidden="true">
                     {STATE_GLYPH[p.state] ?? "?"}
@@ -398,7 +399,7 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
                       <td>
                         {t(`spot.state.${p.state}`)}
                         {p.possibleFloodedVegetation ? " ◆" : ""}
-                        {p.reason ? <span className="block text-[#4A5850]">{p.reason}</span> : null}
+                        {p.reason ? <span className="block text-[#4A5850]">{reasonText(t, p.reason)}</span> : null}
                       </td>
                       <td>{p.hhDb ?? <span title={t("spot.noValue")}>—</span>}</td>
                       <td>{p.hvDb ?? <span title={t("spot.noValue")}>—</span>}</td>
@@ -491,13 +492,13 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
       </Section>
 
       <Section title={t("priority.title")} kind={priority?.dataKind} testId="spot-priority">
-        <p className="text-xs text-[#16231B]">{priority?.value == null ? priority?.reason ?? t("spot.noValue") : t(priority.value ? "spot.priority.yes" : "spot.priority.no")}</p>
+        <p className="text-xs text-[#16231B]">{priority?.value == null ? reasonText(t, priority?.reason) ?? t("spot.noValue") : t(priority.value ? "spot.priority.yes" : "spot.priority.no")}</p>
         {exposure?.value ? (
           <>
             <p className="mt-2 text-[11px] text-[#4A5850]">{t("spot.exposure.scope")}</p>
             <dl className="mt-1 grid grid-cols-2 gap-1 text-xs text-[#16231B]">
               {[["exposure.population", "population", "populationReason"], ["exposure.buildings", "buildings", "buildingsReason"]].map(([label, key, reason]) => (
-                <React.Fragment key={key}><dt className="text-[#4A5850]">{t(label)}</dt><dd className="font-semibold">{fmt(exposure.value[key], 0) ?? exposure.value[reason] ?? t("spot.noValue")}</dd></React.Fragment>
+                <React.Fragment key={key}><dt className="text-[#4A5850]">{t(label)}</dt><dd className="font-semibold">{fmt(exposure.value[key], 0) ?? reasonText(t, exposure.value[reason]) ?? t("spot.noValue")}</dd></React.Fragment>
               ))}
             </dl>
             <div className="mt-1"><KindBadge kind={exposure.dataKind} /></div>

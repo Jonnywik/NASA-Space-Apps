@@ -83,4 +83,4 @@
 - **1.3:** left as is; the two coherence numbers use different land masks and both are labelled exploratory.
 - **1.5:** "In plain words" now qualifies the rain link (`6c87a1f`).
 - **UX:** rainfall y-axes widened (no more "050 mm"); Map tools close after choosing an overlay; duplicate "Hypothesis ·" prefix removed; NASA GPM IMERG and OPERA DSWx-S1 added to data credits; "Learn more about the radar" links (ASF NISAR guides, NASA ARSET) added to Sources and limits (Codex proposal item 2).
-- **Not done before the freeze:** timeline legend overlap, top-level Downloads button, search disambiguation, remaining FIL WorldCover labels, phone header truncation.
+- **Cosmetic follow-ups (17:40):** timeline legend no longer hides the last pass chips (compact legend below 1536 px); header **Download data** button opens the drawer at the downloads; search labels a town that shares its province name ("Bulacan town") and marks places outside CAMANAVA; WorldCover class names and Spot Check reasons translated in Filipino mode; phone header shows the full subtitle; Spot Check no longer shows a raw Python error for points outside any barangay.
