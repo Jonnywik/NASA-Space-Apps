@@ -40,7 +40,7 @@ Changing both thresholds by -1, 0 and +1 dB yields half-or-more areas of 0.0230,
 
 ## Run it yourself
 
-A fresh clone does not include the derived NISAR product (`backend/data/output/camanava_2026/nisar/`, 376 MB). Download it separately as **tanaw-data-camanava_2026-v1**, which matches commit `ce42105`.
+A fresh clone does not include the derived NISAR product (`backend/data/output/camanava_2026/nisar/`, 376 MB). Download it separately as **tanaw-data-camanava_2026-v1** (data unchanged since it was packaged; verified with the current `main`).
 
 - Download: the [`data-package-v1` branch](https://github.com/Jonnywik/NASA-SA-Final/tree/data-package-v1) holds the zip as four parts ([part00](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00), [part01](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01), [part02](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02), [part03](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03); no sign-in needed). Join them into `tanaw-data-camanava_2026-v1.zip` (commands on that branch's README) and check the SHA-256. See [docs/data/DATA_PACKAGE.md](docs/data/DATA_PACKAGE.md).
 - Size: 392,437,688 bytes.
@@ -50,9 +50,10 @@ You do not need an Earthdata login to run the app. Basemap tiles and the depende
 
 You need Python 3.12 or later, Node 20 and Git.
 
-**Windows (PowerShell)**, from the folder that holds the downloaded zip:
+**Windows (PowerShell)**, from the folder that holds the four downloaded parts:
 
 ```powershell
+cmd /c copy /b tanaw-data-camanava_2026-v1.zip.part00+tanaw-data-camanava_2026-v1.zip.part01+tanaw-data-camanava_2026-v1.zip.part02+tanaw-data-camanava_2026-v1.zip.part03 tanaw-data-camanava_2026-v1.zip
 git clone https://github.com/Jonnywik/NASA-SA-Final.git
 cd NASA-SA-Final
 Get-FileHash -Algorithm SHA256 ..\tanaw-data-camanava_2026-v1.zip
@@ -71,9 +72,10 @@ npm ci
 npm run dev
 ```
 
-**macOS / Linux**:
+**macOS / Linux**, from the folder that holds the four downloaded parts:
 
 ```bash
+cat tanaw-data-camanava_2026-v1.zip.part0{0,1,2,3} > tanaw-data-camanava_2026-v1.zip
 git clone https://github.com/Jonnywik/NASA-SA-Final.git
 cd NASA-SA-Final
 sha256sum ../tanaw-data-camanava_2026-v1.zip   # macOS: shasum -a 256
@@ -85,13 +87,16 @@ cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000
 
 In a second terminal, from `NASA-SA-Final`, run `cd frontend && npm ci && npm run dev`.
 
-Open http://localhost:3000. To run a production build instead of the dev server, use `npm run build` and then `npm start`. Check the checksum before you unzip.
+Open http://localhost:3000. To run a production build instead of the dev server, use `npm run build` and then `npm start`. The build downloads the two web fonts from Google Fonts; if it stops with an error in `next/font`, check the internet connection and run `npm run build` again. Check the checksum before you unzip.
 
-Unzip the package at the repository root. It only creates `backend/data/output/camanava_2026/`. Do not regenerate or edit those files, or the bound validation and timelapse results will report "unavailable".
+Unzip the package at the repository root. It only creates `backend/data/output/camanava_2026/`. The validation, robustness, cross-track and timelapse results are bound to this product's content: if you reprocess it and the numbers change, those panels report "unavailable" until you rerun scripts 61, 62, 63 and 28 (see below).
 
-A clean-checkout run is recorded in [docs/data/DATA_PACKAGE.md](docs/data/DATA_PACKAGE.md). It used Linux and the dev server.
+Clean-checkout runs are recorded in [docs/data/DATA_PACKAGE.md](docs/data/DATA_PACKAGE.md): Linux with the dev server, and Linux following these exact macOS/Linux steps (fresh GitHub clone, parts downloaded from the data branch, fresh `pip`/`npm ci` installs, production build, no Earthdata token).
 
-## Reproduce locally on Windows
+## Reprocess the data yourself (advanced, Windows)
+
+Only needed to rebuild the NISAR product from the raw satellite files; to just run the app, use the data package above.
+
 
 Use Python 3.12 and Node 20. An Earthdata account and access to ASF and NASA GES DISC are needed for remote reads. Set `EARTHDATA_TOKEN` privately in the **same PowerShell session** used for processing; never save or print it in the repository. Range reads require network access. Script 20 replaces the existing local NISAR output. Fresh catalogue queries can select newly released products, so retain the committed manifest to reproduce the recorded selection; compare it with the refreshed manifest before using new results.
 
@@ -107,10 +112,13 @@ cd backend
 ..\.venv\Scripts\python scripts/61_opera_comparison.py
 ..\.venv\Scripts\python scripts/25_nisar_soil_moisture.py --track 140 --direction A --frame 9
 ..\.venv\Scripts\python scripts/31_fetch_imerg_passes.py --hours 48 --workers 12
+..\.venv\Scripts\python scripts/26_nisar_extras.py
+..\.venv\Scripts\python scripts/28_nisar_timelapse.py
+..\.venv\Scripts\python scripts/62_robustness.py
 ..\.venv\Scripts\python -m uvicorn app.main:app --reload
 ```
 
-Scripts 25 and 31 refresh their caches and may reflect newer upstream data. Check [the runbook](docs/NISAR_RUNBOOK.md) for the first-file checks and scientific interpretation. In a second PowerShell window at the repository root:
+Scripts 25 and 31 refresh their caches and may reflect newer upstream data. The second-track check (script 63) also needs the track 32 descending product; its commands are in the runbook section "Independent replication on a second NISAR track". Check [the runbook](docs/NISAR_RUNBOOK.md) for the first-file checks and scientific interpretation. In a second PowerShell window at the repository root:
 
 ```powershell
 cd frontend

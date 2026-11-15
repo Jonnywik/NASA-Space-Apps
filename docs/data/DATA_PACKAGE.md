@@ -112,3 +112,12 @@ Browser checks used Playwright with Chromium at 1440×1000:
 - Basemap tiles did not load in the offline sandbox. They need internet access.
 
 Not tested: `npm run build` followed by `npm start`, Windows, the PowerShell extraction steps, and anonymous download from the final host.
+
+## Judge-path verification (15 Nov 2026, commit `bfca9a0`)
+
+Followed the README's macOS/Linux steps literally on a fresh Linux machine image: four parts downloaded from `raw.githubusercontent.com` without credentials, joined, SHA-256 `3290a66b…a2cfa` matched; fresh `git clone` of NASA-SA-Final; Python 3.13 venv with `pip install -r backend/requirements.txt`; `npm ci`; `npm run build` + `npm start`; no `EARTHDATA_TOKEN`.
+
+- All of these returned 200: `nisar/flood-rhythm`, `nisar/passes`, `validation`, `validation/robustness`, `validation/cross-track`, `nisar/timelapse.gif`, `downloads`, `nisar/rain-response`, `nisar/coherence-change`, `nisar/soil-moisture`, `climate/imerg/passes`, `spot-check` (Malabon point), `places/exposure?mask=rhythm_half`.
+- All five modes rendered in English and Filipino with no page errors and no "undefined"/"NaN"/"null" text.
+- The first `npm run build` stopped once with a transient `next/font` download error (Google Fonts); a second run succeeded. The README now says to rerun the build if that happens.
+- Not run: the Windows commands themselves (no Windows machine here). They mirror the tested steps; the part-joining command is the standard `copy /b`.
