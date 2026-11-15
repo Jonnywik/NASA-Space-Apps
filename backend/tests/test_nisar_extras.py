@@ -53,6 +53,34 @@ class BlockAndDropTests(unittest.TestCase):
         self.assertGreater(rgba[0, 2, 3], 0)
 
 
+class NonLandAndLinearMeanTests(unittest.TestCase):
+    def test_water_and_nodata_are_masked_not_counted_as_land(self):
+        values = np.array([[1.0, 2.0, 3.0, 4.0]])
+        lc = np.array([[40, 80, 0, 50]], dtype="uint8")
+        out = ex.mask_non_land(values, lc)
+        self.assertEqual(out[0, 0], 1.0)
+        self.assertTrue(np.isnan(out[0, 1]))  # water
+        self.assertTrue(np.isnan(out[0, 2]))  # no data (class 0)
+        self.assertEqual(out[0, 3], 4.0)
+        self.assertEqual(values[0, 1], 2.0)  # input not modified
+
+    def test_linear_mean_averages_power_not_dB(self):
+        # pixel A never changes; pixel B is 10 dB above its median on the last date
+        db = np.array([[[0.0, 0.0]], [[0.0, 0.0]], [[0.0, 10.0]]])
+        mask = np.array([[True, True]])
+        out = ex.linear_mean_db_change(db, mask)
+        self.assertAlmostEqual(out[0], 0.0)
+        self.assertAlmostEqual(out[2], 10 * np.log10((1 + 10) / 2))  # 7.40 dB, not the dB mean of 5 dB
+
+    def test_linear_mean_respects_mask_and_nan(self):
+        db = np.array([[[0.0, 0.0, np.nan]], [[0.0, 0.0, np.nan]], [[0.0, 10.0, np.nan]]])
+        mask = np.array([[True, True, True]])
+        out = ex.linear_mean_db_change(db, mask)
+        self.assertAlmostEqual(out[2], 10 * np.log10((1 + 10) / 2))  # all-NaN pixel ignored
+        out_none = ex.linear_mean_db_change(db, np.zeros((1, 3), bool))
+        self.assertTrue(np.isnan(out_none).all())
+
+
 class ExtrasApiTests(unittest.TestCase):
     def client(self, write=True):
         tmp = tempfile.TemporaryDirectory()

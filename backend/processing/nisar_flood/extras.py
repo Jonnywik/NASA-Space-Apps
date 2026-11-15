@@ -8,6 +8,8 @@ Neither layer is a flood map. Cells with missing inputs stay NaN (never 0).
 """
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 
 LANDCOVER_NAMES = {10: "Tree cover", 20: "Shrubland", 30: "Grassland", 40: "Cropland", 50: "Built-up",
@@ -85,6 +87,27 @@ def ramp_rgba(values: np.ndarray, stops, *, alpha: int = 215, transparent_below:
         visible &= values >= transparent_below
     a = np.where(visible, alpha, 0)
     return np.dstack([rgb, a]).astype("uint8")
+
+
+def mask_non_land(values: np.ndarray, landcover: np.ndarray) -> np.ndarray:
+    """NaN where WorldCover is water (80) or no data (0). Unclassified cells are never counted as land."""
+    out = np.array(values, dtype="float64", copy=True)
+    out[(landcover == 80) | (landcover == 0)] = np.nan
+    return out
+
+
+def linear_mean_db_change(db_stack: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """Per date, the mean change over mask, averaged in linear power and returned in dB.
+
+    db_stack: n x H x W in dB. Each pixel's change is taken from its own median dB over time; the change is
+    converted to a linear power ratio before the pixels are averaged (averaging dB values would weight dim pixels
+    too heavily). NaN pixels are ignored.
+    """
+    db_stack = np.asarray(db_stack, dtype="float64")
+    with np.errstate(invalid="ignore", divide="ignore"), warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)  # all-NaN pixels or an empty mask give NaN, by design
+        ratio = 10.0 ** ((db_stack - np.nanmedian(db_stack, axis=0)) / 10.0)
+        return 10.0 * np.log10(np.nanmean(ratio[:, mask], axis=1))
 
 
 def by_landcover(values: np.ndarray, landcover: np.ndarray, *, stat=np.nanmedian, min_cells: int = 20) -> list[dict]:

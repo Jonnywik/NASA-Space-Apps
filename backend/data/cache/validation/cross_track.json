@@ -2,8 +2,9 @@
  "schemaVersion": "1.0",
  "area": "camanava_2026",
  "dataKind": "derived",
- "generatedAt": "2026-11-15T08:28:07Z",
+ "generatedAt": "2026-11-15T09:41:30Z",
  "productManifestSha256": "49c00d050b9414f113b7c5311ee8fe2b32696a6623a073871400dfedf4fc990c",
+ "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee",
  "descendingManifestSha256": "f17b1f5a2e989be493b4f1efe2787bf8571f7e03132b1daeb435f61253c29131",
  "title": "Independent check: NISAR track 32 descending (18:24 Manila)",
  "ascending": {
@@ -115,14 +116,14 @@
    {
     "label": "Mean HH change over built-up land vs 48 h IMERG rain",
     "n": 10,
-    "rho": 0.345,
-    "pPermutation": 0.3274
+    "rho": 0.273,
+    "pPermutation": 0.4422
    },
    {
     "label": "Mean HH change over other land vs 48 h IMERG rain",
     "n": 10,
-    "rho": 0.345,
-    "pPermutation": 0.3248
+    "rho": 0.2,
+    "pPermutation": 0.5787
    }
   ]
  },
@@ -305,6 +306,5 @@
   "OPERA scenes are about 24 hours before each NISAR pass; water can change in a day.",
   "Total water includes permanent and coastal water, so these scores do not measure flood-only accuracy.",
   "Provisional NISAR products; the descending track uses its own Manila Bay calibration."
- ],
- "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
+ ]
 }

@@ -81,14 +81,14 @@ def rain_response():
     a, b, c, d_, e, f = grid["transform"][:6]
     g50 = Grid(crs=grid["crs"], transform=(a * k, b, c, d_, e * k, f), width=db.shape[2], height=db.shape[1])
     lc = landcover_on(g50)
-    rho[lc == 80] = np.nan  # open water responds to wind, not wetness: excluded
+    rho = ex.mask_non_land(rho, lc)  # water responds to wind, not wetness; no-data (class 0) is not land
     bounds = write_png_overlay(ex.ramp_rgba(rho, ex.RESPONSE_STOPS), g50, OUT / "rain_response.png")
     land = np.isfinite(rho)
     doc = {
         "schemaVersion": "1.0", "area": "camanava_2026", "dataKind": "derived", "generatedAt": now(),
         "title": "How strongly NISAR radar brightness follows rain",
         "method": ("Per 50 m cell, Spearman rank correlation between NISAR L2 GCOV HH backscatter (dB, 5x5 mean of 10 m samples) "
-                   "and the 48-hour NASA GPM IMERG rain before each pass. WorldCover water cells are excluded."),
+                   "and the 48-hour NASA GPM IMERG rain before each pass. WorldCover water and no-data cells are excluded."),
         "nPasses": len(dates), "passDates": dates, "rain48hMm": rains,
         "overlayUrl": "/api/v1/nisar/extra/rain_response.png", "bounds": bounds,
         "legend": [{"value": v, "color": c} for v, c in ex.RESPONSE_STOPS],
@@ -142,8 +142,7 @@ def coherence_change():
         sys.exit(f"storm pair {STORM} not found among GUNW subsets")
     drop = ex.coherence_drop(storm, np.stack(calm))
     lc = landcover_on(grid)
-    drop_land = drop.copy()
-    drop_land[lc == 80] = np.nan
+    drop_land = ex.mask_non_land(drop, lc)
     bounds = write_png_overlay(ex.ramp_rgba(drop_land, ex.DROP_STOPS, transparent_below=0.05), grid, OUT / "coherence_change.png")
     cell_km2 = abs(grid.transform[0] * grid.transform[4]) / 1e6
     land = np.isfinite(drop_land)
@@ -156,7 +155,7 @@ def coherence_change():
         "schemaVersion": "1.0", "area": "camanava_2026", "dataKind": "derived", "generatedAt": now(),
         "title": "Coherence loss across the 8 Aug 2026 storm",
         "method": ("NISAR L2 GUNW HH coherence at 80 m: median coherence of the other 12-day pairs minus the coherence of the pair "
-                   "17 Jul -> 10 Aug 2026, which spans the 8-9 Aug storm. Positive = coherence lost. WorldCover water cells excluded."),
+                   "17 Jul -> 10 Aug 2026, which spans the 8-9 Aug storm. Positive = coherence lost. WorldCover water and no-data cells excluded."),
         "stormPair": {"reference": STORM[0], "secondary": STORM[1], "days": 24}, "calmPairs": pairs,
         "overlayUrl": "/api/v1/nisar/extra/coherence_change.png", "bounds": bounds,
         "legend": [{"value": v, "color": c} for v, c in ex.DROP_STOPS],

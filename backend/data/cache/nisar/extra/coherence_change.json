@@ -2,9 +2,9 @@
  "schemaVersion": "1.0",
  "area": "camanava_2026",
  "dataKind": "derived",
- "generatedAt": "2026-11-15T07:31:31Z",
+ "generatedAt": "2026-11-15T09:39:33Z",
  "title": "Coherence loss across the 8 Aug 2026 storm",
- "method": "NISAR L2 GUNW HH coherence at 80 m: median coherence of the other 12-day pairs minus the coherence of the pair 17 Jul -> 10 Aug 2026, which spans the 8-9 Aug storm. Positive = coherence lost. WorldCover water cells excluded.",
+ "method": "NISAR L2 GUNW HH coherence at 80 m: median coherence of the other 12-day pairs minus the coherence of the pair 17 Jul -> 10 Aug 2026, which spans the 8-9 Aug storm. Positive = coherence lost. WorldCover water and no-data cells excluded.",
  "stormPair": {
   "reference": "2026-07-17",
   "secondary": "2026-08-10",
@@ -78,11 +78,11 @@
   }
  ],
  "stats": {
-  "cells": 61975,
-  "medianDrop": 0.062,
-  "km2DropOver03": 4.76,
-  "landKm2": 396.6,
-  "km2DropOver03IntervalCorrected": 0.09
+  "cells": 42981,
+  "medianDrop": 0.067,
+  "km2DropOver03": 3.17,
+  "landKm2": 275.1,
+  "km2DropOver03IntervalCorrected": 0.04
  },
  "byLandCover": [
   {
@@ -144,7 +144,7 @@
   "url": "https://nisar-docs.asf.alaska.edu/gunw/"
  },
  "warnings": [
-  "The storm pair spans 24 days (one pass is missing around 29 Jul), the calm pairs 12 days. A longer interval also lowers coherence: allowing for that (expected 24-day coherence = median 12-day coherence squared), only 0.09 km2 of loss over 0.3 is left. Most of this layer can be explained by the longer interval alone; the storm's effect cannot be separated."
+  "The storm pair spans 24 days (one pass is missing around 29 Jul), the calm pairs 12 days. A longer interval also lowers coherence: allowing for that (expected 24-day coherence = median 12-day coherence squared), only 0.04 km2 of loss over 0.3 is left. Most of this layer can be explained by the longer interval alone; the storm's effect cannot be separated."
  ],
  "limitations": [
   "Exploratory. Coherence loss can come from standing water, wet or changed vegetation, construction, or noise; it is never a flood map.",

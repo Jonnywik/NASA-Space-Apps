@@ -2,9 +2,9 @@
  "schemaVersion": "1.0",
  "area": "camanava_2026",
  "dataKind": "derived",
- "generatedAt": "2026-11-15T06:38:57Z",
+ "generatedAt": "2026-11-15T09:39:33Z",
  "title": "How strongly NISAR radar brightness follows rain",
- "method": "Per 50 m cell, Spearman rank correlation between NISAR L2 GCOV HH backscatter (dB, 5x5 mean of 10 m samples) and the 48-hour NASA GPM IMERG rain before each pass. WorldCover water cells are excluded.",
+ "method": "Per 50 m cell, Spearman rank correlation between NISAR L2 GCOV HH backscatter (dB, 5x5 mean of 10 m samples) and the 48-hour NASA GPM IMERG rain before each pass. WorldCover water and no-data cells are excluded.",
  "nPasses": 11,
  "passDates": [
   "2026-06-23",
@@ -66,9 +66,9 @@
   }
  ],
  "stats": {
-  "cells": 113087,
+  "cells": 109918,
   "medianRho": 0.655,
-  "shareAbove05": 0.701,
+  "shareAbove05": 0.703,
   "shareBelowMinus05": 0.003
  },
  "byLandCover": [

@@ -117,9 +117,8 @@ def main():
     lc = landcover_on(grid)
     with np.errstate(invalid="ignore", divide="ignore"):
         db = 10 * np.log10(stack)
-    anomaly = db - np.nanmedian(db, axis=0)
     for name, mask in (("built-up land", lc == 50), ("other land", (lc != 50) & (lc != 80) & (lc > 0))):
-        series = np.array([np.nanmean(a[mask]) for a in anomaly])
+        series = ex.linear_mean_db_change(db, mask)  # pixels averaged in linear power, result in dB
         out["correlations"].append(correlation_report(series, rain48, f"Mean HH change over {name} vs 48 h IMERG rain"))
 
     # Field significance of the rain-response map (same 50 m aggregation as script 26).

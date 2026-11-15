@@ -2,8 +2,9 @@
  "schemaVersion": "1.0",
  "area": "camanava_2026",
  "dataKind": "derived",
- "generatedAt": "2026-11-15T07:30:33Z",
+ "generatedAt": "2026-11-15T09:39:34Z",
  "productManifestSha256": "49c00d050b9414f113b7c5311ee8fe2b32696a6623a073871400dfedf4fc990c",
+ "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee",
  "passDates": [
   "2026-06-23",
   "2026-07-05",
@@ -64,15 +65,15 @@
   {
    "label": "Mean HH change over other land vs 48 h IMERG rain",
    "n": 11,
-   "rho": 0.936,
+   "rho": 0.964,
    "pPermutation": 0.0,
    "bootstrap95": [
-    0.704,
+    0.784,
     1.0
    ],
    "leaveOneOut": [
-    0.915,
-    0.952
+    0.952,
+    0.964
    ],
    "signHoldsWithoutAnyOnePass": true
   }
@@ -155,6 +156,5 @@
    }
   ],
   "note": "Expected 24-day coherence = (median 12-day coherence)^2 (Markov decorrelation). This is an approximation; real decorrelation often levels off, so the corrected figure is a conservative lower bound."
- },
- "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
+ }
 }

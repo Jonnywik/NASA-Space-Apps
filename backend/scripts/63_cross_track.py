@@ -31,7 +31,7 @@ from scipy.stats import rankdata
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
-from processing.nisar_flood.extras import LANDCOVER_NAMES  # noqa: E402
+from processing.nisar_flood.extras import LANDCOVER_NAMES, linear_mean_db_change  # noqa: E402
 from app.product_binding import product_fingerprint  # noqa: E402
 
 ASC = BACKEND / "data/output/camanava_2026/nisar"
@@ -205,11 +205,10 @@ def main():
             lc = s62.landcover_on(Grid(crs=g["crs"], transform=tuple(g["transform"][:6]), width=g["width"], height=g["height"]))
             with np.errstate(invalid="ignore", divide="ignore"):
                 db = 10 * np.log10(stack)
-            anomaly = db - np.nanmedian(db, axis=0)
             r48 = [rain.get(d) for d in dates]
             bright = []
             for name, mask in (("built-up land", lc == 50), ("other land", (lc != 50) & (lc != 80) & (lc > 0))):
-                series = [float(np.nanmean(a[mask])) for a in anomaly]
+                series = linear_mean_db_change(db, mask).tolist()
                 b_rho, b_p = perm_p(series, r48)
                 bright.append({"label": f"Mean HH change over {name} vs 48 h IMERG rain", "n": len(dates),
                                "rho": round(b_rho, 3), "pPermutation": round(b_p, 4)})
