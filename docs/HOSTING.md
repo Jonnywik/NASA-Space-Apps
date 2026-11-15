@@ -5,7 +5,7 @@ The public demo runs on a free Hugging Face Space (Docker SDK). One container se
 browser talks to one origin.
 
 - `deploy/huggingface/Dockerfile` clones this repository (`main`), builds the frontend with
-  `TANAW_STATIC_EXPORT=1 NEXT_PUBLIC_API_URL=same-origin`, installs `backend/requirements.txt`, downloads the four
+  `TANAW_STATIC_EXPORT=1 NEXT_PUBLIC_API_URL=same-origin`, installs `backend/requirements.txt`, then `deploy/fetch_data.py` downloads the four
   data parts from the `data-package-v1` branch, checks SHA-256 `3290a66b…a2cfa`, and unzips the product.
 - `deploy/huggingface/README.md` is the Space's configuration header (Docker SDK, port 7860).
 
@@ -21,3 +21,8 @@ browser talks to one origin.
 
 Free Spaces sleep after about 48 hours without visitors; the first visit after that takes about a minute.
 The demo is the same code and data as the repository; it needs no Earthdata login.
+
+## Tested
+The Space image was built from GitHub with Docker on 15 Nov 2026 and run as user 1000 on port 7860: every page and
+API route (including validation, cross-track, timelapse, downloads and spot check) returned 200, and all five
+modes rendered in English and Filipino with no page errors. The image is about 4.6 GB, within the free tier.
