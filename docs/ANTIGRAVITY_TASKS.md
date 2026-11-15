@@ -1,4 +1,4 @@
-# Antigravity task list for 15 Nov 2026 (current: Round 2, A7)
+# Antigravity task list for 15 Nov 2026 (current: Round 3, A8)
 
 Antigravity: read `AGENTS.md` first for context, rules and how to run. This file gives you a **short list of small, needed tasks** that don't overlap with Codex (`docs/CODEX_TASKS.md`), which is working on the backend and the real NISAR run.
 
@@ -13,7 +13,56 @@ Coding freezes at 17:00 Manila time. Each task is meant to take 30–90 minutes.
 - **Rules from `AGENTS.md` section 2 apply in full.** No invented numbers, stories or references. Synthetic data keeps its badge. Say "exposure", not "damage". Say "line-of-sight motion", not "sinking".
 - **Running the app:** start the backend with `cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000`, then the frontend with `cd frontend && npm run dev`. Don't use fixture mode for checking; it's for development only.
 
-## Round 2 (15 Nov, about 13:15): A7, the real-data copy and new layers. Do this now.
+## Round 3 (15 Nov, about 14:20): A8, final polish on real data. Push by 16:30.
+
+A7 is merged (thank you). The coding freeze is **17:00 Manila**. Work on a new branch **`antigravity/a8-polish`** from the latest `main`, and push after **each** sub-task so the coordinator can merge in pieces. Same boundaries (`frontend/` plus your docs; `docs/RECORDING_SHOTS.md` is also yours this round) and same checks (lint, build, `test:api`). Do them in this order; if time runs out, stop at a pushed sub-task.
+
+### A8.0 See the real data first (10 min)
+Your last screenshots were taken against the **synthetic** product (they showed Demo tags and 82.1 km²) and had to be replaced. On the laptop, with `EARTHDATA_TOKEN` set, regenerate the real product using the two commands in the "v6 decision" section of `docs/SUBMISSION_SCOPE.md`. Then confirm that `GET /api/v1/nisar/passes` returns `"dataKind": "observed"` and the Flood rhythm headline reads about 0.4 km². **Do not use fixture mode or the synthetic demo for any check this round.**
+
+### A8.1 Future: an honest flood-scenario card (30 min)
+The exploratory flood scenario (`/climate/flood-scenario`) is now fitted on the real passes, where NISAR open water goes **down** after rain (ρ = −0.77 with 48 h IMERG rain; see the runbook). Showing it as a "flood scenario" would suggest that wetter months mean less flooding, which is not what it means.
+- **Hide the flood-scenario chart** in Future. Replace it with a short card: "No flood scenario: NISAR's open-water layer shrinks after heavy rain (wet ground and rough water look brighter to the radar), so it can't be used to project floods. Rainfall scenarios above are still valid."
+- Keep the rainfall outlook and the 12-month rainfall scenarios unchanged.
+- Strings in English and Filipino (Filipino pending review).
+
+### A8.2 The key finding as a chart (45 min; most important for the video)
+In **Flood rhythm** findings, below "In plain words", add a small scatter plot: **"Open water vs rain before each pass"**.
+- **x:** 48-hour rain before the pass, `last48hMm` from `GET /api/v1/climate/imerg/passes?series=false`.
+- **y:** open water outside the usual water on that pass, `floodedKm2` from `GET /api/v1/nisar/passes`.
+- Join on `date`. One dot per pass, labelled with its date on hover or focus. Drop a dot if either value is null; never plot null as 0.
+- **No fitted line and no hard-coded statistic.** Caption: "Each dot is one NISAR pass. Passes after heavy rain show less open water: wet ground and rain-roughened water look brighter to L-band radar. Exploratory, 11 passes." Credit both sources (NASA GPM IMERG; NASA–ISRO NISAR).
+- Make it accessible: `role="img"` with an `aria-label` summarising the points, plus a "Show as table" toggle listing date, rain and open water.
+
+### A8.3 Story tour matches the real story (30 min)
+Review all story steps against the v6 story ("what NISAR sees, what it can't see yet, what's next"):
+- **No step may promise ground motion results or priority zones.** Change the ground-motion step to "The ground beneath: not measurable yet (ionospheric noise in 4 months of data)", or merge it into "what's next".
+- Add or reuse a step for **"What NISAR can't see"** that points at the explainer card.
+- The last step stays "Find my barangay".
+- Keep the facts driven by the API (`story.fact.*`). Remove `story.fact.priority` from the tour if priority zones are unavailable.
+
+### A8.4 Spot card on real data (20 min)
+- When `floodCount` is 0, write "No open water outside the usual water on any of the 11 passes" rather than "Flooded on 0 of 11".
+- Make sure the spot card shows the IMERG line ("Rain in the 24 h before the selected pass: X mm, NASA GPM IMERG, ~11 km cell"), with null as "incomplete data".
+- Check the Malabon point (lon 120.957, lat 14.665) and one point in the north-west fishpond area (about lon 120.89, lat 14.80).
+
+### A8.5 Recording kit (20 min)
+Write **`docs/RECORDING_SHOTS.md`** for the team's 30-second video: an ordered list of shots, each with its exact app URL (using the URL parameters `mode`, `pass`, `lon`, `lat`, `lang`), what to click or hover, and how long to hold, following the v6 story:
+1. Title and study area.
+2. A NISAR pass with the IMERG rain card (10 Aug).
+3. The Flood rhythm headline.
+4. The new rain-vs-open-water chart.
+5. "What NISAR can and can't see".
+6. Find my barangay, then the spot card and briefing.
+
+Use only numbers the app shows. Add a checklist: 1920×1080 browser window, zoom 100 %, real product loaded, no Demo tags visible.
+
+### A8.6 Final check and screenshots (20 min, start by 16:00)
+Walk every mode at 1366×768 and 390×844 on the real data. Fix only real defects. Then replace `frontend/screenshots/v2-real/` with screenshots **from your laptop**, which shows the street basemap; the coordinator's set has a blank basemap. Check that no Demo or SYNTHETIC text is visible. Record the status in `docs/ANTIGRAVITY_STATUS.md`.
+
+**Done when:** A8.1–A8.6 are pushed on `antigravity/a8-polish` by **16:30**, lint, build and `test:api` pass, and no Demo or synthetic text appears anywhere on real data.
+
+## Round 2 (15 Nov, about 13:15): A7, the real-data copy and new layers. (DONE, merged)
 
 A6 is merged into `main` (thank you). The app now serves **real NISAR data**; read the "v6 decision" section at the top of `docs/SUBMISSION_SCOPE.md` first. Work on a new branch **`antigravity/a7-real-data`** from the latest `main`. Same boundaries as before (`frontend/` only, plus your status and Filipino review docs). Same checks before each push: lint, build, `test:api`.
 
