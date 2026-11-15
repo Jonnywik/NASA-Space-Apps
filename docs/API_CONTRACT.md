@@ -225,7 +225,7 @@ All of these serve **small committed caches** under `backend/data/cache/`, so th
 - **`GET /nisar/extra/{name}.png`** serves only the overlay names listed by the three endpoints above.
 
 ### Codex: new `downloads_api.py` plus briefing updates
-- **`GET /downloads?area=`** lists the downloadable real layers: `[{id, title, format: "GeoTIFF"|"GeoJSON"|"CSV"|"GIF", sizeBytes, licence: "CC-BY-4.0", dataKind, url}]`.
+- **`GET /downloads?area=`** lists the downloadable real layers: `[{id, title, format: "GeoTIFF"|"GeoJSON"|"CSV"|"JSON"|"GIF", sizeBytes, licence: "CC-BY-4.0", attribution, dataKind, url}]`. Missing, synthetic or hash-mismatched products are omitted. The validation JSON uses the same product-manifest guard as `/validation`; the GIF is bound to the current product manifest and IMERG cache by `timelapse.json`.
 - **`GET /downloads/{id}`** returns the file, with the right `Content-Disposition`. Only listed ids are served.
 - **`GET /nisar/timelapse.gif?area=`** (registered from `downloads_api.py`) returns an animated GIF of the 11 real passes: HH backscatter with the open-water overlay, a date and Manila-time caption, and a small IMERG 48-hour rain bar. Built by `scripts/28_nisar_timelapse.py` into `backend/data/cache/nisar/timelapse.gif` (keep it under about 8 MB).
 - **Briefing** (`/briefing/place`): update to the v6 story, adding the IMERG rain facts for the latest pass. No "flooding" wording for the open-water layer.

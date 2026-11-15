@@ -88,10 +88,56 @@ class SpotTests(unittest.TestCase):
         for lang in ('en', 'fil'):
             text = ' '.join(build(facts, lang)['sentences'])
             self.assertIn('42.5', text)
-            self.assertIn('2.5', text)
+            self.assertNotIn('displacement 2.5', text)
             self.assertIn('population grid absent', text)
             self.assertNotIn('None', text)
             self.assertNotIn('{', text)
+
+    def test_imerg_latest_pass_and_v6_wording(self):
+        cache = {'area': 'camanava_2026', 'source': {'name': 'IMERG'}, 'dataKind': 'observed', 'nativeResolution': '0.1 degree',
+                 'units': {'totals': 'mm'}, 'rainThresholdMmHr': 1.0, 'passes': [
+                     {'acquisitionTime': '2026-06-23T21:30:35Z', 'acquisitionTimeManila': '2026-06-24T05:30:35+08:00',
+                      'last24hMm': 3.4, 'last48hMm': 5.6, 'hoursSinceRain': 2.5},
+                     {'acquisitionTime': '2026-06-22T21:30:35Z', 'acquisitionTimeManila': '2026-06-23T05:30:35+08:00',
+                      'last24hMm': 99, 'last48hMm': 99, 'hoursSinceRain': 99}]}
+        (Path(self.tmp.name) / 'imerg_passes.json').write_text(json.dumps(cache), encoding='utf-8')
+        client = self.client()
+        for lang in ('en', 'fil'):
+            brief = client.get('/api/v1/briefing/place', params={'lon': 120.957, 'lat': 14.665, 'lang': lang}).json()
+            text = ' '.join(brief['sentences'])
+            for value in ('2026-06-24', '05:30', '3.4', '5.6', '2.5', '1.0'):
+                self.assertIn(value, text)
+            self.assertNotIn('99', text)
+            self.assertIn('not available yet' if lang == 'en' else 'hindi pa makukuha', text)
+            self.assertIn('bright' if lang == 'en' else 'maliwanag', text)
+            facts = json.dumps(brief['facts'], ensure_ascii=False)
+            for sentence in brief['sentences']:
+                for number in re.findall(r'\d+(?:\.\d+)?', sentence):
+                    self.assertIn(number, facts)
+        cache['passes'][0]['hoursSinceRain'] = None
+        cache['passes'][0]['hoursSinceRainNote'] = 'no half-hour reached 1.0 mm/hr in the window'
+        (Path(self.tmp.name) / 'imerg_passes.json').write_text(json.dumps(cache), encoding='utf-8')
+        text = next(s for s in client.get('/api/v1/briefing/place?lon=120.957&lat=14.665').json()['sentences'] if s.startswith('IMERG rain:'))
+        self.assertIn('not available because', text)
+        self.assertIn('no half-hour reached 1.0 mm/hr in the window', text)
+        self.assertNotIn('None', text)
+
+    def test_imerg_matches_latest_nisar_pass_and_area(self):
+        cache = {'area': 'camanava_2026', 'source': {'name': 'IMERG'}, 'dataKind': 'observed',
+                 'nativeResolution': '0.1 degree', 'units': {}, 'rainThresholdMmHr': 1.0, 'passes': [
+                     {'date': '2026-06-23', 'acquisitionTime': '2026-06-23T21:30:00Z', 'last24hMm': 3},
+                     {'date': '2026-07-05', 'acquisitionTime': '2026-07-05T21:30:00Z', 'last24hMm': 9}]}
+        path = Path(self.tmp.name) / 'imerg_passes.json'
+        path.write_text(json.dumps(cache), encoding='utf-8')
+        point = {'floodCount': 1, 'floodCountReason': None, 'validCount': 1, 'permanentWater': False,
+                 'possibleFloodedVegetationPasses': 0, 'perPass': [{'date': '2026-06-23', 'state': 'water'}],
+                 'cellCenter': {}, 'source': {}, 'dataKind': 'observed'}
+        client = self.client(point)
+        get_stream = lambda: client.get('/api/v1/spot-check?lon=120.957&lat=14.665').json()['streams']['imerg']
+        self.assertEqual(get_stream()['value']['last24hMm'], 3)
+        cache['area'] = 'another_area'
+        path.write_text(json.dumps(cache), encoding='utf-8')
+        self.assertIsNone(get_stream()['value'])
 
     def test_priority_mask_integrity_and_nodata(self):
         folder = Path(self.tmp.name) / 'camanava_2026' / 'nisar'

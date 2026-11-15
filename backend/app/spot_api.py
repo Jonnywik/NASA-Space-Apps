@@ -89,6 +89,26 @@ def make_router(output_root, read_public_events, places_root=None, climate_root=
         except (OSError, ValueError, KeyError, TypeError) as exc:
             streams['rainfall'] = stream(reason=str(exc))
         try:
+            imerg = json.loads((climate / 'imerg_passes.json').read_text(encoding='utf-8'))
+            if imerg['area'] != AREA or not isinstance(imerg['passes'], list):
+                raise ValueError('IMERG cache does not cover this area')
+            rows = imerg['passes']
+            if point and point.get('perPass'):
+                latest_date = max(p['date'] for p in point['perPass'])
+                rows = [row for row in rows if row['date'] == latest_date]
+            latest = max(rows, key=lambda row: row['acquisitionTime'])
+            value = {k: latest.get(k) for k in ('acquisitionTimeManila', 'last24hMm', 'last48hMm', 'hoursSinceRain')}
+            if latest.get('hoursSinceRain') is None:
+                value['hoursSinceRainReason'] = latest.get('hoursSinceRainNote') or 'the IMERG value is missing'
+            if latest.get('hoursSinceRainNote'):
+                value['hoursSinceRainNote'] = latest['hoursSinceRainNote']
+            value.update(rainThresholdMmHr=imerg['rainThresholdMmHr'], window24Hours=24, window48Hours=48)
+            streams['imerg'] = stream(value, source=imerg['source'], kind=imerg['dataKind'],
+                                      resolution=imerg['nativeResolution'], units=imerg['units'], retrievedAt=imerg.get('retrievedAt'))
+            limits.extend(imerg.get('limitations', [])); warnings.extend(imerg.get('warnings', []))
+        except (OSError, ValueError, KeyError, TypeError):
+            streams['imerg'] = stream(reason='IMERG pass data is unavailable')
+        try:
             m = catalog.select(AREA, 'ground-motion', root=root)
             motion = sample_point(m, x, y)
             streams['motion'] = stream(motion if motion['status'] == 'ok' else None, motion.get('reason'),

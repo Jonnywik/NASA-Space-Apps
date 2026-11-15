@@ -12,8 +12,175 @@ function shortMonthDay(iso) {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
+function RainWaterScatter({ passes, imergPasses }) {
+  const { t } = useLang();
+  const [showTable, setShowTable] = useState(false);
+  const [activeDate, setActiveDate] = useState(null);
+
+  const imergMap = new Map((imergPasses ?? []).map((p) => [p.date, p.last48hMm]));
+  const pts = (passes ?? [])
+    .map((p) => ({ date: p.date, rain48h: imergMap.get(p.date), waterKm2: p.floodedKm2 }))
+    .filter((p) => typeof p.rain48h === "number" && Number.isFinite(p.rain48h) && typeof p.waterKm2 === "number" && Number.isFinite(p.waterKm2));
+
+  if (!pts.length) return null;
+
+  const rains = pts.map((p) => p.rain48h);
+  const waters = pts.map((p) => p.waterKm2);
+  const minRain = Math.min(...rains);
+  const maxRain = Math.max(...rains);
+  const minWater = Math.min(...waters);
+  const maxWater = Math.max(...waters);
+  const maxX = Math.max(20, Math.ceil(maxRain / 20) * 20);
+  const maxY = maxWater <= 1 ? Math.max(0.2, Math.ceil(maxWater * 10) / 10) : Math.ceil(maxWater * 1.1);
+  const yDigits = maxY <= 2 ? 2 : 1;
+
+  const W = 360;
+  const H = 190;
+  const padL = 42;
+  const padR = 16;
+  const padT = 20;
+  const padB = 34;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const xPos = (x) => padL + (x / maxX) * plotW;
+  const yPos = (y) => padT + plotH - (y / maxY) * plotH;
+
+  const yTicks = [0, maxY / 2, maxY];
+  const xTicks = [0, maxX / 2, maxX];
+  const activePt = pts.find((p) => p.date === activeDate) ?? pts[0];
+  const aria = t("rhythm.v2.scatter.aria", {
+    n: pts.length,
+    minRain: fmt(minRain, 1),
+    maxRain: fmt(maxRain, 1),
+    minWater: fmt(minWater, 2),
+    maxWater: fmt(maxWater, 2),
+  });
+
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-[#DCE3DB] bg-white p-3" data-testid="rhythm-rain-scatter">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="m-0 font-serif text-[15px] font-semibold text-[#16231B]">{t("rhythm.v2.scatter.title")}</h3>
+        <button
+          type="button"
+          onClick={() => setShowTable((s) => !s)}
+          aria-expanded={showTable}
+          className="rounded-lg border border-[#DCE3DB] bg-[#F2F5F1] px-2.5 py-1 text-[11px] font-semibold text-[#1E5B3A] hover:bg-[#E3EFE7]"
+          data-testid="rhythm-scatter-table-toggle"
+        >
+          {showTable ? t("rhythm.v2.scatter.hideTable") : t("rhythm.v2.scatter.showTable")}
+        </button>
+      </div>
+
+      {activePt && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#F2F5F1] px-2.5 py-1 text-[11px] text-[#16231B]" data-testid="rhythm-scatter-readout">
+          <span className="font-semibold text-[#1E5B3A]">{activePt.date}</span>
+          <span className="tabular-nums">
+            {fmt(activePt.rain48h, 1)} mm · {fmt(activePt.waterKm2, 2)} km²
+          </span>
+        </div>
+      )}
+
+      {!showTable ? (
+        <svg viewBox={`0 0 ${W} ${H}`} className="h-[190px] w-full overflow-visible" role="img" aria-label={aria} data-testid="rhythm-scatter-svg">
+          <text x={padL} y={12} fontSize="10" fill="#4A5850">
+            {t("rhythm.v2.scatter.yAxis")}
+          </text>
+          {yTicks.map((v) => {
+            const y = yPos(v);
+            return (
+              <g key={`y-${v}`}>
+                <line x1={padL} x2={W - padR} y1={y} y2={y} stroke="#DCE3DB" strokeDasharray={v > 0 ? "3 3" : undefined} />
+                <text x={padL - 5} y={y + 3} textAnchor="end" fontSize="10" fill="#4A5850">
+                  {fmt(v, yDigits)}
+                </text>
+              </g>
+            );
+          })}
+          {xTicks.map((v) => {
+            const x = xPos(v);
+            return (
+              <g key={`x-${v}`}>
+                <line x1={x} x2={x} y1={padT} y2={padT + plotH} stroke="#DCE3DB" strokeDasharray={v > 0 ? "3 3" : undefined} />
+                <text x={x} y={padT + plotH + 13} textAnchor="middle" fontSize="10" fill="#4A5850">
+                  {fmt(v, 0)}
+                </text>
+              </g>
+            );
+          })}
+          <text x={padL + plotW / 2} y={H - 4} textAnchor="middle" fontSize="10" fill="#4A5850">
+            {t("rhythm.v2.scatter.xAxis")}
+          </text>
+          {pts.map((pt) => {
+            const cx = xPos(pt.rain48h);
+            const cy = yPos(pt.waterKm2);
+            const isActive = activePt?.date === pt.date;
+            return (
+              <g
+                key={pt.date}
+                tabIndex={0}
+                onMouseEnter={() => setActiveDate(pt.date)}
+                onFocus={() => setActiveDate(pt.date)}
+                onClick={() => setActiveDate(pt.date)}
+                className="cursor-pointer outline-none"
+                aria-label={`${pt.date}: ${fmt(pt.rain48h, 1)} mm, ${fmt(pt.waterKm2, 2)} km²`}
+                data-testid={`scatter-dot-${pt.date}`}
+              >
+                <title>{`${pt.date}: ${fmt(pt.rain48h, 1)} mm · ${fmt(pt.waterKm2, 2)} km²`}</title>
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={isActive ? 6 : 4.5}
+                  fill={isActive ? "#1E5B3A" : "#2171B5"}
+                  stroke="#FFFFFF"
+                  strokeWidth={1.5}
+                />
+                {isActive && (
+                  <text
+                    x={cx > padL + plotW - 44 ? cx - 8 : cx + 8}
+                    y={Math.max(padT + 10, cy - 6)}
+                    textAnchor={cx > padL + plotW - 44 ? "end" : "start"}
+                    fontSize="10"
+                    fontWeight="600"
+                    fill="#16231B"
+                  >
+                    {shortMonthDay(pt.date)}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      ) : (
+        <div className="max-h-52 overflow-y-auto rounded-lg border border-[#DCE3DB]">
+          <table className="w-full text-left text-[11px] text-[#16231B]" data-testid="rhythm-scatter-table">
+            <thead className="bg-[#F2F5F1] text-[#4A5850]">
+              <tr>
+                <th className="px-2.5 py-1.5 font-semibold">{t("rhythm.v2.scatter.colDate")}</th>
+                <th className="px-2.5 py-1.5 text-right font-semibold">{t("rhythm.v2.scatter.colRain")}</th>
+                <th className="px-2.5 py-1.5 text-right font-semibold">{t("rhythm.v2.scatter.colWater")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pts.map((pt) => (
+                <tr key={pt.date} className="border-t border-[#DCE3DB]">
+                  <td className="px-2.5 py-1 font-medium">{pt.date}</td>
+                  <td className="px-2.5 py-1 text-right tabular-nums">{fmt(pt.rain48h, 1)}</td>
+                  <td className="px-2.5 py-1 text-right tabular-nums">{fmt(pt.waterKm2, 2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <p className="m-0 text-[11px] leading-relaxed text-[#4A5850]">{t("rhythm.v2.scatter.caption")}</p>
+      <p className="m-0 text-[11px] font-medium text-[#4A5850]">{t("rhythm.v2.scatter.sources")}</p>
+    </div>
+  );
+}
+
 // N1 flood rhythm: "flooded on k of n passes".
-export default function RhythmPanel({ tier, exposureTier, passes = [], onHelp, onPlace, onSources }) {
+export default function RhythmPanel({ tier, exposureTier, passes = [], imergTier, onHelp, onPlace, onSources }) {
   const { t } = useLang();
   const [more, setMore] = useState(false);
   const d = tier.data;
@@ -95,6 +262,8 @@ export default function RhythmPanel({ tier, exposureTier, passes = [], onHelp, o
               </div>
             )}
           </div>
+
+          <RainWaterScatter passes={passes} imergPasses={imergTier?.data?.passes} />
 
           {more && (
             <div className="flex flex-col gap-3 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3">

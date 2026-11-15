@@ -39,7 +39,10 @@ def build(spot, lang):
     template = templates_en if lang == 'en' else templates_fil
     sentences = []
     for key, label in template.LABELS.items():
-        stream = spot['streams'][key]
+        stream = spot['streams'].get(key, {'value': None, 'reason': 'IMERG pass data is unavailable'})
+        if key == 'motion':
+            sentences.append(f'{label}: {template.MOTION_UNAVAILABLE}.')
+            continue
         if stream['value'] is None:
             sentences.append(f"{label}: {template.UNAVAILABLE} {stream['reason']}.")
         else:
@@ -68,16 +71,22 @@ def build(spot, lang):
                     detail = template.RAINFALL.format(rain=latest['prior7DayMm'], date=latest['date'])
                 else:
                     detail = f"{template.UNAVAILABLE} no complete prior-pass rainfall window is available"
-            elif key == 'motion':
-                rows = [(date, displacement) for date, displacement in zip(value.get('epochs', []), value.get('displacementMm', [])) if displacement is not None]
-                if rows:
-                    date, displacement = rows[-1]
-                    detail = template.MOTION.format(date=date, displacement=displacement)
-                else:
-                    detail = f"{template.UNAVAILABLE} no valid displacement epoch is available"
+            elif key == 'imerg':
+                def available(field):
+                    v = value.get(field)
+                    return scalar(v) if v is not None else f"{template.UNAVAILABLE} {value.get(field + 'Reason') or 'the IMERG value is missing'}"
+                when = value.get('acquisitionTimeManila')
+                detail = template.IMERG.format(when=when or available('acquisitionTimeManila'),
+                    rain24=available('last24hMm'), hours24=available('window24Hours'),
+                    rain48=available('last48hMm'), hours48=available('window48Hours'),
+                    since=available('hoursSinceRain'), threshold=available('rainThresholdMmHr'))
             sentences.append(f'{label}: {detail}.')
             sentences.extend(f'{label} ({key}): {template.UNAVAILABLE} {reason}.'
                              for key, reason in missing(stream['value']))
+    imerg = spot['streams'].get('imerg', {}).get('value') or {}
+    when = imerg.get('acquisitionTimeManila')
+    time = when[11:16] if when and len(when) >= 16 else ('dawn' if lang == 'en' else 'madaling-araw')
+    sentences.append(template.LIMIT.format(time=time) + '.')
     return {'language': lang, 'translationStatus': 'pending native-speaker review' if lang == 'fil' else None,
             'dataKind': spot['dataKind'], 'sentences': sentences, 'facts': spot,
             'source': spot['source'], 'generatedAt': spot['generatedAt'],

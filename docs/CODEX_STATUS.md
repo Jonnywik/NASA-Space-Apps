@@ -1,5 +1,18 @@
 # Codex implementation status — 15 November 2026
 
+## Round 3 update
+
+Implementation commit: `67ae303`, branch `codex/round3`. Three Terra agents worked in parallel (high reasoning for briefings and downloads; medium for timelapse), with root integration and verification.
+
+| Task | Status | Evidence / blocker |
+|---|---|---|
+| R3.1 Briefings | Complete; Filipino review pending | EN/FIL open-water framing, latest matching pass IMERG facts, radar limitations and motion unavailable. Eight focused tests passed; null rain timing retains the source explanation. |
+| R3.2 Downloads | Complete | Seven real exports available on this laptop; whitelist, source attribution, missing/synthetic rejection, GeoTIFF hashes, validation and GIF provenance checks. Three focused tests passed. |
+| R3.3 Timelapse | Complete | Eleven frames at 1.2 seconds, 3,794,164 bytes. Manila dates, rainfall bar and attribution; three focused tests and first-frame visual inspection passed. |
+| R3.4 CI | Main confirmed green | Both backend and frontend jobs passed for `fd9de9a`, run [43686549327](https://github.com/Jonnywik/NASA-SA-Final/actions/runs/43686549327). No workflow change was necessary. Branch CI is checked after push. |
+
+Final integrated suite: **374 backend tests passed**. Real HTTP checks returned seven downloads, GIF 200, and the pending-review Filipino briefing with the latest 48-hour IMERG total. The original NISAR manifest remains SHA-256 `b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc`; the real radar product was not regenerated. Frontend changes and coordinator-owned NISAR layers were left to their assigned workers. The local API is running on port 8000.
+
 ## Round 2 update
 
 This update supersedes the older status below: real GCOV windows were processed, and GUNW windows were examined without producing a defensible motion product. The coordinator regenerated the canonical v6 product using the committed rule and one-pixel-dilated WorldCover mask: 0.3721 km² on at least half of valid passes and 0.9919 km² at least once. Do not use an older local output as that product.

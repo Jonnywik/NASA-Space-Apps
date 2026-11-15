@@ -67,6 +67,12 @@ npm run dev
 
 Open http://localhost:3000; the API documentation is at http://127.0.0.1:8000/docs. The frontend defaults to this API. `NEXT_PUBLIC_USE_FIXTURES=1` enables synthetic development fixtures; they are not observations.
 
+## Downloads and season animation
+
+`GET /api/v1/downloads?area=camanava_2026` lists the available real-data exports with attribution and licence information. Follow an entry's `url` to download it. Raster entries require the local NISAR product; absent files are omitted rather than replaced by samples.
+
+From `backend/`, build the animation with `..\.venv\Scripts\python scripts/28_nisar_timelapse.py`. It uses the existing real product and IMERG cache without regenerating the radar results. View it at `/api/v1/nisar/timelapse.gif?area=camanava_2026`. A changed input requires rebuilding the animation.
+
 ## Tests
 
 ```powershell

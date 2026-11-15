@@ -28,6 +28,7 @@ from app.climate_api import make_router as make_climate_router
 from app.nisar_api import make_router as make_nisar_router
 from app.spot_api import make_router as make_spot_router
 from app.validation_api import make_router as make_validation_router
+from app.downloads_api import make_router as make_downloads_router
 from processing.p3.catalog import capabilities
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -143,3 +144,4 @@ app.include_router(make_climate_router(OUTPUT, read_public_events))
 app.include_router(make_nisar_router(OUTPUT, read_public_events))
 app.include_router(make_spot_router(OUTPUT, read_public_events))
 app.include_router(make_validation_router(OUTPUT, read_public_events))
+app.include_router(make_downloads_router(OUTPUT, read_public_events))

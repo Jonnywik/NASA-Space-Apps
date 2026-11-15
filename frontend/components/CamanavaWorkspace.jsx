@@ -558,6 +558,7 @@ function Workspace({ onRegional }) {
                 tier={rhythmTier}
                 exposureTier={exposureRhythm}
                 passes={passes}
+                imergTier={imergTier}
                 onHelp={openHelp}
                 onPlace={onZone}
                 onSources={() => setLimitsOpen(true)}

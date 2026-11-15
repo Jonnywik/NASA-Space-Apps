@@ -139,14 +139,16 @@ export function SpotCard({ point, placeHint, spotTier, imergTier, mode, selected
         </div>
       ) : (
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-baseline justify-between gap-2 text-[12px]">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[12px]">
             <span className="text-[#4A5850]">{t("spot.card.waterPasses")}</span>
-            <span className="flex items-center gap-1.5 font-bold text-[#16231B]">
+            <span className="flex items-center gap-1.5 font-bold text-[#16231B]" data-testid="spot-card-water-count">
               {nd?.permanentWater
                 ? t("spot.permanent")
-                : nd?.floodCount != null
-                  ? t("spot.card.waterCount", { k: nd.floodCount, n: nd.validCount ?? "—" })
-                  : "—"}
+                : nd?.floodCount === 0
+                  ? t("spot.card.waterZero", { n: nd.validCount ?? 11 })
+                  : nd?.floodCount != null
+                    ? t("spot.card.waterCount", { k: nd.floodCount, n: nd.validCount ?? "—" })
+                    : "—"}
               {isNisarDemo && <DemoTag compact />}
             </span>
           </div>
@@ -351,7 +353,9 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
                 ? t("spot.permanent")
                 : nd.floodCount == null
                   ? `${t("spot.noCount")}${nd.floodCountReason ? `: ${nd.floodCountReason}` : ""}`
-                  : t("spot.floodCount", { k: nd.floodCount, n: nd.validCount ?? "—" })}
+                  : nd.floodCount === 0
+                    ? t("spot.card.waterZero", { n: nd.validCount ?? 11 })
+                    : t("spot.floodCount", { k: nd.floodCount, n: nd.validCount ?? "—" })}
             </p>
             {nd.permanentWater && nd.floodCountReason && <p className="text-[11px] text-[#4A5850]">{nd.floodCountReason}</p>}
             {nd.possibleFloodedVegetationPasses > 0 && <p className="text-[11px] text-[#7A5B00]">◆ {t("spot.vegPasses", { n: nd.possibleFloodedVegetationPasses })}</p>}

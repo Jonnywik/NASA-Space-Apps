@@ -631,3 +631,21 @@ All v2 shell, Map tools, Spot card, findings summaries and timeline strings adde
 | `radar.limits.p2` | In a flooded street, the radar bounces off the water and then a wall straight back to the satellite (double-bounce), so the street looks bright, not dark. Narrow streets, building shadows and layover also hide the street surface. | Sa binahang kalye, tumatalbog ang radar sa tubig tapos sa pader pabalik sa satellite (double-bounce), kaya nagmumukhang maliwanag ang kalye, hindi madilim. Tinatakpan din ng makikitid na kalye, anino ng gusali, at layover ang ibabaw ng kalye. |  |
 | `radar.limits.p3` | NISAR passes CAMANAVA at about 05:30 Manila time every 12 days, so floods that rise in the afternoon and drain overnight are missed. The radar does see the whole area get 'wetter' after rainy weeks: built-up and open land brighten together (Spearman ρ = 0.80 with 7-day rain, n = 11). This is general wetness, not a flood map. | Dumaraan ang NISAR sa CAMANAVA bandang ~05:30 oras sa Maynila tuwing 12 araw, kaya hindi naaabot ang biglaang pagbaha sa hapon na humuhupa bago mag-umaga. Nakikita ng radar ang pangkalahatang pagbasa ng lupa pagkatapos ng maulang linggo: sabay na umiilaw ang lungsod at bukirin (Spearman ρ = 0.80 sa 7-araw na ulan, n = 11). Pangkalahatang halumigmig ito, hindi mapa ng baha. |  |
 | `radar.limits.tip` | NISAR maps open water outside the usual water and general surface wetness, not flooded city streets. | ipinapakita ng NISAR ang bukas na tubig sa labas ng karaniwang tubig at pangkalahatang basa sa ibabaw, hindi ang mga binahang kalye. |  |
+
+## Round 3 / A8 real-data scatter & spot polish (pending native review)
+
+| Key | English | Current Filipino (pending native review) | Corrected Filipino (draft / reviewer) |
+| --- | --- | --- | --- |
+| `spot.card.imerg24h` | Rain in the 24 h before the selected pass: {mm} (NASA GPM IMERG, ~11 km cell) | Ulan sa 24 oras bago ang napiling pass: {mm} (NASA GPM IMERG, ~11 km cell) |  |
+| `spot.card.waterZero` | No open water outside the usual water on any of the {n} passes | Walang bukas na tubig sa labas ng karaniwang tubig sa alinman sa {n} na pass |  |
+| `rhythm.v2.scatter.title` | Open water vs rain before each pass | Bukas na tubig laban sa ulan bago ang bawat pass |  |
+| `rhythm.v2.scatter.xAxis` | 48 h rain before pass (mm) | Ulan sa 48 oras bago ang pass (mm) |  |
+| `rhythm.v2.scatter.yAxis` | Open water (km²) | Bukas na tubig (km²) |  |
+| `rhythm.v2.scatter.caption` | Each dot is one NISAR pass. Passes after heavy rain show less open water: wet ground and rain-roughened water look brighter to L-band radar. Exploratory, 11 passes. | Bawat tuldok ay isang pass ng NISAR. Mas maliit ang bukas na tubig sa mga pass pagkatapos ng malakas na ulan: mas maliwanag sa L-band radar ang basang lupa at maalon na tubig. Eksploratoryo, 11 pass. |  |
+| `rhythm.v2.scatter.sources` | Sources: NASA GPM IMERG · NASA–ISRO NISAR | Pinagmulan: NASA GPM IMERG · NASA–ISRO NISAR |  |
+| `rhythm.v2.scatter.aria` | Scatter plot of open water outside the usual water (km²) against 48-hour rain before each pass (mm) across {n} NISAR passes. Rain ranges from {minRain} to {maxRain} mm; open water ranges from {minWater} to {maxWater} km². | Scatter plot ng bukas na tubig sa labas ng karaniwang tubig (km²) laban sa ulan sa 48 oras bago ang bawat pass (mm) sa {n} na pass ng NISAR. Ang ulan ay mula {minRain} hanggang {maxRain} mm; ang bukas na tubig ay mula {minWater} hanggang {maxWater} km². |  |
+| `rhythm.v2.scatter.showTable` | Show as table | Ipakita bilang talahanayan |  |
+| `rhythm.v2.scatter.hideTable` | Hide table | Itago ang talahanayan |  |
+| `rhythm.v2.scatter.colDate` | Pass date | Petsa ng pass |  |
+| `rhythm.v2.scatter.colRain` | 48 h rain (mm) | Ulan sa 48 oras (mm) |  |
+| `rhythm.v2.scatter.colWater` | Open water (km²) | Bukas na tubig (km²) |  |
