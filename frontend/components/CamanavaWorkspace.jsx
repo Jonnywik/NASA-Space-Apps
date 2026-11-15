@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import FuturePanel from "./FuturePanel";
+import { CoherenceChangeCard, RainResponseCard } from "./ExtraOverlayCard";
 import HistoryPanel from "./HistoryPanel";
 import HypothesesPanel from "./HypothesesPanel";
 import LimitsDrawer from "./LimitsDrawer";
@@ -22,12 +23,17 @@ import {
   AREA_ID,
   FIXTURES_ON,
   FIXTURE_SCOPE,
+  checkTimelapseGif,
+  getDownloads,
   getFloodScenario,
   getGroundMotion,
   getImergPasses,
+  getNisarCoherenceChange,
   getNisarPasses,
   getNisarPolarization,
+  getNisarRainResponse,
   getNisarRhythm,
+  getNisarSoilMoisture,
   getOutlook,
   getPlaceBoundaries,
   getPlaceExposure,
@@ -39,6 +45,7 @@ import {
   getTimelineAvailability,
   getValidation,
   searchPlaces,
+  timelapseGifUrl,
 } from "../utils/api";
 import { useLang } from "../utils/LangContext";
 import { LimitsProvider, useLimits, useReportMany } from "../utils/LimitsContext";
@@ -168,6 +175,8 @@ function Workspace({ onRegional }) {
   const [layers, setLayers] = useState(DEFAULT_LAYERS);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [extraOverlay, setExtraOverlay] = useState(null);
+  const [showSmOverlay, setShowSmOverlay] = useState(false);
 
   const searchRef = useRef(null);
   const settingsRef = useRef(null);
@@ -231,6 +240,15 @@ function Workspace({ onRegional }) {
   const flood = useTier(needFuture && scenarioId ? () => getFloodScenario(AREA_ID, scenarioId) : null, [needFuture, scenarioId]);
   const proj = useProjection({ eventId: AREA_ID, year: projYear, demo: false, active: mode === "future" });
 
+  const needRainResp = useLatched(extraOverlay === "rainResponse");
+  const rainRespTier = useTier(needRainResp ? () => getNisarRainResponse(AREA_ID) : null, [needRainResp]);
+  const needCohChange = useLatched(extraOverlay === "coherenceChange");
+  const cohChangeTier = useTier(needCohChange ? () => getNisarCoherenceChange(AREA_ID) : null, [needCohChange]);
+  const needSoilMoisture = useLatched(mode === "season");
+  const soilMoistureTier = useTier(needSoilMoisture ? () => getNisarSoilMoisture(AREA_ID) : null, [needSoilMoisture]);
+  const downloadsTier = useTier(() => getDownloads(AREA_ID), []);
+  const timelapseTier = useTier(needSoilMoisture ? () => checkTimelapseGif(AREA_ID) : null, [needSoilMoisture]);
+
   const { spot: spotTier, briefing: briefingTier } = useSpotData(point);
 
   useReportMany([
@@ -238,6 +256,9 @@ function Workspace({ onRegional }) {
     ["rain", t("season.rain"), rainTier.data],
     ["imerg", t("imerg.title"), imergTier.data],
     ["rhythm", t("rhythm.title"), rhythmTier.data],
+    ["rain-resp", t("rainResp.title"), rainRespTier.data],
+    ["coh-change", t("cohChange.title"), cohChangeTier.data],
+    ["soil-moisture", t("sm.title"), soilMoistureTier.data],
     ["validation", t("validation.title"), validationTier.data],
     ["exp-rhythm", t("exposure.title"), exposureRhythm.data],
     ["motion", t("motion.title"), motionTier.data],
@@ -352,6 +373,8 @@ function Workspace({ onRegional }) {
   function goMode(m) {
     if (tour.open) closeTour();
     setBare(false);
+    setExtraOverlay(null);
+    setShowSmOverlay(false);
     setMode(m);
     setSideTab("findings");
   }
@@ -396,9 +419,36 @@ function Workspace({ onRegional }) {
 
   // ---- map content --------------------------------------------------------------------------
   const bounds = passesTier.data?.bounds;
+  const activeSmPass = useMemo(
+    () => (soilMoistureTier.data?.passes ?? []).find((p) => p.date === passes[passIdx]?.date) ?? null,
+    [soilMoistureTier.data, passes, passIdx],
+  );
+  const effectiveSmOverlay = !extraOverlay && mode === "season" && !compareOn && showSmOverlay && Boolean(activeSmPass?.overlayUrl);
+  const extraOverlayKind = extraOverlay ?? (effectiveSmOverlay ? "soilMoisture" : null);
+  const extraLegend =
+    extraOverlay === "rainResponse"
+      ? rainRespTier.data?.legend
+      : extraOverlay === "coherenceChange"
+        ? cohChangeTier.data?.legend
+        : effectiveSmOverlay
+          ? soilMoistureTier.data?.legend
+          : null;
+
   const overlays = useMemo(() => {
     if (bare) return [];
     const out = [];
+    if (extraOverlay === "rainResponse") {
+      if (rainRespTier.data?.overlayUrl) {
+        out.push({ key: "extra-rain-response", url: rainRespTier.data.overlayUrl, pane: "afterPane", opacity, bounds: rainRespTier.data.bounds ?? bounds, alt: t("rainResp.title") });
+      }
+      return out;
+    }
+    if (extraOverlay === "coherenceChange") {
+      if (cohChangeTier.data?.overlayUrl) {
+        out.push({ key: "extra-coherence-change", url: cohChangeTier.data.overlayUrl, pane: "afterPane", opacity, bounds: cohChangeTier.data.bounds ?? bounds, alt: t("cohChange.title") });
+      }
+      return out;
+    }
     if (mode === "season" && passes.length) {
       const cur = passes[passIdx];
       const url = (p) => (polView === "hh" ? p?.backscatterUrl : p?.overlayUrl);
@@ -409,6 +459,8 @@ function Workspace({ onRegional }) {
         const a = passes[cmpAfter];
         out.push({ key: `b-${b?.id}-${polView}`, url: url(b), pane: "beforePane", opacity, bounds, alt: `${b?.date}` }, ...veg(b, "beforePane", "b"));
         out.push({ key: `a-${a?.id}-${polView}`, url: url(a), pane: "afterPane", opacity, bounds, alt: `${a?.date}` }, ...veg(a, "afterPane", "a"));
+      } else if (effectiveSmOverlay) {
+        out.push({ key: `sm-${cur?.id}`, url: activeSmPass.overlayUrl, pane: "afterPane", opacity, bounds: soilMoistureTier.data?.bounds ?? bounds, alt: t("sm.title") });
       } else if (polView === "rgb") {
         const rgb = polTier.data?.rgbUrl ?? cur?.polarizationUrl;
         if (rgb) out.push({ key: `rgb-${cur?.id}`, url: rgb, pane: "afterPane", opacity, bounds: polTier.data?.bounds ?? bounds, alt: "RGB" });
@@ -420,10 +472,11 @@ function Workspace({ onRegional }) {
       out.push({ key: "rhythm", url: rhythmTier.data.overlayUrl, pane: "rhythmPane", opacity, bounds: rhythmTier.data.bounds ?? bounds, alt: t("rhythm.title") });
     }
     return out;
-  }, [bare, mode, passes, passIdx, polView, showVeg, compareOn, cmpBefore, cmpAfter, opacity, bounds, polTier.data, rhythmTier.data, rhythmUnder, t]);
+  }, [bare, extraOverlay, rainRespTier.data, cohChangeTier.data, effectiveSmOverlay, activeSmPass, soilMoistureTier.data, mode, passes, passIdx, polView, showVeg, compareOn, cmpBefore, cmpAfter, opacity, bounds, polTier.data, rhythmTier.data, rhythmUnder, t]);
 
   const losScale = useMemo(() => makeLosScale(motionTier.data?.heatmapGeojson), [motionTier.data]);
   const geojsons = useMemo(() => {
+    if (extraOverlay) return [];
     const out = [];
     if (mode === "motion" && losScale && motionTier.data?.heatmapGeojson) {
       out.push({
@@ -447,7 +500,7 @@ function Workspace({ onRegional }) {
       });
     }
     return out;
-  }, [mode, losScale, motionTier.data, rhythmUnder, opacity, proj.geojson, t]);
+  }, [extraOverlay, mode, losScale, motionTier.data, rhythmUnder, opacity, proj.geojson, t]);
 
   const pins = useMemo(() => stories.map((s, i) => ({ id: String(s.id ?? i), lat: s.lat, lon: s.lon, label: s.name ?? s.barangay ?? t("stories.pin") })), [stories, t]);
   const onPin = useCallback(
@@ -493,18 +546,24 @@ function Workspace({ onRegional }) {
   const scenarioMonths = scenarios.data?.scenarios?.find((s) => s.id === scenarioId)?.months ?? scenarios.data?.scenarios?.[0]?.months ?? [];
   const areaTitle = mode === "history" ? t("header.area.history") : mode === "future" ? t("header.area.future") : t("header.area.season");
 
-  const activeOverlay = OVERLAY_FOR_MODE[mode] ?? "rhythm";
+  const activeOverlay = extraOverlay ?? OVERLAY_FOR_MODE[mode] ?? "rhythm";
   const isDemoOverlay =
-    (mode === "rhythm" && rhythmTier.data?.dataKind === "synthetic") ||
-    (mode === "season" && passesTier.data?.dataKind === "synthetic") ||
-    (mode === "motion" && motionTier.data?.dataKind === "synthetic") ||
-    (mode === "future" && (flood.data?.dataKind === "synthetic" || scenarios.data?.dataKind === "synthetic"));
+    (extraOverlay === "rainResponse" && rainRespTier.data?.dataKind === "synthetic") ||
+    (extraOverlay === "coherenceChange" && cohChangeTier.data?.dataKind === "synthetic") ||
+    (effectiveSmOverlay && soilMoistureTier.data?.dataKind === "synthetic") ||
+    (!extraOverlay &&
+      ((mode === "rhythm" && rhythmTier.data?.dataKind === "synthetic") ||
+        (mode === "season" && !effectiveSmOverlay && passesTier.data?.dataKind === "synthetic") ||
+        (mode === "motion" && motionTier.data?.dataKind === "synthetic") ||
+        (mode === "future" && (flood.data?.dataKind === "synthetic" || scenarios.data?.dataKind === "synthetic"))));
 
   const resetMapControls = () => {
     setMapMode("streets");
     setLayers(DEFAULT_LAYERS);
     setShowVeg(true);
     setOpacity(0.75);
+    setExtraOverlay(null);
+    setShowSmOverlay(false);
   };
 
   const renderFindingsContent = () => (
@@ -552,7 +611,15 @@ function Workspace({ onRegional }) {
             </div>
           )}
 
-          {mode === "rhythm" && (
+          {extraOverlay === "rainResponse" && (
+            <RainResponseCard tier={rainRespTier} onSources={() => setLimitsOpen(true)} />
+          )}
+
+          {extraOverlay === "coherenceChange" && (
+            <CoherenceChangeCard tier={cohChangeTier} onSources={() => setLimitsOpen(true)} />
+          )}
+
+          {!extraOverlay && mode === "rhythm" && (
             <>
               <RhythmPanel
                 tier={rhythmTier}
@@ -568,12 +635,17 @@ function Workspace({ onRegional }) {
             </>
           )}
 
-          {mode === "season" && (
+          {!extraOverlay && mode === "season" && (
             <SeasonPanel
               passesTier={passesTier}
               rainTier={rainTier}
               imergTier={imergTier}
               polTier={polTier}
+              soilMoistureTier={soilMoistureTier}
+              showSmOverlay={showSmOverlay}
+              onToggleSmOverlay={setShowSmOverlay}
+              timelapseUrl={timelapseGifUrl(AREA_ID)}
+              timelapseAvailable={Boolean(timelapseTier.data)}
               idx={passIdx}
               onIdx={setPassIdx}
               playing={playing}
@@ -900,6 +972,8 @@ function Workspace({ onRegional }) {
               showVeg={showVeg}
               losScale={losScale}
               isDemoOverlay={isDemoOverlay}
+              extraOverlayKind={extraOverlayKind}
+              extraLegend={extraLegend}
               topLeftSearch={<SearchBox onSelect={onSearchSelect} inputRef={searchRef} highlight={searchHighlight} />}
               topRightTools={
                 <MapTools
@@ -910,6 +984,13 @@ function Workspace({ onRegional }) {
                   onMapMode={setMapMode}
                   overlay={activeOverlay}
                   onOverlay={(ov) => {
+                    if (ov === "rainResponse" || ov === "coherenceChange") {
+                      setExtraOverlay(ov);
+                      setShowSmOverlay(false);
+                      setSideTab("findings");
+                      return;
+                    }
+                    setExtraOverlay(null);
                     const nextMode = MODE_FOR_OVERLAY[ov];
                     if (nextMode) goMode(nextMode);
                   }}
@@ -1040,7 +1121,7 @@ function Workspace({ onRegional }) {
       </nav>
 
       <RadarCards open={radar.open} initial={radar.card} onClose={closeHelp} />
-      <LimitsDrawer open={limitsOpen} onClose={closeLimits} />
+      <LimitsDrawer open={limitsOpen} onClose={closeLimits} downloadsTier={downloadsTier} />
     </div>
   );
 }

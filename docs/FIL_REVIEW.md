@@ -649,3 +649,34 @@ All v2 shell, Map tools, Spot card, findings summaries and timeline strings adde
 | `rhythm.v2.scatter.colDate` | Pass date | Petsa ng pass |  |
 | `rhythm.v2.scatter.colRain` | 48 h rain (mm) | Ulan sa 48 oras (mm) |  |
 | `rhythm.v2.scatter.colWater` | Open water (km²) | Bukas na tubig (km²) |  |
+
+## Round 4 / A9 exploratory overlays, soil moisture & downloads (pending native review)
+
+| Key | English | Current Filipino (pending native review) | Corrected Filipino (draft / reviewer) |
+| --- | --- | --- | --- |
+| `map.tools.overlay.rainResponse` | Rain response (ρ) | Tugon sa ulan (ρ) |  |
+| `map.tools.overlay.coherenceChange` | 8 Aug coherence loss | Bawas-coherence (8 Ago) |  |
+| `rainResp.title` | How strongly radar brightness follows rain (11 passes) | Gaano kalakas sumusunod ang ningning ng radar sa ulan (11 daan) |  |
+| `rainResp.legendTitle` | Rain response ρ (Spearman, −1 to +1) | Tugon sa ulan ρ (Spearman, −1 hanggang +1) |  |
+| `rainResp.medianRho` | Median correlation (ρ) | Median na korelasyon (ρ) |  |
+| `rainResp.shareAbove05` | Share of cells with ρ > 0.5 | Bahagi ng mga cell na may ρ > 0.5 |  |
+| `rainResp.landCoverCol` | Land cover | Takip ng lupa |  |
+| `rainResp.cellsCol` | Cells | Mga cell |  |
+| `rainResp.medianCol` | Median ρ | Median ρ |  |
+| `rainResp.caption` | Exploratory. Brighter after rain usually means wetter ground or vegetation; it is not a flood map. | Pang-eksplorasyon. Ang mas maliwanag pagkatapos ng ulan ay karaniwang mas basang lupa o halaman; hindi ito mapa ng baha. |  |
+| `cohChange.title` | Coherence loss across the 8 Aug storm (17 Jul → 10 Aug pair) vs calm pairs | Pagbaba ng coherence sa bagyo noong 8 Ago (pares na 17 Hul → 10 Ago) laban sa payapang pares |  |
+| `cohChange.legendTitle` | Coherence drop vs calm pairs (0.05 to 0.70) | Bawas sa coherence laban sa payapang pares (0.05 hanggang 0.70) |  |
+| `cohChange.km2Over03` | Area with drop > 0.3 | Lawak na may bawas > 0.3 |  |
+| `cohChange.medianDrop` | Median coherence drop | Median na bawas sa coherence |  |
+| `cohChange.medianCol` | Median drop | Median na bawas |  |
+| `cohChange.caption` | Exploratory. Loss can come from water, vegetation change, construction or noise; never call it flooding. | Pang-eksplorasyon. Ang pagbaba ay maaaring mula sa tubig, pagbabago sa halaman, konstruksiyon o ingay; huwag itong tawaging baha. |  |
+| `sm.title` | NISAR L3 soil moisture (SME2, ~200 m) | NISAR L3 halumigmig ng lupa (SME2, ~200 m) |  |
+| `sm.legendTitle` | Volumetric soil moisture (m³/m³) | Volumetric na halumigmig ng lupa (m³/m³) |  |
+| `sm.medianLabel` | Pass median soil moisture | Median na halumigmig ng lupa sa daan |  |
+| `sm.recommendedNote` | recommended retrievals for {pct}% of cells (farmland at the edges; none in the dense city) | inirerekomendang retrieval para sa {pct}% ng mga cell (bukirin sa gilid; wala sa masinsing lungsod) |  |
+| `sm.unavailablePass` | not available for this pass | walang datos sa daang ito |  |
+| `sm.toggleOverlay` | Show soil moisture overlay on map | Ipakita ang patong ng halumigmig ng lupa sa mapa |  |
+| `season.timelapse` | Download timelapse (GIF) | I-download ang timelapse (GIF) |  |
+| `downloads.title` | Download data | Mag-download ng datos |  |
+| `downloads.lead` | Processed CAMANAVA layers and summaries for offline GIS or verification. | Mga naprosesong patong at buod ng CAMANAVA para sa offline na GIS o beripikasyon. |  |
+| `downloads.action` | Download | I-download |  |

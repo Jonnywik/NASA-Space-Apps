@@ -27,7 +27,7 @@ export const MODE_FOR_OVERLAY = {
   scenario: "future",
 };
 
-const OVERLAY_KEYS = ["rhythm", "pass", "motion", "scenario"];
+const OVERLAY_KEYS = ["rhythm", "pass", "rainResponse", "coherenceChange", "motion", "scenario"];
 const LAYER_KEYS = ["bgy", "labels", "roads", "rivers", "study", "buildings"];
 const MAP_MODES = ["streets", "minimal"];
 
@@ -78,6 +78,8 @@ export default function MapTools({
   const overlayShort = {
     rhythm: t("mode.rhythm"),
     pass: t("mode.season"),
+    rainResponse: t("map.tools.overlay.rainResponse"),
+    coherenceChange: t("map.tools.overlay.coherenceChange"),
     motion: t("mode.motion"),
     scenario: t("map.tools.overlay.scenario"),
   }[overlay] ?? t("mode.rhythm");

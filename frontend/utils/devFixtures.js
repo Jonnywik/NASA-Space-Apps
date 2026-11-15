@@ -381,6 +381,108 @@ export async function fixtureResponse(path, q) {
         ],
       });
     }
+    case "/api/v1/nisar/rain-response": {
+      const { passes, wet } = m();
+      return base({
+        title: "How strongly NISAR radar brightness follows rain",
+        method: "FIXTURE: synthetic Spearman rank correlation between brightness and prior rain.",
+        nPasses: passes.length,
+        passDates: passes.map((p) => p.date),
+        rain48hMm: passes.map((p) => Math.round(p.prior7 * 0.4 * 10) / 10),
+        overlayUrl: makePng((x, y) => {
+          const v = wet[y * W + x];
+          return v > 0.55 ? [179, 88, 6, 195] : v > 0.35 ? [244, 165, 130, 175] : [146, 197, 222, 165];
+        }),
+        bounds: BOUNDS,
+        legend: [
+          { value: -1.0, color: "#2166AC" },
+          { value: -0.5, color: "#92C5DE" },
+          { value: 0.0, color: "#F7F7F7" },
+          { value: 0.5, color: "#F4A582" },
+          { value: 1.0, color: "#B35806" },
+        ],
+        stats: { cells: 113087, medianRho: 0.655, shareAbove05: 0.701, shareBelowMinus05: 0.003 },
+        byLandCover: [
+          { class: 10, name: "Tree cover", cells: 20402, median: 0.682 },
+          { class: 30, name: "Grassland", cells: 7659, median: 0.7 },
+          { class: 40, name: "Cropland", cells: 5295, median: 0.591 },
+          { class: 50, name: "Built-up", cells: 74923, median: 0.645 },
+        ],
+        nativeResolution: { x: 50, y: 50, units: "m" },
+      });
+    }
+    case "/api/v1/nisar/coherence-change":
+      return base({
+        title: "Coherence loss across the 8 Aug 2026 storm",
+        method: "FIXTURE: synthetic coherence drop between calm pairs and storm pair.",
+        stormPair: { reference: "2026-07-17", secondary: "2026-08-10", days: 24 },
+        calmPairs: [{ reference: "2026-06-23", secondary: "2026-07-05" }],
+        overlayUrl: makePng((x, y) => {
+          const v = m().wet[y * W + x];
+          if (v < 0.45) return null;
+          return v > 0.7 ? [197, 27, 125, 200] : [222, 119, 174, 175];
+        }),
+        bounds: BOUNDS,
+        legend: [
+          { value: 0.05, color: "#FDE0EF" },
+          { value: 0.2, color: "#F1B6DA" },
+          { value: 0.35, color: "#DE77AE" },
+          { value: 0.5, color: "#C51B7D" },
+          { value: 0.7, color: "#4D004B" },
+        ],
+        stats: { cells: 61975, medianDrop: 0.062, km2DropOver03: 4.76, landKm2: 396.6 },
+        byLandCover: [
+          { class: 10, name: "Tree cover", cells: 7734, median: 0.107 },
+          { class: 40, name: "Cropland", cells: 1986, median: 0.117 },
+          { class: 50, name: "Built-up", cells: 29892, median: 0.055 },
+        ],
+        nativeResolution: { x: 80, y: 80, units: "m" },
+      });
+    case "/api/v1/nisar/soil-moisture": {
+      const { passes, wet } = m();
+      return base({
+        sensor: "NISAR L-band SAR (fixture)",
+        product: "L3 SME2 soil moisture (fixture)",
+        units: "m3/m3",
+        nativeResolution: { x: 200, y: 200, units: "m", grid: "EASE-Grid 2.0" },
+        bounds: BOUNDS,
+        legend: [
+          { value: 0.0, color: "#A6611A" },
+          { value: 0.15, color: "#DFC27D" },
+          { value: 0.3, color: "#F5F5F5" },
+          { value: 0.45, color: "#80CDC1" },
+          { value: 0.6, color: "#018571" },
+        ],
+        passes: passes.slice(0, 9).map((p, i) => ({
+          date: p.date,
+          acquisitionTime: `${p.date}T21:30:32.000Z`,
+          productId: `FIXTURE_SME2_${p.date}`,
+          maturity: "provisional",
+          overlayUrl: makePng((x, y) => {
+            if (x > W * 0.25 && x < W * 0.75 && y > H * 0.25 && y < H * 0.75) return null;
+            const v = wet[y * W + x];
+            return v > 0.5 ? [1, 133, 113, 190] : [223, 194, 125, 180];
+          }),
+          medianM3M3: Math.round((0.24 + 0.1 * hash(i + 17)) * 1000) / 1000,
+          meanM3M3: Math.round((0.25 + 0.1 * hash(i + 17)) * 1000) / 1000,
+          p10M3M3: 0.19,
+          p90M3M3: 0.38,
+          medianUncertaintyM3M3: 0.035,
+          recommendedPixels: 620,
+          studyPixels: 10395,
+          recommendedFraction: 0.06,
+          prior3DayMm: Math.round(p.prior7 * 0.3 * 10) / 10,
+          prior7DayMm: Math.round(p.prior7 * 10) / 10,
+        })),
+        rainComparison: {
+          method: "FIXTURE Spearman rank correlation between 7-day rain and median soil moisture",
+          n: 9,
+          rho: -0.333,
+          pValue: 0.3807,
+          note: "Synthetic fixture values.",
+        },
+      });
+    }
     case "/api/v1/climate/rainfall/daily": {
       const start = q.start ?? "2026-06-01";
       const end = q.end ?? "2026-11-02";

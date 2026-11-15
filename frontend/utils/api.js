@@ -282,6 +282,51 @@ export async function getNisarPolarization(area, date) {
   return d;
 }
 
+export async function getNisarRainResponse(area = AREA_ID) {
+  const d = await request(`${V1}/nisar/rain-response`, { area }, "Could not load rain response");
+  d.overlayUrl = assetUrl(d.overlayUrl);
+  return d;
+}
+
+export async function getNisarCoherenceChange(area = AREA_ID) {
+  const d = await request(`${V1}/nisar/coherence-change`, { area }, "Could not load coherence change");
+  d.overlayUrl = assetUrl(d.overlayUrl);
+  return d;
+}
+
+export async function getNisarSoilMoisture(area = AREA_ID) {
+  const d = await request(`${V1}/nisar/soil-moisture`, { area }, "Could not load soil moisture");
+  (d.passes ?? []).forEach((p) => {
+    p.overlayUrl = assetUrl(p.overlayUrl);
+  });
+  return d;
+}
+
+export function timelapseGifUrl(area = AREA_ID) {
+  return `${API_BASE}${V1}/nisar/timelapse.gif?area=${encodeURIComponent(area)}`;
+}
+
+export async function checkTimelapseGif(area = AREA_ID) {
+  try {
+    const res = await fetch(timelapseGifUrl(area), { method: "HEAD" });
+    return Boolean(res?.ok);
+  } catch {
+    return false;
+  }
+}
+
+export async function getDownloads(area = AREA_ID) {
+  try {
+    const res = await fetch(`${API_BASE}${V1}/downloads?area=${encodeURIComponent(area)}`);
+    if (!res.ok) return [];
+    const body = await res.json();
+    const items = Array.isArray(body) ? body : body?.entries ?? body?.downloads ?? [];
+    return items.map((item) => ({ ...item, url: assetUrl(item?.url) }));
+  } catch {
+    return [];
+  }
+}
+
 // --- A: climate, history, outlook, scenarios -------------------------------
 
 // Incomplete months have totalMm null, a partialMm and no anomaly.

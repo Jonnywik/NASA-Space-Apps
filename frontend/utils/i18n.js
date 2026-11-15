@@ -827,6 +827,8 @@ Object.assign(en, {
   "map.tools.overlay.one": "One at a time",
   "map.tools.overlay.rhythm": "Open water outside the usual water",
   "map.tools.overlay.pass": "Single radar pass",
+  "map.tools.overlay.rainResponse": "Rain response (ρ)",
+  "map.tools.overlay.coherenceChange": "8 Aug coherence loss",
   "map.tools.overlay.motion": "Ground motion (InSAR)",
   "map.tools.overlay.scenario": "Flood scenario",
   "map.tools.showVeg": "Show possible flooded vegetation",
@@ -973,6 +975,35 @@ Object.assign(en, {
   "time.v2.rain7d": "7-day rain window",
   "time.v2.prevMonth": "Previous month",
   "time.v2.nextMonth": "Next month",
+
+  "rainResp.title": "How strongly radar brightness follows rain (11 passes)",
+  "rainResp.legendTitle": "Rain response ρ (Spearman, −1 to +1)",
+  "rainResp.medianRho": "Median correlation (ρ)",
+  "rainResp.shareAbove05": "Share of cells with ρ > 0.5",
+  "rainResp.landCoverCol": "Land cover",
+  "rainResp.cellsCol": "Cells",
+  "rainResp.medianCol": "Median ρ",
+  "rainResp.caption": "Exploratory. Brighter after rain usually means wetter ground or vegetation; it is not a flood map.",
+
+  "cohChange.title": "Coherence loss across the 8 Aug storm (17 Jul → 10 Aug pair) vs calm pairs",
+  "cohChange.legendTitle": "Coherence drop vs calm pairs (0.05 to 0.70)",
+  "cohChange.km2Over03": "Area with drop > 0.3",
+  "cohChange.medianDrop": "Median coherence drop",
+  "cohChange.medianCol": "Median drop",
+  "cohChange.caption": "Exploratory. Loss can come from water, vegetation change, construction or noise; never call it flooding.",
+
+  "sm.title": "NISAR L3 soil moisture (SME2, ~200 m)",
+  "sm.legendTitle": "Volumetric soil moisture (m³/m³)",
+  "sm.medianLabel": "Pass median soil moisture",
+  "sm.recommendedNote": "recommended retrievals for {pct}% of cells (farmland at the edges; none in the dense city)",
+  "sm.unavailablePass": "not available for this pass",
+  "sm.toggleOverlay": "Show soil moisture overlay on map",
+
+  "season.timelapse": "Download timelapse (GIF)",
+
+  "downloads.title": "Download data",
+  "downloads.lead": "Processed CAMANAVA layers and summaries for offline GIS or verification.",
+  "downloads.action": "Download",
 });
 Object.assign(fil, {
   "briefing.title": "Buod para sa lugar",
@@ -1021,6 +1052,8 @@ Object.assign(fil, {
   "map.tools.overlay.one": "Isa bawat pagkakataon",
   "map.tools.overlay.rhythm": "Bukas na tubig sa labas ng karaniwang tubig",
   "map.tools.overlay.pass": "Isang radar pass",
+  "map.tools.overlay.rainResponse": "Tugon sa ulan (ρ)",
+  "map.tools.overlay.coherenceChange": "Bawas-coherence (8 Ago)",
   "map.tools.overlay.motion": "Galaw ng lupa (InSAR)",
   "map.tools.overlay.scenario": "Senaryo ng baha",
   "map.tools.showVeg": "Ipakita ang posibleng binahang halaman",
@@ -1167,6 +1200,35 @@ Object.assign(fil, {
   "time.v2.rain7d": "7-araw na ulan",
   "time.v2.prevMonth": "Nakaraang buwan",
   "time.v2.nextMonth": "Susunod na buwan",
+
+  "rainResp.title": "Gaano kalakas sumusunod ang ningning ng radar sa ulan (11 daan)",
+  "rainResp.legendTitle": "Tugon sa ulan ρ (Spearman, −1 hanggang +1)",
+  "rainResp.medianRho": "Median na korelasyon (ρ)",
+  "rainResp.shareAbove05": "Bahagi ng mga cell na may ρ > 0.5",
+  "rainResp.landCoverCol": "Takip ng lupa",
+  "rainResp.cellsCol": "Mga cell",
+  "rainResp.medianCol": "Median ρ",
+  "rainResp.caption": "Pang-eksplorasyon. Ang mas maliwanag pagkatapos ng ulan ay karaniwang mas basang lupa o halaman; hindi ito mapa ng baha.",
+
+  "cohChange.title": "Pagbaba ng coherence sa bagyo noong 8 Ago (pares na 17 Hul → 10 Ago) laban sa payapang pares",
+  "cohChange.legendTitle": "Bawas sa coherence laban sa payapang pares (0.05 hanggang 0.70)",
+  "cohChange.km2Over03": "Lawak na may bawas > 0.3",
+  "cohChange.medianDrop": "Median na bawas sa coherence",
+  "cohChange.medianCol": "Median na bawas",
+  "cohChange.caption": "Pang-eksplorasyon. Ang pagbaba ay maaaring mula sa tubig, pagbabago sa halaman, konstruksiyon o ingay; huwag itong tawaging baha.",
+
+  "sm.title": "NISAR L3 halumigmig ng lupa (SME2, ~200 m)",
+  "sm.legendTitle": "Volumetric na halumigmig ng lupa (m³/m³)",
+  "sm.medianLabel": "Median na halumigmig ng lupa sa daan",
+  "sm.recommendedNote": "inirerekomendang retrieval para sa {pct}% ng mga cell (bukirin sa gilid; wala sa masinsing lungsod)",
+  "sm.unavailablePass": "walang datos sa daang ito",
+  "sm.toggleOverlay": "Ipakita ang patong ng halumigmig ng lupa sa mapa",
+
+  "season.timelapse": "I-download ang timelapse (GIF)",
+
+  "downloads.title": "Mag-download ng datos",
+  "downloads.lead": "Mga naprosesong patong at buod ng CAMANAVA para sa offline na GIS o beripikasyon.",
+  "downloads.action": "I-download",
 });
 
 export const DICT = { en, fil };

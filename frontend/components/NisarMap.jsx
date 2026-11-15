@@ -31,8 +31,45 @@ function tileConfig(mapMode, showLabels) {
   };
 }
 
-function MapLegend({ mode, passCount, showVeg, losScale, hasPoint, isDemo }) {
+const EXTRA_LEGEND_TITLES = {
+  rainResponse: "rainResp.legendTitle",
+  coherenceChange: "cohChange.legendTitle",
+  soilMoisture: "sm.legendTitle",
+};
+
+function MapLegend({ mode, passCount, showVeg, losScale, hasPoint, isDemo, extraOverlayKind, extraLegend }) {
   const { t } = useLang();
+
+  const extraTitleKey = EXTRA_LEGEND_TITLES[extraOverlayKind];
+  if (extraTitleKey && Array.isArray(extraLegend) && extraLegend.length > 0) {
+    const title = t(extraTitleKey);
+    const fullTitle = extraOverlayKind === "soilMoisture" && !title.includes("m³/m³") ? `${title} (m³/m³)` : title;
+    return (
+      <div
+        className={`pointer-events-auto absolute z-[950] flex max-w-[300px] flex-col gap-1.5 rounded-xl border border-[#DCE3DB] bg-white px-3 py-2.5 text-[11px] text-[#16231B] shadow-[0_1px_4px_rgba(20,30,40,0.10)] ${
+          hasPoint ? "hidden md:flex md:right-4 md:bottom-7" : "left-3 bottom-3 md:left-4 md:bottom-4"
+        }`}
+        data-testid="map-legend"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[12px] font-semibold leading-snug">{fullTitle}</span>
+          {isDemo && <DemoTag compact />}
+        </div>
+        <div className="flex items-start gap-1">
+          {extraLegend.map((item, idx) => (
+            <div key={`${item.value}-${idx}`} className="flex flex-1 flex-col items-center gap-1">
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-full rounded-[2px] border border-[#DCE3DB]/80"
+                style={{ background: item.color }}
+              />
+              <span className="tabular-nums text-[10px] text-[#4A5850]">{item.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (mode === "history") {
     return (
@@ -183,6 +220,8 @@ export default function NisarMap({
   showVeg = true,
   losScale = null,
   isDemoOverlay = false,
+  extraOverlayKind = null,
+  extraLegend = null,
   topRightTools = null,
   topLeftSearch = null,
   bottomLeftSpot = null,
@@ -491,7 +530,16 @@ export default function NisarMap({
       )}
 
       {/* Mode legend card */}
-      <MapLegend mode={mode} passCount={passCount} showVeg={showVeg} losScale={losScale} hasPoint={Boolean(bottomLeftSpot)} isDemo={isDemoOverlay} />
+      <MapLegend
+        mode={mode}
+        passCount={passCount}
+        showVeg={showVeg}
+        losScale={losScale}
+        hasPoint={Boolean(bottomLeftSpot)}
+        isDemo={isDemoOverlay}
+        extraOverlayKind={extraOverlayKind}
+        extraLegend={extraLegend}
+      />
     </div>
   );
 }

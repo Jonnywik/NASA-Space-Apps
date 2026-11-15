@@ -7,8 +7,17 @@ import { useLimits } from "../utils/LimitsContext";
 
 const STANDING = [1, 2, 3, 4, 5, 6, 7];
 
+function formatBytes(bytes) {
+  if (typeof bytes !== "number" || !Number.isFinite(bytes) || bytes < 0) return null;
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(kb >= 100 ? 0 : 1)} KB`;
+  const mb = kb / 1024;
+  return `${mb.toFixed(mb >= 100 ? 0 : 1)} MB`;
+}
+
 // U8 Limits drawer: standing caveats plus every limitation / warning string returned by APIs in view.
-export default function LimitsDrawer({ open, onClose }) {
+export default function LimitsDrawer({ open, onClose, downloadsTier = null }) {
   const { t } = useLang();
   const { entries } = useLimits();
   const closeRef = useRef(null);
@@ -28,6 +37,7 @@ export default function LimitsDrawer({ open, onClose }) {
 
   if (!open) return null;
   const list = Object.entries(entries).filter(([, e]) => e.limitations.length || e.warnings.length);
+  const downloads = Array.isArray(downloadsTier) ? downloadsTier : downloadsTier?.data ?? [];
   return (
     <div className="fixed inset-0 z-[3000] bg-black/35 backdrop-blur-[1px]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <aside
@@ -98,6 +108,42 @@ export default function LimitsDrawer({ open, onClose }) {
             </ul>
           </div>
         ))}
+
+        {downloads.length > 0 && (
+          <section className="mt-6 border-t border-[#DCE3DB] pt-4" data-testid="downloads-list">
+            <h3 className="font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("downloads.title")}</h3>
+            <p className="mt-1 text-[12px] text-[#4A5850]">{t("downloads.lead")}</p>
+            <ul className="mt-2.5 space-y-2">
+              {downloads.map((item, i) => {
+                const size = formatBytes(item.sizeBytes);
+                const meta = [item.format, size, item.licence].filter(Boolean).join(" · ");
+                return (
+                  <li
+                    key={item.id ?? item.url ?? i}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] px-3 py-2.5"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[13px] font-semibold text-[#16231B]">{item.title}</span>
+                        {item.dataKind && <KindBadge kind={item.dataKind} />}
+                      </div>
+                      {meta && <p className="mt-0.5 text-[11px] text-[#4A5850]">{meta}</p>}
+                    </div>
+                    {item.url && (
+                      <a
+                        href={item.url}
+                        download
+                        className="shrink-0 rounded-lg border border-[#DCE3DB] bg-white px-2.5 py-1 text-[12px] font-semibold text-[#1E5B3A] hover:bg-[#E3EFE7]"
+                      >
+                        {t("downloads.action")}
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
       </aside>
     </div>
   );

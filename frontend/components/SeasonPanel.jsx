@@ -2,7 +2,7 @@
 
 import React from "react";
 import SeasonChart from "./SeasonChart";
-import { Caveats, DemoTag, HelpButton, SensorBadge, SourceLine, Stat, StateNote, fmt } from "./ui";
+import { Caveats, DemoTag, HelpButton, KindBadge, SensorBadge, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
 
 export const DEFAULT_PASS_LEGEND = [
@@ -100,7 +100,24 @@ function rainWindow7d(days, targetIso) {
   return { sum, from: shortMonthDay(startIso), to: shortMonthDay(targetIso) };
 }
 
-export default function SeasonPanel({ passesTier, rainTier, imergTier, polTier, idx, onIdx, polView, onPolView, compare, onHelp, onSources }) {
+export default function SeasonPanel({
+  passesTier,
+  rainTier,
+  imergTier,
+  polTier,
+  idx,
+  onIdx,
+  polView,
+  onPolView,
+  compare,
+  onHelp,
+  onSources,
+  soilMoistureTier = null,
+  showSmOverlay = false,
+  onToggleSmOverlay = null,
+  timelapseUrl = null,
+  timelapseAvailable = false,
+}) {
   const { t } = useLang();
   const d = passesTier.data;
   const passes = d?.passes ?? [];
@@ -111,6 +128,7 @@ export default function SeasonPanel({ passesTier, rainTier, imergTier, polTier, 
   const rain7 = rainWindow7d(rainTier.data?.days, cur?.date);
   const imergData = imergTier?.data;
   const imergPass = imergData?.passes?.find((p) => p.date === cur?.date) ?? null;
+  const smPass = (soilMoistureTier?.data?.passes ?? []).find((p) => p.date === cur?.date);
 
   const deltaKm2 =
     cur?.floodedKm2 != null && prev?.floodedKm2 != null ? cur.floodedKm2 - prev.floodedKm2 : null;
@@ -352,6 +370,42 @@ export default function SeasonPanel({ passesTier, rainTier, imergTier, polTier, 
             )}
           </div>
 
+          {/* NISAR L3 Soil Moisture (SME2) */}
+          <div className="flex flex-col gap-2 rounded-xl border border-[#DCE3DB] bg-white p-3" data-testid="soil-moisture-card">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="mr-auto text-[12px] font-semibold text-[#16231B]">{t("sm.title")}</span>
+              <SensorBadge sensor="nisar_l" />
+              <KindBadge kind={soilMoistureTier?.data?.dataKind} />
+            </div>
+            {smPass && smPass.medianM3M3 != null ? (
+              <>
+                <div className="flex items-baseline justify-between gap-2 text-[12px]">
+                  <span className="text-[#4A5850]">{t("sm.medianLabel")}</span>
+                  <span className="font-bold tabular-nums text-[#16231B]" data-testid="sm-median">
+                    {fmt(smPass.medianM3M3, 3)} m³/m³
+                  </span>
+                </div>
+                <p className="m-0 text-[11px] leading-snug text-[#4A5850]">
+                  {t("sm.recommendedNote", { pct: Math.round((smPass.recommendedFraction ?? 0) * 100) })}
+                </p>
+                {onToggleSmOverlay && smPass.overlayUrl && (
+                  <label className="mt-0.5 flex cursor-pointer items-center gap-2 text-[12px] font-medium text-[#16231B]">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(showSmOverlay)}
+                      onChange={(e) => onToggleSmOverlay(e.target.checked)}
+                      className="h-4 w-4 accent-[#1E5B3A]"
+                      data-testid="toggle-sm-overlay"
+                    />
+                    {t("sm.toggleOverlay")}
+                  </label>
+                )}
+              </>
+            ) : (
+              <p className="m-0 text-[12px] text-[#4A5850]">{t("sm.unavailablePass")}</p>
+            )}
+          </div>
+
           <details className="rounded-xl border border-[#DCE3DB] bg-white p-3">
             <summary className="cursor-pointer text-[13px] font-semibold text-[#16231B]">{t("season.chart.title")} &amp; {t("season.table")}</summary>
             <div className="mt-2 space-y-2">
@@ -387,6 +441,17 @@ export default function SeasonPanel({ passesTier, rainTier, imergTier, polTier, 
               <Caveats data={d} />
             </div>
           </details>
+
+          {timelapseAvailable && timelapseUrl && (
+            <a
+              href={timelapseUrl}
+              download="camanava_nisar_timelapse.gif"
+              data-testid="download-timelapse-gif"
+              className="inline-flex w-fit items-center justify-center rounded-lg border border-[#DCE3DB] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1E5B3A] hover:bg-[#F2F5F1]"
+            >
+              {t("season.timelapse")}
+            </a>
+          )}
 
           <SourceLine data={d} className="mt-auto pt-2" onSources={onSources} />
         </>
