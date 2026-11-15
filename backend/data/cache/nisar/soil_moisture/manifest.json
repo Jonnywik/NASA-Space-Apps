@@ -1,0 +1,229 @@
+{
+ "schemaVersion": "1.0",
+ "area": "camanava_2026",
+ "dataKind": "observed",
+ "generatedAt": "2026-11-15T04:36:21Z",
+ "sensor": "NISAR L-band SAR",
+ "product": "L3 SME2 soil moisture (provisional)",
+ "collection": "NISAR_L3_SME2_PROVISIONAL_V1",
+ "track": {
+  "track": 140,
+  "direction": "A",
+  "frame": 9
+ },
+ "layer": "science/LSAR/SME2/grids/soilMoisture (average of recommended retrievals)",
+ "units": "m3/m3",
+ "nativeResolution": {
+  "x": 200,
+  "y": 200,
+  "units": "m",
+  "grid": "EASE-Grid 2.0"
+ },
+ "selection": "recommended retrievals only (retrievalQualityFlag bit 0 == 0); cells with waterbodyFraction > 0.5 excluded",
+ "bounds": [
+  [
+   14.597138,
+   120.875519
+  ],
+  [
+   14.822444,
+   121.043571
+  ]
+ ],
+ "legend": [
+  {
+   "value": 0.0,
+   "color": "#A6611A"
+  },
+  {
+   "value": 0.15,
+   "color": "#DFC27D"
+  },
+  {
+   "value": 0.3,
+   "color": "#F5F5F5"
+  },
+  {
+   "value": 0.45,
+   "color": "#80CDC1"
+  },
+  {
+   "value": 0.6,
+   "color": "#018571"
+  }
+ ],
+ "passes": [
+  {
+   "date": "2026-06-23",
+   "acquisitionTime": "2026-06-23T21:30:35.000Z",
+   "productId": "NISAR_L3_PR_SME2_023_140_A_009_4005_DHDH_A_20260623T213035_20260623T213109_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260623.png",
+   "medianM3M3": 0.3115,
+   "meanM3M3": 0.3159,
+   "p10M3M3": 0.2495,
+   "p90M3M3": 0.3761,
+   "medianUncertaintyM3M3": 0.0406,
+   "recommendedPixels": 528,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0508,
+   "prior3DayMm": 8.47,
+   "prior7DayMm": 21.83
+  },
+  {
+   "date": "2026-07-05",
+   "acquisitionTime": "2026-07-05T21:30:34.000Z",
+   "productId": "NISAR_L3_PR_SME2_024_140_A_009_4005_DHDH_A_20260705T213034_20260705T213109_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260705.png",
+   "medianM3M3": 0.3161,
+   "meanM3M3": 0.3209,
+   "p10M3M3": 0.2585,
+   "p90M3M3": 0.3758,
+   "medianUncertaintyM3M3": 0.0406,
+   "recommendedPixels": 550,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0529,
+   "prior3DayMm": 9.47,
+   "prior7DayMm": 59.63
+  },
+  {
+   "date": "2026-07-17",
+   "acquisitionTime": "2026-07-17T21:30:34.000Z",
+   "productId": "NISAR_L3_PR_SME2_025_140_A_009_4005_DHDH_A_20260717T213034_20260717T213108_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260717.png",
+   "medianM3M3": 0.3387,
+   "meanM3M3": 0.3414,
+   "p10M3M3": 0.2884,
+   "p90M3M3": 0.395,
+   "medianUncertaintyM3M3": 0.0384,
+   "recommendedPixels": 680,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0654,
+   "prior3DayMm": 1.39,
+   "prior7DayMm": 61.99
+  },
+  {
+   "date": "2026-08-10",
+   "acquisitionTime": "2026-08-10T21:30:32.000Z",
+   "productId": "NISAR_L3_PR_SME2_027_140_A_009_4005_DHDH_A_20260810T213032_20260810T213107_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260810.png",
+   "medianM3M3": 0.2656,
+   "meanM3M3": 0.2785,
+   "p10M3M3": 0.1448,
+   "p90M3M3": 0.442,
+   "medianUncertaintyM3M3": 0.0266,
+   "recommendedPixels": 627,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0603,
+   "prior3DayMm": 161.75,
+   "prior7DayMm": 229.47
+  },
+  {
+   "date": "2026-08-22",
+   "acquisitionTime": "2026-08-22T21:30:32.000Z",
+   "productId": "NISAR_L3_PR_SME2_028_140_A_009_4005_DHDH_A_20260822T213032_20260822T213106_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260822.png",
+   "medianM3M3": 0.3226,
+   "meanM3M3": 0.3324,
+   "p10M3M3": 0.2744,
+   "p90M3M3": 0.422,
+   "medianUncertaintyM3M3": 0.037,
+   "recommendedPixels": 680,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0654,
+   "prior3DayMm": 15.08,
+   "prior7DayMm": 128.63
+  },
+  {
+   "date": "2026-09-03",
+   "acquisitionTime": "2026-09-03T21:30:32.000Z",
+   "productId": "NISAR_L3_PR_SME2_029_140_A_009_4005_DHDH_A_20260903T213032_20260903T213106_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260903.png",
+   "medianM3M3": 0.2334,
+   "meanM3M3": 0.2218,
+   "p10M3M3": 0.14,
+   "p90M3M3": 0.295,
+   "medianUncertaintyM3M3": 0.0247,
+   "recommendedPixels": 536,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0516,
+   "prior3DayMm": 6.58,
+   "prior7DayMm": 117.6
+  },
+  {
+   "date": "2026-09-15",
+   "acquisitionTime": "2026-09-15T21:30:31.000Z",
+   "productId": "NISAR_L3_PR_SME2_030_140_A_009_4005_DHDH_A_20260915T213031_20260915T213106_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260915.png",
+   "medianM3M3": 0.2961,
+   "meanM3M3": 0.3014,
+   "p10M3M3": 0.2427,
+   "p90M3M3": 0.372,
+   "medianUncertaintyM3M3": 0.034,
+   "recommendedPixels": 670,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0645,
+   "prior3DayMm": 15.18,
+   "prior7DayMm": 56.36
+  },
+  {
+   "date": "2026-09-27",
+   "acquisitionTime": "2026-09-27T21:30:31.000Z",
+   "productId": "NISAR_L3_PR_SME2_031_140_A_009_4005_DHDH_A_20260927T213031_20260927T213106_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20260927.png",
+   "medianM3M3": 0.2698,
+   "meanM3M3": 0.2724,
+   "p10M3M3": 0.2186,
+   "p90M3M3": 0.3277,
+   "medianUncertaintyM3M3": 0.031,
+   "recommendedPixels": 669,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0644,
+   "prior3DayMm": 23.95,
+   "prior7DayMm": 75.79
+  },
+  {
+   "date": "2026-10-09",
+   "acquisitionTime": "2026-10-09T21:30:31.000Z",
+   "productId": "NISAR_L3_PR_SME2_032_140_A_009_4005_DHDH_A_20261009T213031_20261009T213106_P05023_N_F_J_001",
+   "maturity": "provisional",
+   "overlay": "sm_20261009.png",
+   "medianM3M3": 0.2999,
+   "meanM3M3": 0.3078,
+   "p10M3M3": 0.2404,
+   "p90M3M3": 0.3909,
+   "medianUncertaintyM3M3": 0.035,
+   "recommendedPixels": 652,
+   "studyPixels": 10395,
+   "recommendedFraction": 0.0627,
+   "prior3DayMm": 30.6,
+   "prior7DayMm": 84.33
+  }
+ ],
+ "rainComparison": {
+  "method": "Spearman rank correlation between 7-day prior NASA POWER rain and the study-area median soil moisture",
+  "n": 9,
+  "rho": -0.333,
+  "pValue": 0.3807,
+  "note": "Exploratory, small sample; rain is one ~50 km NASA POWER grid cell; correlation is not causation."
+ },
+ "source": {
+  "name": "NASA/ISRO NISAR L3 SME2 via ASF",
+  "url": "https://nisar-docs.asf.alaska.edu/",
+  "algorithmReferences": "Lal et al. 2023 (RSE 295, 113667); Kim & Liao 2021; Mattia et al. 2009"
+ },
+ "limitations": [
+  "Provisional product: values and quality flags may change in later NISAR releases.",
+  "200 m cells: one value per cell, not per street or plot.",
+  "Retrievals over dense urban areas are usually not recommended by the product; those cells are left blank, not set to zero.",
+  "Soil moisture is not flooding: it describes the top few centimetres of soil where the product can retrieve it."
+ ],
+ "warnings": []
+}

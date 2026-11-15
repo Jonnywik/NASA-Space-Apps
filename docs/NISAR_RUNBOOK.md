@@ -193,3 +193,11 @@ Run from the cloud session with the proxy-held Earthdata token, track 140 A / fr
 3. Tropospheric correction (wet season), redundancy (NISAR provides only 12-day nearest-neighbour GUNW pairs, so no redundant network), and a longer record than 4 months. A real reference area should be chosen on ground with independent evidence of stability.
 
 Until then, Ground motion shows "not available yet", and priority zones (which need motion) stay unavailable.
+
+## Soil moisture (NISAR L3 SME2): real data, 15 Nov 2026 (coordinator)
+
+- `scripts/25_nisar_soil_moisture.py` reads the study window of `NISAR_L3_SME2_PROVISIONAL_V1` for track 140 A / frame 9: **9 passes, 23 Jun → 9 Oct 2026**, about 5 seconds each by range request. It writes `data/cache/nisar/soil_moisture/manifest.json` and one PNG per pass (120 kB in total, committed). The layer is the top-level `soilMoisture` (m³/m³, 200 m EASE-Grid 2.0), recommended retrievals only (quality-flag bit 0 = 0), with cells more than half water excluded. Tests: `tests/test_nisar_soil_moisture.py`.
+- **Coverage is low:** only about 22 % of the study cells have any retrieval, and **5–7 % have recommended retrievals**, scattered and concentrated in the northern Bulacan farmland. The dense urban core gets no recommended soil moisture, which is expected for an L-band soil-moisture algorithm.
+- **Values:** study-area median of the recommended cells 0.23–0.34 m³/m³ per pass.
+- **No rain signal:** compared with the 7-day prior NASA POWER rain, Spearman ρ = −0.33 (p = 0.38, n = 9). For example, 10 Aug, after about 230 mm in 7 days, has a median of 0.27 m³/m³, lower than June. With a few hundred scattered cells and a provisional product, this does not confirm the wetness signal seen in the GCOV backscatter (ρ = 0.80).
+- **Not yet served by the API or shown in the app.**
