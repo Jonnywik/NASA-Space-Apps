@@ -53,7 +53,7 @@ function OutlookChart({ d }) {
         <ComposedChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} stroke="#DCE3DB" />
-          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={60} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
             contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
             labelStyle={{ color: "#16231B", fontWeight: 600 }}
@@ -82,7 +82,7 @@ function ScenarioRainChart({ sc }) {
         <ComposedChart data={rows} margin={{ top: 14, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} stroke="#DCE3DB" />
-          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={60} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
             contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
             labelStyle={{ color: "#16231B", fontWeight: 600 }}
@@ -125,7 +125,7 @@ function FloodScenarioChart({ d }) {
         <ComposedChart data={rows} margin={{ top: 14, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} stroke="#DCE3DB" />
-          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" km²" stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={56} unit=" km²" stroke="#DCE3DB" />
           <Tooltip
             contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
             labelStyle={{ color: "#16231B", fontWeight: 600 }}
@@ -353,6 +353,11 @@ export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, on
               <>
                 <FloodScenarioChart d={f} />
                 <p className="mt-1 text-[11px] text-[#4A5850]">{t("future.flood.legend")}</p>
+                {f.relationship && f.relationship.slopeKm2PerMm === 0 && (
+                  <p className="mt-1 rounded-md bg-[#FFF6DE] px-2 py-1 text-[11px] text-[#5A4300]" data-testid="flood-flat-note">
+                    {t("future.flood.flat")}
+                  </p>
+                )}
                 {(() => {
                   const gaps = f.months.filter((m) => !m.expectedFloodedKm2);
                   if (!gaps.length) return null;

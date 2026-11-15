@@ -17,7 +17,7 @@ export default function HypothesesPanel({ items, onMode }) {
               <span className="rounded border border-dotted border-[#6B5A9E] bg-[#ECE8F4] px-1.5 py-0.5 text-[10px] font-bold uppercase text-[#4E3F80]">
                 {t("hyp.label")}
               </span>
-              <span className="text-xs font-semibold text-[#16231B]">{(lang === "fil" && h.titleFil) || h.title}</span>
+              <span className="text-xs font-semibold text-[#16231B]">{((lang === "fil" && h.titleFil) || h.title || "").replace(/^(hypothesis|hipotesis|haka)\s*[:·-]\s*/i, "")}</span>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-[#4A5850]">{(lang === "fil" && h.summaryFil) || h.summary}</p>
             {h.evidence?.length > 0 && (

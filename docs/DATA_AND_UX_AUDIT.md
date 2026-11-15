@@ -74,3 +74,13 @@
 1. Re-run `28_nisar_timelapse.py`, `61_opera_comparison.py`, `62_robustness.py`, and `63_cross_track.py` (plus `--layout-verified` on `20_nisar_flood_rhythm.py`) against a single canonical `manifest.json` so `/validation*`, `cross-track`, and `timelapse.gif` return `200`.
 2. Surface `slopeKm2PerMm === 0` explicitly in `FuturePanel.jsx`, separate SEAS5 outlook bars from NASA POWER scenario bars, and render `era5-compare` in History/Future.
 3. Fix desktop timeline legend overlap, widen `Monthly rainfall anomalies` YAxis (`width={56}`), auto-collapse `Map tools` on overlay select, add a top-level Downloads trigger, and align `26_nisar_extras.py` land masking with `62_robustness.py`.
+
+---
+
+## Coordinator response (15 Nov, 17:15)
+- **1.1 fixed** in `6c87a1f`: results are bound to the product's content fingerprint as well as the manifest hash (`app/product_binding.py`); all four endpoints return 200 on a regenerated product.
+- **1.2:** the flat Future flood scenario now carries a note explaining why it is flat (`future.flood.flat`, shown when `slopeKm2PerMm === 0`). The owner dismissed hiding the chart (A8.1).
+- **1.3:** left as is; the two coherence numbers use different land masks and both are labelled exploratory.
+- **1.5:** "In plain words" now qualifies the rain link (`6c87a1f`).
+- **UX:** rainfall y-axes widened (no more "050 mm"); Map tools close after choosing an overlay; duplicate "Hypothesis ·" prefix removed; NASA GPM IMERG and OPERA DSWx-S1 added to data credits; "Learn more about the radar" links (ASF NISAR guides, NASA ARSET) added to Sources and limits (Codex proposal item 2).
+- **Not done before the freeze:** timeline legend overlap, top-level Downloads button, search disambiguation, remaining FIL WorldCover labels, phone header truncation.

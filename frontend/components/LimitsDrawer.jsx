@@ -73,11 +73,29 @@ export default function LimitsDrawer({ open, onClose, downloadsTier = null }) {
           {[
             ["NASA–ISRO NISAR · ASF", "https://asf.alaska.edu/datasets/daac/nisar/"],
             ["NASA POWER", "https://power.larc.nasa.gov/"],
+            ["NASA GPM IMERG · GES DISC", "https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_07/summary"],
+            ["NASA OPERA DSWx-S1 · PO.DAAC", "https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1"],
             ["WorldPop 2020 · CC BY 4.0", "https://www.worldpop.org/"],
             ["OpenStreetMap contributors · ODbL", "https://www.openstreetmap.org/copyright"],
             ["ESA WorldCover · CC BY 4.0", "https://esa-worldcover.org/en/data-access"],
             ["HDX Philippines COD-AB", "https://data.humdata.org/dataset/cod-ab-phl"],
             ["Open-Meteo / ECMWF", "https://open-meteo.com/en/docs/seasonal-forecast-api"],
+          ].map(([label, url]) => (
+            <li key={url}>
+              <a href={url} target="_blank" rel="noreferrer" className="font-medium text-[#1E5B3A] underline hover:text-[#123B25]">
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="mt-5 font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("limits.learn")}</h3>
+        <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[12px] text-[#4A5850]" data-testid="further-reading">
+          {[
+            [t("limits.learn.products"), "https://nisar-docs.asf.alaska.edu/products-overview/"],
+            [t("limits.learn.gcov"), "https://nisar-docs.asf.alaska.edu/gcov/"],
+            [t("limits.learn.phase"), "https://nisar-docs.asf.alaska.edu/phase/"],
+            [t("limits.learn.arset"), "https://forum.earthdata.nasa.gov/viewtopic.php?t=6022"],
           ].map(([label, url]) => (
             <li key={url}>
               <a href={url} target="_blank" rel="noreferrer" className="font-medium text-[#1E5B3A] underline hover:text-[#123B25]">

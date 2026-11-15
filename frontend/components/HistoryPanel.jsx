@@ -100,7 +100,7 @@ function AnomalyChart({ series }) {
         <BarChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }} barCategoryGap={0}>
           <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(0, 4)} interval={59} stroke="#DCE3DB" />
-          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={60} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
             contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
             labelStyle={{ color: "#16231B", fontWeight: 600 }}
@@ -128,7 +128,7 @@ function RankChart({ d, peakYear }) {
         <BarChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="year" tick={{ fill: "#4A5850", fontSize: 10 }} interval={4} stroke="#DCE3DB" />
-          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={60} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
             contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
             labelStyle={{ color: "#16231B", fontWeight: 600 }}

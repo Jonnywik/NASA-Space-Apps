@@ -173,7 +173,10 @@ export default function MapTools({
                       type="button"
                       role="radio"
                       aria-checked={active}
-                      onClick={() => onOverlay(k)}
+                      onClick={() => {
+                        onOverlay(k);
+                        onClose?.();
+                      }}
                       data-testid={`overlay-opt-${k}`}
                       className={`flex h-9 items-center gap-2 rounded-lg border px-2.5 text-left text-[13px] ${
                         active

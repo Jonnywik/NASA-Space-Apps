@@ -33,7 +33,7 @@ export default function PixelChart({ point, cumulative = false }) {
           <LineChart data={rows} margin={{ top: 6, right: 8, bottom: 0, left: 0 }}>
             <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" />
             <XAxis dataKey="date" tick={{ fill: '#4A5850', fontSize: 10 }} tickFormatter={(d) => d.slice(5)} />
-            <YAxis tick={{ fill: '#4A5850', fontSize: 10 }} unit=" mm" width={48} />
+            <YAxis tick={{ fill: '#4A5850', fontSize: 10 }} unit=" mm" width={60} />
             <Tooltip
               contentStyle={{ background: '#FFFFFF', border: '1px solid #DCE3DB', borderRadius: '8px', fontSize: 12, color: '#16231B' }}
               labelStyle={{ color: '#16231B', fontWeight: 600 }}
