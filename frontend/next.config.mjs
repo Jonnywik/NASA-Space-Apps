@@ -8,6 +8,8 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_USE_FIXTURES: fx === "1" || fx === "nisar" ? fx : "0",
   },
+  // Hosting (deploy/): TANAW_STATIC_EXPORT=1 builds plain static files into frontend/out, served by the backend.
+  ...(process.env.TANAW_STATIC_EXPORT === "1" ? { output: "export" } : {}),
 };
 
 export default nextConfig;

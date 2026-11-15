@@ -8,6 +8,7 @@ Start with the [project README](../README.md) for what Tanaw is and how to run i
 | [SUBMISSION_SCOPE.md](SUBMISSION_SCOPE.md) | The submission plan, the real NISAR findings (v6 / v6.1) and the story |
 | [NISAR_RUNBOOK.md](NISAR_RUNBOOK.md) | How the NISAR products were found, processed and checked, with every result and correction |
 | [API_CONTRACT.md](API_CONTRACT.md) | Backend endpoints, response shapes and shared constants |
+| [HOSTING.md](HOSTING.md) | How the public demo is built and how to create the Hugging Face Space |
 
 ## Science and validation — [`science/`](science/)
 - [VALIDATION.md](science/VALIDATION.md): NISAR vs OPERA DSWx-S1 comparisons and threshold sensitivity

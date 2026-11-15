@@ -1,7 +1,9 @@
 // frontend/utils/api.js  -  the only place that talks to the Tanaw backend.
 // The backend must be running:  uvicorn app.main:app --reload   (inside backend/)
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+// "same-origin": the hosted build, where the backend serves the frontend itself (deploy/serve.py).
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL === "same-origin" ? "" : process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 // Study area of the submission (docs/API_CONTRACT.md, "Shared constants").
 export const AREA_ID = "camanava_2026";
