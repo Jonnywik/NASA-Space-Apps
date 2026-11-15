@@ -2,13 +2,60 @@
 
 import React from "react";
 import SeasonChart from "./SeasonChart";
-import { Caveats, DemoTag, HelpButton, SourceLine, Stat, StateNote, fmt } from "./ui";
+import { Caveats, DemoTag, HelpButton, SensorBadge, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
 
 export const DEFAULT_PASS_LEGEND = [
-  { id: "water", label: "Open water on this pass", color: "#2171B5", shape: "square" },
+  { id: "water", label: "Open water outside the usual water", color: "#2171B5", shape: "square" },
   { id: "vegetation", label: "Possible flooded vegetation (L-band)", color: "#E69F00", shape: "diamond" },
 ];
+
+function formatManilaTime(iso) {
+  if (!iso) return "—";
+  const ms = Date.parse(iso);
+  if (!Number.isFinite(ms)) return iso;
+  const m = new Date(ms + 8 * 3600000);
+  const day = m.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const hhmm = `${String(m.getUTCHours()).padStart(2, "0")}:${String(m.getUTCMinutes()).padStart(2, "0")}`;
+  return `${day}, ${hhmm} Manila`;
+}
+
+function ImergSparkline({ series, passLabel, maxLabel }) {
+  if (!Array.isArray(series) || !series.length) return null;
+  const w = 280;
+  const h = 44;
+  const maxRate = Math.max(1.0, ...series.map((s) => s.meanMmHr ?? 0));
+  const bw = (w - 8) / series.length;
+  return (
+    <div className="mt-1">
+      <svg viewBox={`0 0 ${w} ${h + 14}`} className="w-full" role="img" aria-label={maxLabel}>
+        <line x1={0} y1={h} x2={w - 4} y2={h} stroke="#DCE3DB" strokeWidth={1} />
+        {series.map((s, i) => {
+          const val = s.meanMmHr ?? 0;
+          const bh = val > 0 ? Math.max(2, (val / maxRate) * (h - 6)) : 0;
+          return (
+            <rect
+              key={s.start ?? i}
+              x={i * bw}
+              y={h - bh}
+              width={Math.max(1.5, bw - 0.6)}
+              height={bh}
+              fill={val >= 1.0 ? "#0B4F79" : "#2171B5"}
+              rx={0.5}
+            >
+              <title>{`${s.start?.slice(11, 16) ?? ""} UTC: ${val.toFixed(2)} mm/hr`}</title>
+            </rect>
+          );
+        })}
+        <line x1={w - 4} y1={2} x2={w - 4} y2={h + 2} stroke="#1E5B3A" strokeWidth={1.5} strokeDasharray="3 2" />
+        <text x={2} y={h + 11} fontSize={8.5} fill="#4A5850">−48 h</text>
+        <text x={w - 4} y={h + 11} fontSize={8.5} fontWeight={600} fill="#1E5B3A" textAnchor="end">
+          {passLabel}
+        </text>
+      </svg>
+    </div>
+  );
+}
 
 function shortDate(iso) {
   if (!iso) return "—";
@@ -53,7 +100,7 @@ function rainWindow7d(days, targetIso) {
   return { sum, from: shortMonthDay(startIso), to: shortMonthDay(targetIso) };
 }
 
-export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx, polView, onPolView, compare, onHelp, onSources }) {
+export default function SeasonPanel({ passesTier, rainTier, imergTier, polTier, idx, onIdx, polView, onPolView, compare, onHelp, onSources }) {
   const { t } = useLang();
   const d = passesTier.data;
   const passes = d?.passes ?? [];
@@ -62,6 +109,8 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
   const isDemo = d?.dataKind === "synthetic";
   const clock = passClockLine(cur);
   const rain7 = rainWindow7d(rainTier.data?.days, cur?.date);
+  const imergData = imergTier?.data;
+  const imergPass = imergData?.passes?.find((p) => p.date === cur?.date) ?? null;
 
   const deltaKm2 =
     cur?.floodedKm2 != null && prev?.floodedKm2 != null ? cur.floodedKm2 - prev.floodedKm2 : null;
@@ -140,6 +189,59 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
                 ? t("season.v2.plainBody", { rain: fmt(rain7.sum, 0), km2: fmt(cur.floodedKm2), date: shortDate(cur.date) })
                 : t("season.v2.plainNoRain", { date: shortDate(cur.date), km2: fmt(cur.floodedKm2) ?? "—" })}
             </p>
+          </div>
+
+          <div className="flex flex-col gap-2 rounded-xl border border-[#DCE3DB] bg-[#EEF5FA]/60 p-3" data-testid="imerg-card">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-[12px] font-semibold text-[#16231B]">{t("imerg.title")}</span>
+              <SensorBadge sensor="imerg" />
+            </div>
+            {imergTier?.state && imergTier.state !== "ready" && (
+              <StateNote tier={imergTier} label={t("imerg.title")} />
+            )}
+            {imergPass ? (
+              <>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="rounded-lg border border-[#DCE3DB] bg-white px-2.5 py-2">
+                    <div className="text-[11px] text-[#4A5850]">{t("imerg.last24h")}</div>
+                    <div className="mt-0.5 font-bold tabular-nums text-[#16231B]" data-testid="imerg-24h">
+                      {imergPass.last24hMm != null ? `${fmt(imergPass.last24hMm, 1)} mm` : t("imerg.incomplete")}
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-[#DCE3DB] bg-white px-2.5 py-2">
+                    <div className="text-[11px] text-[#4A5850]">{t("imerg.last48h")}</div>
+                    <div className="mt-0.5 font-bold tabular-nums text-[#16231B]" data-testid="imerg-48h">
+                      {imergPass.last48hMm != null ? `${fmt(imergPass.last48hMm, 1)} mm` : t("imerg.incomplete")}
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-[#DCE3DB] bg-white px-2.5 py-2">
+                    <div className="text-[11px] text-[#4A5850]">{t("imerg.peak")}</div>
+                    <div className="mt-0.5 font-bold tabular-nums text-[#16231B]" data-testid="imerg-peak">
+                      {imergPass.peakMmHr != null ? `${fmt(imergPass.peakMmHr, 1)} mm/hr` : "—"}
+                    </div>
+                    {imergPass.peakAt && (
+                      <div className="text-[10px] text-[#4A5850]">{formatManilaTime(imergPass.peakAt)}</div>
+                    )}
+                  </div>
+                </div>
+                <p className="m-0 text-[12px] text-[#16231B]" data-testid="imerg-hours-since">
+                  {imergPass.hoursSinceRain != null
+                    ? t("imerg.hoursSince", { h: fmt(imergPass.hoursSinceRain, 1) })
+                    : t("imerg.noHeavyRain", { th: fmt(imergData?.rainThresholdMmHr ?? 1.0, 1) })}
+                </p>
+                {Array.isArray(imergPass.series) && imergPass.series.length > 0 && (
+                  <ImergSparkline
+                    series={imergPass.series}
+                    passLabel={clock?.manilaHHMM ? `pass ${clock.manilaHHMM}` : t("imerg.passMarker")}
+                    maxLabel={t("imerg.sparklineAria", { date: cur.date })}
+                  />
+                )}
+                <SourceLine data={imergData} onSources={onSources} />
+                <Caveats data={imergData} />
+              </>
+            ) : imergTier?.state === "ready" ? (
+              <p className="m-0 text-[12px] text-[#4A5850]">{t("imerg.noPass", { date: cur.date })}</p>
+            ) : null}
           </div>
 
           {/* Radar layer toggle + Before/After Swipe */}

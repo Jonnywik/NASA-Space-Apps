@@ -315,6 +315,10 @@ export async function getPassRainfall(area, dates) {
   );
 }
 
+export async function getImergPasses(area = AREA_ID, series = true) {
+  return request(`${V1}/climate/imerg/passes`, { area, series }, "Could not load IMERG rain timing");
+}
+
 export async function getOutlook(area = AREA_ID) {
   return request(`${V1}/climate/outlook`, { area }, "Could not load the seasonal outlook");
 }

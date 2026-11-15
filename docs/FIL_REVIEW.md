@@ -602,3 +602,32 @@ All v2 shell, Map tools, Spot card, findings summaries and timeline strings adde
 | `time.v2.rain7d` | 7-day rain window | 7-araw na ulan |  |
 | `time.v2.prevMonth` | Previous month | Nakaraang buwan |  |
 | `time.v2.nextMonth` | Next month | Susunod na buwan |  |
+
+## Round 2 / v6 real-data wording & IMERG updates (pending native review)
+
+| Key | English | Current Filipino (pending native review) | Corrected Filipino (draft / reviewer) |
+| --- | --- | --- | --- |
+| `map.tools.overlay.rhythm` | Open water outside the usual water | Bukas na tubig sa labas ng karaniwang tubig |  |
+| `season.layer.flood` | Open water outside the usual water | Bukas na tubig sa labas ng karaniwang tubig |  |
+| `spot.card.standingWater` | Open water outside the usual water | Bukas na tubig sa labas ng karaniwang tubig |  |
+| `spot.card.imerg24h` | Rain in the 24 h before this pass: {mm} (GPM IMERG, ~11 km cell) | Ulan sa 24 oras bago ang pass na ito: {mm} (GPM IMERG, ~11 km cell) |  |
+| `rhythm.v2.headline` | {km2} km² of usually-dry land had open water on half or more of NISAR's passes | {km2} km² ng karaniwang tuyong lupa ang nagkaroon ng bukas na tubig sa kalahati o higit pang pass ng NISAR |  |
+| `rhythm.v2.plainBody` | NISAR passed over CAMANAVA {n} times between {from} and {to}, through clouds and rain. Light blue shows usually-dry land where open water appeared on one or two passes; darker blue shows open water outside the usual water on more passes. This layer gets smaller after heavy rain, because wet ground and rain-roughened water look brighter to the radar. | Dumaan ang NISAR sa CAMANAVA nang {n} ulit mula {from} hanggang {to}, kahit may ulap at ulan. Ang mapusyaw na asul ay karaniwang tuyong lupa na nakitaan ng bukas na tubig sa isa o dalawang pass; ang matingkad na asul ay bukas na tubig sa maraming pass. Lumiit ang layer na ito pagkatapos ng malakas na ulan dahil mas maliwanag sa radar ang basang lupa at maalon na tubig. |  |
+| `rhythm.v2.limitsCallout` | Why doesn't this show flooded streets? In dense streets, radar bounces off water and walls (double-bounce) and looks bright, and NISAR passes at ~05:30 Manila time every 12 days. | Bakit hindi nito ipinapakita ang binahang kalye? Sa siksik na kalye, tumatalbog ang radar sa tubig at pader (double-bounce) kaya nagmumukhang maliwanag, at dumaraan ang NISAR bandang ~05:30 oras sa Maynila tuwing 12 araw. |  |
+| `rhythm.v2.limitsBtn` | What NISAR can and can't see | Ano ang nakikita at hindi nakikita ng NISAR |  |
+| `rhythm.v2.legendTitle` | Open water outside the usual water | Bukas na tubig sa labas ng karaniwang tubig |  |
+| `season.v2.headline` | {km2} km² of open water outside the usual water on this pass | {km2} km² ng bukas na tubig sa labas ng karaniwang tubig sa pass na ito |  |
+| `imerg.title` | Rain before this pass (NASA GPM IMERG) | Ulan bago ang pass na ito (NASA GPM IMERG) |  |
+| `imerg.last24h` | Last 24 h | Huling 24 oras |  |
+| `imerg.last48h` | Last 48 h | Huling 48 oras |  |
+| `imerg.peak` | Peak rate | Pinakamalakas |  |
+| `imerg.incomplete` | incomplete data | kulang ang datos |  |
+| `imerg.hoursSince` | Last heavy rain {h} h before the pass (area mean ≥ 1.0 mm/hr) | Huling malakas na ulan {h} oras bago ang pass (mean ng lugar ≥ 1.0 mm/hr) |  |
+| `imerg.noHeavyRain` | No half-hour ≥ {th} mm/hr in the 48 h before the pass | Walang kalahating oras na ≥ {th} mm/hr sa loob ng 48 oras bago ang pass |  |
+| `motion.v2.unavailableIono` | Not available yet. Four months of NISAR interferograms are dominated by ionospheric noise; ground motion needs a longer record and ionosphere correction. | Hindi pa available. Ang apat na buwang interferogram ng NISAR ay pinangingibabawan ng ionospheric noise; kailangan ang mas mahabang tala at ionospheric correction. |  |
+| `priority.v2.unavailable` | Not available: needs ground motion. | Hindi available: kailangan ang galaw ng lupa. |  |
+| `radar.limits.title` | What NISAR can and can't see | Ano ang nakikita at hindi nakikita ng NISAR |  |
+| `radar.limits.p1` | Calm open water reflects the radar away and looks dark, so open water on fishponds, lowland flats, and rivers outside the usual water stands out clearly when the surface is smooth. | Ang tahimik na bukas na tubig ay nagpapatalbog ng radar palayo kaya madilim ito sa larawan—malinaw nitong nakikita ang bukas na tubig sa mga palaisdaan, ilog, at kapatagan kapag payapa ang tubig. |  |
+| `radar.limits.p2` | In a flooded street, the radar bounces off the water and then a wall straight back to the satellite (double-bounce), so the street looks bright, not dark. Narrow streets, building shadows and layover also hide the street surface. | Sa binahang kalye, tumatalbog ang radar sa tubig tapos sa pader pabalik sa satellite (double-bounce), kaya nagmumukhang maliwanag ang kalye, hindi madilim. Tinatakpan din ng makikitid na kalye, anino ng gusali, at layover ang ibabaw ng kalye. |  |
+| `radar.limits.p3` | NISAR passes CAMANAVA at about 05:30 Manila time every 12 days, so floods that rise in the afternoon and drain overnight are missed. The radar does see the whole area get 'wetter' after rainy weeks: built-up and open land brighten together (Spearman ρ = 0.80 with 7-day rain, n = 11). This is general wetness, not a flood map. | Dumaraan ang NISAR sa CAMANAVA bandang ~05:30 oras sa Maynila tuwing 12 araw, kaya hindi naaabot ang biglaang pagbaha sa hapon na humuhupa bago mag-umaga. Nakikita ng radar ang pangkalahatang pagbasa ng lupa pagkatapos ng maulang linggo: sabay na umiilaw ang lungsod at bukirin (Spearman ρ = 0.80 sa 7-araw na ulan, n = 11). Pangkalahatang halumigmig ito, hindi mapa ng baha. |  |
+| `radar.limits.tip` | NISAR maps open water outside the usual water and general surface wetness, not flooded city streets. | ipinapakita ng NISAR ang bukas na tubig sa labas ng karaniwang tubig at pangkalahatang basa sa ibabaw, hindi ang mga binahang kalye. |  |

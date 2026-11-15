@@ -19,6 +19,7 @@ const SENSORS = {
   s1_c: { label: "C-band · Sentinel-1", cls: "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]" },
   insar: { label: "InSAR LOS · NISAR", cls: "border-[#C2A5CF] bg-[#F6F1F9] text-[#5B2370]" },
   power: { label: "NASA POWER", cls: "border-[#DCE3DB] bg-[#E3EFE7] text-[#123B25]" },
+  imerg: { label: "NASA GPM IMERG", cls: "border-[#2171B5]/40 bg-[#EEF5FA] text-[#0B4F79]" },
   outlook: { label: "Outlook model", cls: "border-[#2171B5]/40 bg-[#EEF5FA] text-[#0B4F79]" },
   places: { label: "Places · gazetteer", cls: "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]" },
 };

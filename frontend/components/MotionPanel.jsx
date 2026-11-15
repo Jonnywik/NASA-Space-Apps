@@ -35,7 +35,39 @@ export default function MotionPanel({ tier, scale, rhythmUnder, onRhythmUnder, p
         {onHelp && <HelpButton card="insar" onOpen={onHelp} />}
       </div>
 
-      <StateNote tier={tier} label={t("motion.title")} />
+      <div className="flex flex-col gap-1.5">
+        <h1 className="m-0 font-serif text-[22px] font-semibold leading-[1.22] text-[#16231B]">
+          {t("motion.title")}
+        </h1>
+      </div>
+
+      {tier.state === "loading" ? (
+        <StateNote tier={tier} label={t("motion.title")} />
+      ) : !d ? (
+        <div
+          className="flex flex-col gap-2 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3.5 text-[13px] leading-[1.55] text-[#16231B]"
+          role="status"
+          data-testid="motion-unavailable"
+        >
+          <p className="m-0 font-semibold text-[#16231B]">{t("state.unavailable.title")}</p>
+          <p className="m-0 text-[#4A5850]">{t("motion.v2.unavailableIono")}</p>
+          {tier.error?.detail?.message && (
+            <p className="m-0 text-[11px] text-[#4A5850]">{tier.error.detail.message}</p>
+          )}
+        </div>
+      ) : null}
+
+      {!d && tier.state !== "loading" && (
+        <div
+          className="flex flex-col gap-1.5 rounded-xl border border-[#DCE3DB] bg-white p-3 text-[12px]"
+          data-testid="priority-zones"
+        >
+          <div className="font-semibold text-[#16231B]">{t("priority.title")}</div>
+          <p className="m-0 text-[#4A5850]" data-testid="priority-unavailable">
+            {t("priority.v2.unavailable")}
+          </p>
+        </div>
+      )}
 
       {d && (
         <>

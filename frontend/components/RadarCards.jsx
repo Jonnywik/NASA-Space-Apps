@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLang } from "../utils/LangContext";
 
-export const RADAR_CARDS = ["water", "vegetation", "insar", "bands"];
+export const RADAR_CARDS = ["water", "vegetation", "limits", "insar", "bands"];
 
 // U5 "How radar sees": four short cards. Opened from a "?" on a panel, which selects the matching card.
 export default function RadarCards({ open, initial, onClose }) {

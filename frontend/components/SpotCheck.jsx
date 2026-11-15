@@ -27,7 +27,7 @@ export function useSpotData(point) {
   return { spot, briefing };
 }
 
-export function SpotCard({ point, placeHint, spotTier, mode, selectedDate, onClose, onOpenDetails }) {
+export function SpotCard({ point, placeHint, spotTier, imergTier, mode, selectedDate, onClose, onOpenDetails }) {
   const { t, lang } = useLang();
   const [exportState, setExportState] = useState({ state: "idle" });
   if (!point) return null;
@@ -36,6 +36,9 @@ export function SpotCard({ point, placeHint, spotTier, mode, selectedDate, onClo
   const nisar = streamTier(spotTier, "nisar");
   const locate = streamTier(spotTier, "place");
   const los = streamTier(spotTier, "motion", (pt) => ({ point: pt }));
+  const imergPasses = imergTier?.data?.passes ?? [];
+  const imergPass = imergPasses.find((p) => p.date === selectedDate) ?? imergPasses[imergPasses.length - 1];
+  const imerg24h = imergPass ? (imergPass.last24hMm != null ? `${fmt(imergPass.last24hMm, 1)} mm` : t("imerg.incomplete")) : null;
 
   const nd = nisar.data;
   const ld = locate.data;
@@ -173,6 +176,11 @@ export function SpotCard({ point, placeHint, spotTier, mode, selectedDate, onClo
           {nd?.possibleFloodedVegetationPasses > 0 && (
             <span className="text-[11px] text-[#4A5850]">◆ {t("spot.vegPasses", { n: nd.possibleFloodedVegetationPasses })}</span>
           )}
+          {imerg24h && (
+            <div className="text-[11px] text-[#0B4F79]" data-testid="spot-imerg-24h">
+              {t("spot.card.imerg24h", { mm: imerg24h })}
+            </div>
+          )}
         </div>
       )}
 
@@ -210,7 +218,7 @@ export function SpotCard({ point, placeHint, spotTier, mode, selectedDate, onClo
 }
 
 // U2 spot check: one clicked point, every value with its source, missing values with a reason.
-export default function SpotCheck({ point, placeHint, selectedDate, spotTier: externalSpot, briefingTier: externalBriefing, onClose, onBack, onCopy, copied, onHelp }) {
+export default function SpotCheck({ point, placeHint, selectedDate, spotTier: externalSpot, briefingTier: externalBriefing, imergTier, onClose, onBack, onCopy, copied, onHelp }) {
   const { t, lang } = useLang();
   const { lon, lat } = point;
   const fallbackSpot = useTier(!externalSpot ? () => getSpotCheck(lon, lat) : null, [lon, lat]);
@@ -224,6 +232,9 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
   const los = streamTier(spot, "motion", (pt) => ({ point: pt }));
   const priority = spot.data?.streams?.priority;
   const exposure = spot.data?.streams?.exposure;
+  const imergPasses = imergTier?.data?.passes ?? [];
+  const imergPass = imergPasses.find((p) => p.date === selectedDate) ?? imergPasses[imergPasses.length - 1];
+  const imerg24h = imergPass ? (imergPass.last24hMm != null ? `${fmt(imergPass.last24hMm, 1)} mm` : t("imerg.incomplete")) : null;
   useReportLimits("spot", t("spot.title"), !externalSpot ? spot.data : null);
 
   async function exportBriefing(language, format) {
@@ -406,6 +417,11 @@ export default function SpotCheck({ point, placeHint, selectedDate, spotTier: ex
 
       <Section title={t("spot.rain")} sensor="power" kind={rain.data?.dataKind}>
         <p className="mb-1 text-[11px] text-[#4A5850]">{t("spot.rain.cell")}</p>
+        {imerg24h && (
+          <p className="mb-2 rounded-lg border border-[#2171B5]/30 bg-[#EEF5FA] px-2.5 py-1.5 text-[11px] font-medium text-[#0B4F79]" data-testid="spot-detail-imerg-24h">
+            {t("spot.card.imerg24h", { mm: imerg24h })}
+          </p>
+        )}
         <StateNote tier={rain} label={t("spot.rain")} />
         {rain.data && (
           <>

@@ -24,6 +24,7 @@ import {
   FIXTURE_SCOPE,
   getFloodScenario,
   getGroundMotion,
+  getImergPasses,
   getNisarPasses,
   getNisarPolarization,
   getNisarRhythm,
@@ -204,6 +205,7 @@ function Workspace({ onRegional }) {
   const rainStart = passDates.length ? addDays(passDates[0], -14) : null;
   const rainEnd = passDates.length ? passDates[passDates.length - 1] : null;
   const rainTier = useTier(rainStart ? () => getRainfallDaily(AREA_ID, rainStart, rainEnd) : null, [rainStart, rainEnd]);
+  const imergTier = useTier(() => getImergPasses(AREA_ID, true), []);
   const boundariesTier = useTier(() => getPlaceBoundaries("barangay"), []);
 
   const needRhythm = useLatched(mode === "rhythm" || mode === "motion");
@@ -234,6 +236,7 @@ function Workspace({ onRegional }) {
   useReportMany([
     ["passes", t("season.title"), passesTier.data],
     ["rain", t("season.rain"), rainTier.data],
+    ["imerg", t("imerg.title"), imergTier.data],
     ["rhythm", t("rhythm.title"), rhythmTier.data],
     ["validation", t("validation.title"), validationTier.data],
     ["exp-rhythm", t("exposure.title"), exposureRhythm.data],
@@ -524,6 +527,7 @@ function Workspace({ onRegional }) {
             selectedDate={passes[passIdx]?.date}
             spotTier={spotTier}
             briefingTier={briefingTier}
+            imergTier={imergTier}
             onBack={() => setSideTab("findings")}
             onClose={clearSpot}
             onCopy={copyLink}
@@ -539,6 +543,7 @@ function Workspace({ onRegional }) {
                 point={point}
                 placeHint={placeHint}
                 spotTier={spotTier}
+                imergTier={imergTier}
                 mode={mode}
                 selectedDate={passes[passIdx]?.date}
                 onClose={clearSpot}
@@ -566,6 +571,7 @@ function Workspace({ onRegional }) {
             <SeasonPanel
               passesTier={passesTier}
               rainTier={rainTier}
+              imergTier={imergTier}
               polTier={polTier}
               idx={passIdx}
               onIdx={setPassIdx}
@@ -923,6 +929,7 @@ function Workspace({ onRegional }) {
                       point={point}
                       placeHint={placeHint}
                       spotTier={spotTier}
+                      imergTier={imergTier}
                       mode={mode}
                       selectedDate={passes[passIdx]?.date}
                       onClose={clearSpot}

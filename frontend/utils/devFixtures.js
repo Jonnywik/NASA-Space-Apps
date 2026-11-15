@@ -445,6 +445,28 @@ export async function fixtureResponse(path, q) {
       };
       return base({ units: "mm", passes: dates.map((date) => ({ date, sameDayMm: dayRain(date), prior3DayMm: sum(date, 3), prior7DayMm: sum(date, 7) })), nativeResolution: "0.5° x 0.625° (fixture)" });
     }
+    case "/api/v1/climate/imerg/passes": {
+      const includeSeries = q.series !== false && q.series !== "false";
+      return base({
+        units: { rate: "mm/hr", totals: "mm" },
+        nativeResolution: "0.1° (~11 km), 30 min (fixture)",
+        hoursBeforePass: 48,
+        rainThresholdMmHr: 1.0,
+        passes: m().passes.map((p) => ({
+          date: p.date,
+          acquisitionTime: `${p.date}T21:30:35Z`,
+          acquisitionTimeManila: `${isoFromDay(dayNumber(p.date) + 1)}T05:30:35+08:00`,
+          last24hMm: 3.1,
+          last48hMm: 12.4,
+          peakMmHr: 4.2,
+          peakAt: `${p.date}T09:30:00Z`,
+          hoursSinceRain: 12.0,
+          hoursSinceRainNote: "hours since the last half-hour with an area-mean rate >= 1.0 mm/hr",
+          missingHalfHours: 0,
+          ...(includeSeries ? { series: Array.from({ length: 48 }, (_x, i) => ({ start: `${p.date}T00:00:00Z`, end: `${p.date}T00:30:00Z`, meanMmHr: i === 24 ? 4.2 : 0.2, maxCellMmHr: 5.0 })) } : {}),
+        })),
+      });
+    }
     case "/api/v1/climate/outlook": {
       const months = [12, 1, 2, 3, 4, 5].map((mo, i) => {
         const yr = mo === 12 ? 2026 : 2027;

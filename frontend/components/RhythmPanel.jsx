@@ -81,6 +81,19 @@ export default function RhythmPanel({ tier, exposureTier, passes = [], onHelp, o
                 {more ? t("rhythm.v2.readLess") : t("rhythm.v2.readMore")}
               </button>
             </p>
+            {onHelp && (
+              <div className="mt-1 flex flex-col items-start gap-1.5 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3 text-[12px] leading-relaxed text-[#4A5850]">
+                <p className="m-0">{t("rhythm.v2.limitsCallout")}</p>
+                <button
+                  type="button"
+                  onClick={() => onHelp("limits")}
+                  data-testid="open-nisar-limits"
+                  className="rounded-lg border border-[#1E5B3A] bg-white px-2.5 py-1 text-[12px] font-semibold text-[#1E5B3A] hover:bg-[#E3EFE7]"
+                >
+                  {t("rhythm.v2.limitsBtn")}
+                </button>
+              </div>
+            )}
           </div>
 
           {more && (
