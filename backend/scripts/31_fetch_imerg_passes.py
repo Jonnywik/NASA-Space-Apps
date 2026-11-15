@@ -110,13 +110,25 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--hours", type=int, default=48)
     ap.add_argument("--workers", type=int, default=12)
+    ap.add_argument("--recompute", action="store_true", help="rebuild the summaries from the cached file's series (no download)")
     a = ap.parse_args(argv)
+    if a.recompute:
+        doc = json.loads(OUT.read_text())
+        for p in doc["passes"]:
+            t = datetime.fromisoformat(p["acquisitionTime"].replace("Z", "+00:00"))
+            series = [s for s in p["series"] if datetime.fromisoformat(s["end"].replace("Z", "+00:00")) <= t]
+            p.update({**summarise(series, t), "series": series})
+        OUT.write_text(json.dumps(doc, indent=1))
+        print(f"recomputed {OUT}")
+        return
     remote.get_token()
     m = json.loads(MANIFEST.read_text())
     passes = []
     for row in m["gcov"]:
         t = datetime.fromisoformat(row["acquisitionTime"].replace("Z", "+00:00"))
-        gs = granules(t - timedelta(hours=a.hours), t)
+        # keep only half-hours that END at or before the pass: the one containing the pass time is after it
+        gs = [g for g in granules(t - timedelta(hours=a.hours), t)
+              if datetime.fromisoformat(g["end"].replace("Z", "+00:00")) <= t]
         print(f"{row['date']}: {len(gs)} IMERG half-hours")
         passes.append({"date": row["date"], "acquisitionTime": row["acquisitionTime"],
                        "acquisitionTimeManila": row.get("acquisitionTimeManila"), "granules": gs, "t": t})

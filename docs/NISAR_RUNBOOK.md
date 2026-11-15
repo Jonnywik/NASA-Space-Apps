@@ -201,3 +201,29 @@ Until then, Ground motion shows "not available yet", and priority zones (which n
 - **Values:** study-area median of the recommended cells 0.23–0.34 m³/m³ per pass.
 - **No rain signal:** compared with the 7-day prior NASA POWER rain, Spearman ρ = −0.33 (p = 0.38, n = 9). For example, 10 Aug, after about 230 mm in 7 days, has a median of 0.27 m³/m³, lower than June. With a few hundred scattered cells and a provisional product, this does not confirm the wetness signal seen in the GCOV backscatter (ρ = 0.80).
 - **Not yet served by the API or shown in the app.**
+
+## Rain timing before each pass: NASA GPM IMERG (15 Nov 2026, coordinator)
+
+`scripts/31_fetch_imerg_passes.py` fetched IMERG Late Run V07 half-hourly rain (`GPM_3IMERGHHL`, 0.1°) for the 48 hours before each of the 11 NISAR passes: 1,067 files, none missing, over 0.1° cells overlapping the study bbox. Only half-hours ending at or before the pass are counted; an early version included the half-hour containing the pass, which was fixed and the summaries recomputed. Output: `data/cache/climate/imerg_passes.json`, served at `GET /api/v1/climate/imerg/passes`.
+
+| Pass (UTC date; 05:30 Manila the next morning) | Rain 24 h before (mm) | Rain 48 h before (mm) | Peak (mm/hr, area mean) | Hours since last ≥ 1 mm/hr | NISAR open water outside permanent water (km²) |
+|---|---|---|---|---|---|
+| 23 Jun | 1.8 | 5.2 | 2.1 | 0.0 | 0.53 |
+| 5 Jul | 5.7 | 7.1 | 1.1 | 15.5 | 0.50 |
+| 17 Jul | 0.1 | 0.3 | 0.1 | none | 0.41 |
+| 10 Aug | 31.4 | 96.6 | 11.9 (9 Aug 07:00 Manila) | 7.5 | 0.19 |
+| 22 Aug | 10.1 | 10.2 | 2.7 | 12.0 | 0.13 |
+| 3 Sep | 23.9 | 29.1 | 10.5 | 0.0 (raining at the pass) | 0.19 |
+| 15 Sep | 16.0 | 19.1 | 5.3 | 14.0 | 0.38 |
+| 27 Sep | 4.8 | 6.6 | 3.0 | 0.5 | 0.47 |
+| 9 Oct | 1.8 | 8.0 | 2.2 | 38.5 | 0.34 |
+| 21 Oct | 3.2 | 3.2 | 1.4 | 8.0 | 0.58 |
+| 2 Nov | 1.2 | 5.4 | 1.4 | 0.0 | 0.50 |
+
+**Finding: the NISAR open-water area goes down after rain.** Spearman ρ = −0.77 (p = 0.01) against 48-hour rain, and −0.61 (p = 0.05) against 24-hour rain, n = 11.
+- The passes after the heaviest rain (10 Aug, 3 Sep, 22 Aug) have the smallest areas.
+- This is consistent with L-band physics: wet soil and vegetation, and rain- or wind-roughened water, scatter more energy back, so fewer pixels fall below the "dark = water" threshold. The same rain response shows as general brightening (ρ = +0.80 with 7-day POWER rain).
+- **So the "flood rhythm" layer is not a map of rain-driven flooding.** It maps open water outside permanent water, mostly wetland and fishpond margins, and it shrinks when it rains. It must be labelled that way.
+- Rain-driven urban flooding is not visible in these 05:30 passes: flooded streets look bright (double-bounce), and on 10 Aug the main storm peaked about 46 hours before the pass.
+
+Exploratory: n = 11, one study area, provisional NISAR products, and IMERG is a satellite estimate at about 11 km.

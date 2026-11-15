@@ -20,6 +20,7 @@ A6 is merged into `main` (thank you). The app now serves **real NISAR data**; re
 To see real data locally you need the real product. Regenerate it with the two commands in that section (needs `EARTHDATA_TOKEN`), or ask the coordinator.
 
 ### A7.1 Wording (do first; about 30 min)
+- **Rename the layer.** The real data shows NISAR's "flood rhythm" area *shrinks* after rain (ρ = −0.77 with 48 h IMERG rain; see the runbook). In the UI, call it **"Open water outside the usual water"** (mode name can stay "Flood rhythm", but the headline, legend title and plain words must not call it flooding). Add one line in plain words: "This layer gets smaller after heavy rain, because wet ground and rain-roughened water look brighter to the radar."
 - Remove every claim that NISAR shows **flooded streets**. Flood rhythm describes "open water on land that is usually dry"; e.g. the plain-words text "darker blue shows streets that flooded again and again" must change.
 - Generate the findings headline and "In plain words" from the API values. Never hard-code numbers. With the real data, the headline reads like "0.37 km² of usually-dry land had open water on half or more of NISAR's passes".
 - Search `i18n.js` and the components for "street", "flooded streets", "damage" and "sinking", and fix each, in both English and Filipino (Filipino marked pending review).
