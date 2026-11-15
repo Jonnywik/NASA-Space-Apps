@@ -129,7 +129,7 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
               <ul className="mt-2 space-y-0.5 text-[11px] text-slate-300" aria-label={t("season.legend")}>
                 {legend.map((l) => (
                   <li key={l.id ?? l.label} className="flex items-center gap-2">
-                    <span aria-hidden="true" className={`inline-block h-3 w-3 border border-white/60 ${l.shape === "diamond" ? "rotate-45" : ""}`} style={{ background: l.color }} />
+                    <span aria-hidden="true" className={`inline-block h-3 w-3 border border-white/60 ${(l.shape === "diamond" || String(l.id).includes("veg")) ? "rotate-45" : ""}`} style={{ background: l.color }} />
                     {l.label}
                   </li>
                 ))}

@@ -136,3 +136,28 @@ Generates fake GCOV-like HDF5 files in `data/raw/nisar_synthetic/`, runs the sam
 ```sh
 ../.venv/bin/python -m unittest discover -s tests
 ```
+
+## Real run results (15 Nov 2026, coordinator; first real NISAR read)
+
+Run from the cloud session with the proxy-held Earthdata token, track 140 A / frame 9, all 11 GCOV passes
+(23 Jun – 2 Nov 2026), read by HTTP range requests (about 70–90 MB per date, 4 minutes for all 11).
+**These results were written to a scratch folder; the app still serves the synthetic demo product until the owner approves publishing.**
+
+### First-file checks (runbook section 3)
+1. **Layout.** The real file matches the expected paths: `science/LSAR/GCOV/grids/frequencyA/{HHHH,HVHV,xCoordinates,yCoordinates,projection,mask,numberOfLooks}`, float32, 33120 × 33840 samples. No layout override was needed. (Frequency B, a narrow second band, is also present and unused.)
+2. **Coverage.** The study window reads as **valid for 100 % of the study area on all 11 passes**, so track 140 A covers CAMANAVA fully (track 133 D covers about 35 %).
+3. **Window size.** 1752 × 2457 samples on a 10 m UTM 51N (EPSG:32651) grid.
+4. **Coastline.** The HH image lines up with the shoreline: Manila Bay is dark, the Bulacan fishponds are dark rectangles, the Navotas–Manila port area and reclaimed land are bright and sharp, and ships appear as bright dots. Checked by eye by the coordinator.
+5. **Radiometry.** Manila Bay (calibration box `[120.885, 14.62, 120.897, 14.70]`, 1.26 million pixels over 11 passes): HH median about −15.8 dB, 95th percentile about −13.6 dB; HV median about −25.5 dB. The bay is brighter than a calm sea because of wind roughening, and it brightens toward the coast.
+6. **Calibrated rule (one rule for all passes):** HH < −12.5 dB and HV < −22.5 dB.
+
+### What the real data shows
+- **Open water outside permanent water is tiny on every pass: 0.13–0.57 km² of a 419 km² study window** (flood rhythm: 0.37 km² flooded on half or more of the valid passes). Possible flooded vegetation (L-band HH brightening in cropland and wetland) is 0.11–0.77 km² per pass.
+- **Where the flagged pixels are:** small clusters in the far north-west wetlands and fishponds, and a strip along the reclaimed Navotas coast. **None are in the dense urban streets of Malabon, Navotas or Caloocan.**
+- **Why:** street flooding is not visible as dark water to L-band radar. Flooded streets between buildings look bright (double-bounce), and the 21:30 UTC passes are at 05:30 Manila time, so flooding that peaks in the afternoon and recedes by morning is not captured. Both are known limits and are in the manifest limitations. **This run does not show that CAMANAVA did not flood; it shows that these 11 pre-dawn passes, read as open water, do not map it.**
+- **Without masking, the bay's nearshore strip looks like flooding.** A two-date trial with no external mask flagged 8–11 km² of "flood", almost all of it nearshore bay water that crosses the threshold on some passes. The mask used for the full run is WorldCover 2021 class 80 (water bodies, grown by one 10 m pixel): `scripts/23_worldcover_water_mask.py`, passed with `--permanent-mask`. The mask also removes fishponds, which is intended.
+- **Backscatter tracks rain.** Compared with each pixel's median over the 11 passes, mean HH change over built-up land (WorldCover class 50) correlates with the 7-day rain before each pass (NASA POWER): Spearman ρ = 0.80 (n = 11, p ≈ 0.003). Non-built land shows the same pattern, so this is general wetness (soil and vegetation), not a distinct urban flood signal. It is an exploratory result, not a flood map.
+
+### Open
+- The rule was calibrated on the bay with a margin chosen for wind roughening. A stricter or looser margin changes the totals only slightly because most permanent water is masked, but it has not been tested against an independent flood map (OPERA DSWx-S1 matches 10 of 11 passes in the catalogue, not yet downloaded).
+- Ground motion (T2) has not been run.
