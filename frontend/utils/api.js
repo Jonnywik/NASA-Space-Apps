@@ -308,7 +308,8 @@ export function timelapseGifUrl(area = AREA_ID) {
 
 export async function checkTimelapseGif(area = AREA_ID) {
   try {
-    const res = await fetch(timelapseGifUrl(area), { method: "HEAD" });
+    const res = await fetch(timelapseGifUrl(area));
+    Promise.resolve(res?.body?.cancel?.()).catch(() => {});
     return Boolean(res?.ok);
   } catch {
     return false;
