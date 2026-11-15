@@ -1,13 +1,13 @@
 # Antigravity task list for 15 Nov 2026 (current: Round 3 A8, then Round 4 A9; freeze 18:00)
 
-Antigravity: read `AGENTS.md` first for context, rules and how to run. This file gives you a **short list of small, needed tasks** that don't overlap with Codex (`docs/CODEX_TASKS.md`), which is working on the backend and the real NISAR run.
+Antigravity: read `AGENTS.md` first for context, rules and how to run. This file gives you a **short list of small, needed tasks** that don't overlap with Codex (`docs/project-log/CODEX_TASKS.md`), which is working on the backend and the real NISAR run.
 
 Coding freezes at 17:00 Manila time. Each task is meant to take 30–90 minutes.
 
 ## Your boundaries
 
-- **You own:** `frontend/` (all of it), `docs/FIL_REVIEW.md` (new) and `docs/ANTIGRAVITY_STATUS.md` (new).
-- **Do not edit:** anything under `backend/`, `README.md`, `AGENTS.md`, `docs/SUBMISSION_SCOPE.md`, `docs/API_CONTRACT.md` or `docs/CODEX_TASKS.md`. If you need a backend change, write it in `docs/ANTIGRAVITY_STATUS.md` under `NEEDS-BACKEND:` and move on.
+- **You own:** `frontend/` (all of it), `docs/submission/FIL_REVIEW.md` (new) and `docs/project-log/ANTIGRAVITY_STATUS.md` (new).
+- **Do not edit:** anything under `backend/`, `README.md`, `AGENTS.md`, `docs/SUBMISSION_SCOPE.md`, `docs/API_CONTRACT.md` or `docs/project-log/CODEX_TASKS.md`. If you need a backend change, write it in `docs/project-log/ANTIGRAVITY_STATUS.md` under `NEEDS-BACKEND:` and move on.
 - **Git (updated 15 Nov):** the main repository is now `Jonnywik/NASA-SA-Final`. For A6, create branch `antigravity/a6-mangrove` from the latest `main`, commit small and often there, and push it. The coordinator reviews and merges it. Run `git pull --rebase` before each push. Never force-push. Don't reuse the old `antigravity/codex-tasks-t3-t7` branch.
 - **Before each push:** `cd frontend && npm run lint && npm run build` must pass.
 - **Rules from `AGENTS.md` section 2 apply in full.** No invented numbers, stories or references. Synthetic data keeps its badge. Say "exposure", not "damage". Say "line-of-sight motion", not "sinking".
@@ -32,11 +32,11 @@ In Season, add a small card from `/nisar/soil-moisture` for the selected pass if
 - Hide both if the endpoint returns 404.
 
 ### A9.4 Re-check and screenshots (about 20 min)
-Lint, build and `test:api` must pass. Add screenshots of the two new overlays and the soil-moisture card from the laptop to `frontend/screenshots/v2-real/`.
+Lint, build and `test:api` must pass. Add screenshots of the two new overlays and the soil-moisture card from the laptop to `docs/screenshots/current/`.
 
 ## Round 3 (15 Nov, about 14:20): A8, final polish on real data. Push by 16:30.
 
-> **Owner decision (15 Nov, 16:00): A8.1, A8.3 and A8.5 are DISMISSED (not part of the submission).** (Earlier: on hold.) Antigravity's scope for this round is A8.0, A8.2, A8.4 and A8.6, plus A9. Merged so far: A8.2 and A8.4 (`8c16b76`) and A9.1–A9.3 (`56479e6`). **Still to push: A8.6** (final check and laptop screenshots with the street basemap, into `frontend/screenshots/v2-real/`) and A9.4.
+> **Owner decision (15 Nov, 16:00): A8.1, A8.3 and A8.5 are DISMISSED (not part of the submission).** (Earlier: on hold.) Antigravity's scope for this round is A8.0, A8.2, A8.4 and A8.6, plus A9. Merged so far: A8.2 and A8.4 (`8c16b76`) and A9.1–A9.3 (`56479e6`). **Still to push: A8.6** (final check and laptop screenshots with the street basemap, into `docs/screenshots/current/`) and A9.4.
 
 
 
@@ -83,7 +83,7 @@ Write **`docs/RECORDING_SHOTS.md`** for the team's 30-second video: an ordered l
 Use only numbers the app shows. Add a checklist: 1920×1080 browser window, zoom 100 %, real product loaded, no Demo tags visible.
 
 ### A8.6 Final check and screenshots (20 min, start by 16:00)
-Walk every mode at 1366×768 and 390×844 on the real data. Fix only real defects. Then replace `frontend/screenshots/v2-real/` with screenshots **from your laptop**, which shows the street basemap; the coordinator's set has a blank basemap. Check that no Demo or SYNTHETIC text is visible. Record the status in `docs/ANTIGRAVITY_STATUS.md`.
+Walk every mode at 1366×768 and 390×844 on the real data. Fix only real defects. Then replace `docs/screenshots/current/` with screenshots **from your laptop**, which shows the street basemap; the coordinator's set has a blank basemap. Check that no Demo or SYNTHETIC text is visible. Record the status in `docs/project-log/ANTIGRAVITY_STATUS.md`.
 
 **Done when:** A8.1–A8.6 are pushed on `antigravity/a8-polish` by **16:30**, lint, build and `test:api` pass, and no Demo or synthetic text appears anywhere on real data.
 
@@ -114,24 +114,24 @@ Add a fifth card to "How radar sees" and a short note in the Flood rhythm findin
 
 ### A7.4 Ground motion and priority zones (about 30 min)
 - **Ground motion:** a clear unavailable state: "Not available yet. Four months of NISAR interferograms are dominated by ionospheric noise; ground motion needs a longer record and ionosphere correction." Keep the "How radar sees" InSAR card.
-- If you add literature context, use only references already verified in `docs/HYPOTHESES_SOURCES.md` (the Codex section, e.g. Eco et al. 2020). Label it "Published study (not NISAR)" and give no numbers that aren't in that file.
+- If you add literature context, use only references already verified in `docs/science/HYPOTHESES_SOURCES.md` (the Codex section, e.g. Eco et al. 2020). Label it "Published study (not NISAR)" and give no numbers that aren't in that file.
 - **Priority zones:** "Not available: needs ground motion."
 
 ### A7.5 Real-data screenshots (about 20 min)
-Re-take every mode at 1366×768, plus the phone view, against the real product, into `frontend/screenshots/v2-real/`. Check that no Demo tags remain on NISAR values.
+Re-take every mode at 1366×768, plus the phone view, against the real product, into `docs/screenshots/current/`. Check that no Demo tags remain on NISAR values.
 
-**Done when:** no copy claims flooded streets; the explainer card exists in English and Filipino; IMERG timing shows in Season and the spot card; Ground motion and priority zones show honest unavailable states; real screenshots are committed; lint, build and `test:api` pass; and `docs/ANTIGRAVITY_STATUS.md` is updated. Push the branch and tell the owner; the coordinator reviews and merges.
+**Done when:** no copy claims flooded streets; the explainer card exists in English and Filipino; IMERG timing shows in Season and the spot card; Ground motion and priority zones show honest unavailable states; real screenshots are committed; lint, build and `test:api` pass; and `docs/project-log/ANTIGRAVITY_STATUS.md` is updated. Push the branch and tell the owner; the coordinator reviews and merges.
 
 ## Status update (15 Nov, coordinator): do A6, then A2 and A5
 
-- **A1, A3 and A4 are already done by Codex** and merged to `main`: `docs/FIL_REVIEW.md` exists, the pass legend uses shared colours, and the briefing buttons are wired. Don't redo them. A1 now only waits for the native-speaker corrections.
+- **A1, A3 and A4 are already done by Codex** and merged to `main`: `docs/submission/FIL_REVIEW.md` exists, the pass legend uses shared colours, and the briefing buttons are wired. Don't redo them. A1 now only waits for the native-speaker corrections.
 - **Your order now:** **A6** (the redesign, below) → **A2** (base map, as part of A6's Map tools "Map mode") → **A5** (final UI check on the new design).
 
 ## A6: Restyle the app to the approved "Mangrove" design (main task; about 4–6 h)
 
 **Why:** the owner approved a new interface design. It is calm civic with a map-first layout, a left mode rail, a Map tools panel and a spot card on the map. It aims at the Presentation and Impact scores.
 
-**Spec:** **`docs/DESIGN_SPEC_V2.md`**. Read all of it first. The board sources are in `docs/design/v2-mangrove/` for exact structure and styles.
+**Spec:** **`docs/design/DESIGN_SPEC_V2.md`**. Read all of it first. The board sources are in `docs/design/v2-mangrove/` for exact structure and styles.
 
 **Steps:**
 1. **Tokens and fonts.** Add the Mangrove CSS variables and Tailwind names, and switch the fonts to Inter plus Source Serif 4 via `next/font/google` (spec §2).
@@ -147,13 +147,13 @@ Re-take every mode at 1366×768, plus the phone view, against the real product, 
 
 **Don't:** change API calls, analysis or wording rules; touch `backend/`; invent numbers; remove any existing feature. Move features, don't delete them: Story tour, Limits, Radar cards, Regional context, Pipeline preview and briefing exports must all remain reachable.
 
-**Done when:** every item in spec §10 passes, screenshots are in `frontend/screenshots/v2/`, and lint, build and `test:api` pass. Log the status and any `NEEDS-BACKEND:` lines in `docs/ANTIGRAVITY_STATUS.md`.
+**Done when:** every item in spec §10 passes, screenshots are in `docs/screenshots/archive/v2-design-synthetic/`, and lint, build and `test:api` pass. Log the status and any `NEEDS-BACKEND:` lines in `docs/project-log/ANTIGRAVITY_STATUS.md`.
 
 ## A1: Filipino review sheet (do first; about 30 min)
 
 **Why:** a native speaker on the team must sign off the Filipino text before the video. They need it in a form they can read quickly.
 
-1. Write `docs/FIL_REVIEW.md` from `frontend/utils/i18n.js`: a table with the key, the English text, the current Filipino text, and an empty "Corrected Filipino" column. Group the rows by screen (Story, Season, Flood rhythm, Ground motion, History, Future, Spot check, Limits, Radar cards).
+1. Write `docs/submission/FIL_REVIEW.md` from `frontend/utils/i18n.js`: a table with the key, the English text, the current Filipino text, and an empty "Corrected Filipino" column. Group the rows by screen (Story, Season, Flood rhythm, Ground motion, History, Future, Spot check, Limits, Radar cards).
 2. Put the strings most likely to appear in the video at the top: the story steps, the mode names, the spot-check labels and the scenario caveat.
 3. Add a short instruction at the top for the reviewer: correct the meaning, keep `{placeholders}` unchanged, and flag anything that sounds machine-translated.
 4. After the reviewer fills it in, copy the corrections back into `i18n.js`, and remove the "pending native review" marker only for the keys that were reviewed.
@@ -166,7 +166,7 @@ Re-take every mode at 1366×768, plus the phone view, against the real product, 
 
 1. Run the app on the laptop and confirm the base-map tiles load in the CAMANAVA workspace and the regional view.
 2. Make sure the tile provider's **attribution** is visible (OpenStreetMap contributors, or whichever provider is used), as its licence requires. Also make sure the NISAR/ASF, NASA POWER, WorldPop, ESA WorldCover and HDX credits are reachable from the map, for example in a "Sources" link in the footer or the Limits drawer.
-3. Check that the CAMANAVA study-area outline and the NISAR overlays line up with the coastline in Navotas and Malabon. If they are visibly offset, record it in `docs/ANTIGRAVITY_STATUS.md` under `NEEDS-BACKEND:` with a screenshot path; don't "fix" it by shifting things in the frontend.
+3. Check that the CAMANAVA study-area outline and the NISAR overlays line up with the coastline in Navotas and Malabon. If they are visibly offset, record it in `docs/project-log/ANTIGRAVITY_STATUS.md` under `NEEDS-BACKEND:` with a screenshot path; don't "fix" it by shifting things in the frontend.
 4. If the default tile server is slow or rate-limits, switch to another **free, no-key** provider whose terms allow this use, and update the attribution.
 
 **Done when:** a screenshot at 1366×768 shows streets under the overlays with the correct attribution.
@@ -197,11 +197,11 @@ Re-take every mode at 1366×768, plus the phone view, against the real product, 
 1. Walk through Story Mode and every mode at **1366×768** and at a phone width (390×844) on the real backend.
 2. Fix only real defects: overlapping text, cut-off labels, controls you can't reach with the keyboard, missing focus outlines, any status shown by colour alone, and console errors.
 3. Check that every number on screen has its source, and that every synthetic number and overlay carries a **Demo** tag. The yellow banner is retired in the v2 design.
-4. Save screenshots of every mode to `frontend/screenshots/v2/` (create it; commit them). The team will use them for the project page.
-5. List anything you couldn't fix in `docs/ANTIGRAVITY_STATUS.md`.
+4. Save screenshots of every mode to `docs/screenshots/archive/v2-design-synthetic/` (create it; commit them). The team will use them for the project page.
+5. List anything you couldn't fix in `docs/project-log/ANTIGRAVITY_STATUS.md`.
 
 **Done when:** there are no console errors, the screenshots are committed, and lint and build pass.
 
 ## What to send back
 
-In `docs/ANTIGRAVITY_STATUS.md`, add one line per task: its status (done / partial / blocked), the commit hash, any `NEEDS-BACKEND:` request, and anything you couldn't verify.
+In `docs/project-log/ANTIGRAVITY_STATUS.md`, add one line per task: its status (done / partial / blocked), the commit hash, any `NEEDS-BACKEND:` request, and anything you couldn't verify.

@@ -35,7 +35,7 @@ Agents share one workspace. Edit only your own paths. **Do not run `git commit`,
 | **A: Climate and scenarios** | `backend/processing/climate/`, `backend/app/climate_api.py`, `backend/scripts/3[0-9]_*.py`, `backend/tests/test_climate_*.py`, `backend/data/cache/climate/` |
 | **D: Places and exposure** | `backend/processing/places/`, `backend/app/places_api.py`, `backend/scripts/4[0-9]_*.py`, `backend/tests/test_places_*.py`, `backend/data/cache/places/` |
 | **C: Frontend** | everything under `frontend/` |
-| **E: Packaging** | `README.md`, `LICENSE`, `.github/`, `docs/DATA_MANIFEST.md` |
+| **E: Packaging** | `README.md`, `LICENSE`, `.github/`, `docs/data/DATA_MANIFEST.md` |
 | Coordinator | `backend/app/main.py`, `backend/requirements*.txt`, `docs/SUBMISSION_SCOPE.md`, this file, spot check and briefing (wave 2) |
 
 Each router module exposes `make_router(output_root, read_public_events)`, like `backend/app/p3_api.py`.

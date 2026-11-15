@@ -44,16 +44,16 @@ The real NISAR product is not in git (376 MB). Regenerate it with the two comman
 `backend/processing/nisar_flood/gunw_chain.py` hard-codes 1.2575 GHz → 0.2384 m. The real GUNW file's `science/LSAR/GUNW/grids/frequencyA/centerFrequency` is **1.239 GHz → 0.2420 m**. Read the centre frequency from the file in `inspect_local_file`/`build_ingest_config` and use it. Fall back to the constant only if absent, with a warning. Add a test.
 
 ### R2.2 T5 validation with OPERA DSWx-S1 (about 90 min)
-The catalogue (CMR `C2949811996-POCLOUD`) has 40 DSWx-S1 granules on tile T51PTS matching 10 of the 11 NISAR passes within ±2 days (see `docs/SOURCE_REVIEW.md`).
+The catalogue (CMR `C2949811996-POCLOUD`) has 40 DSWx-S1 granules on tile T51PTS matching 10 of the 11 NISAR passes within ±2 days (see `docs/science/SOURCE_REVIEW.md`).
 - **Access:** downloads are at PO.DAAC (`archive.podaac.earthdata.nasa.gov`) behind Earthdata Login. If you work in a cloud session, ask the owner to add the token for that host and allow its redirect host. On a laptop, `EARTHDATA_TOKEN` works if the PO.DAAC app is approved in the owner's Earthdata profile.
 - Normalise DSWx classes to open water / not water / nodata using the product spec, crop to the study bbox and reproject to the coarser grid. Compare with the **total open water** per pass (NISAR water including permanent water, not the flood-only mask) using `processing/validation/metrics.compare_rasters`.
-- Report agreement, F1, IoU and confusion per pass, plus a **±1 dB threshold sensitivity** for NISAR. Write `docs/VALIDATION.md` honestly, including disagreements, and serve the result at `/api/v1/validation`.
+- Report agreement, F1, IoU and confusion per pass, plus a **±1 dB threshold sensitivity** for NISAR. Write `docs/science/VALIDATION.md` honestly, including disagreements, and serve the result at `/api/v1/validation`.
 
 ### R2.3 T7 README truth pass (about 60 min; must be done before 16:30)
 - Rewrite the README's top story to the v6 framing.
 - Put **Limitations first**: no visible street flooding, 05:30 passes, ground motion not available, provisional products.
 - Set each row of the challenge table to **real / real-but-limited / unavailable / cut**.
-- Fill `docs/DATA_MANIFEST.md` with the exact NISAR GCOV, GUNW and SME2 granules used (from the manifests in `backend/data/cache/nisar/`), plus IMERG, POWER, WorldPop, WorldCover, COD-AB, OSM, Open-Meteo and OPERA. Include product IDs, versions and retrieval dates.
+- Fill `docs/data/DATA_MANIFEST.md` with the exact NISAR GCOV, GUNW and SME2 granules used (from the manifests in `backend/data/cache/nisar/`), plus IMERG, POWER, WorldPop, WorldCover, COD-AB, OSM, Open-Meteo and OPERA. Include product IDs, versions and retrieval dates.
 - Add a "Reproduce" section with the exact command sequence (scripts 19, 23, 20, 25, 31, then the API and frontend).
 
 ### R2.4 After the freeze (not today)
@@ -64,7 +64,7 @@ The T2 research path: get the GUNW phase sign from the RIFG/RUNW spec or ISCE3, 
 | Worker | Owns | Status |
 |---|---|---|
 | Frontend agent (Claude) | — | Finished: the CAMANAVA workspace runs on the real API. |
-| **Antigravity** | **everything under `frontend/`**, `docs/FIL_REVIEW.md`, `docs/ANTIGRAVITY_STATUS.md` | Small UI tasks in `docs/ANTIGRAVITY_TASKS.md`. **Do not edit `frontend/`.** |
+| **Antigravity** | **everything under `frontend/`**, `docs/submission/FIL_REVIEW.md`, `docs/project-log/ANTIGRAVITY_STATUS.md` | Small UI tasks in `docs/project-log/ANTIGRAVITY_TASKS.md`. **Do not edit `frontend/`.** |
 | Coordinator (Claude) | `backend/app/main.py`, `docs/SUBMISSION_SCOPE.md`, `docs/API_CONTRACT.md` sections 0–2 (shared constants and rules), `AGENTS.md` | Integration and review |
 | **Codex (you)** | **The files listed in each task below, and nothing else** | Tasks T1–T7 |
 
@@ -82,8 +82,8 @@ Already done and on this branch, so build on them rather than rewriting them:
 2. **Commit small and often** to branch `claude/kind-pascal-93n7ns` with clear messages. Pull (`git pull --rebase`) before every push. Never force-push, rewrite history, or delete other people's files.
 3. **Follow every rule in `AGENTS.md` section 2.** Above all: never fabricate data, references or stories; synthetic data is always labelled; missing values are not zero.
 4. **Run the full backend test suite before each push:** `cd backend && ../.venv/bin/python -m unittest discover -s tests`. It must stay green.
-5. **Each task ends with a "done when".** If you cannot meet it honestly, stop, write down what blocked you in `docs/CODEX_STATUS.md`, and move to the next task.
-6. **Record progress in `docs/CODEX_STATUS.md`** (you own this file): one line per task with its status, the commit hash, and any blocker.
+5. **Each task ends with a "done when".** If you cannot meet it honestly, stop, write down what blocked you in `docs/project-log/CODEX_STATUS.md`, and move to the next task.
+6. **Record progress in `docs/project-log/CODEX_STATUS.md`** (you own this file): one line per task with its status, the commit hash, and any blocker.
 
 ## 2. Tasks, in priority order
 
@@ -91,7 +91,7 @@ Already done and on this branch, so build on them rather than rewriting them:
 
 **Why:** this is the core of the submission. Everything in the app is synthetic until this runs.
 
-**Files you own:** `backend/processing/nisar_flood/` (fixes only), `backend/scripts/19`–`22`, `backend/tests/test_nisar_*.py`, `backend/data/cache/nisar/`, `docs/NISAR_RUNBOOK.md`, and the NISAR rows of `docs/DATA_MANIFEST.md`.
+**Files you own:** `backend/processing/nisar_flood/` (fixes only), `backend/scripts/19`–`22`, `backend/tests/test_nisar_*.py`, `backend/data/cache/nisar/`, `docs/NISAR_RUNBOOK.md`, and the NISAR rows of `docs/data/DATA_MANIFEST.md`.
 
 **Steps:**
 1. Create a free account at https://urs.earthdata.nasa.gov, then go to **Profile → Generate Token**. In your shell, set `EARTHDATA_TOKEN=<token>`. Never write it to a file in the repo, never echo it, and never paste it into a commit.
@@ -115,11 +115,11 @@ python scripts/20_nisar_flood_rhythm.py --manifest data/cache/nisar/nisar_manife
    - Does permanent water match the bay, rivers and fishponds?
    - Is the per-pass flooded km² plausible against the rainfall? Use `GET /api/v1/climate/pass-rainfall`.
    - Name any obvious artefacts: layover, radar shadow, urban double-bounce, wind-roughened water.
-6. Fill the NISAR rows of `docs/DATA_MANIFEST.md` with the exact granule IDs used, their MD5/SHA-256 and the retrieval time.
+6. Fill the NISAR rows of `docs/data/DATA_MANIFEST.md` with the exact granule IDs used, their MD5/SHA-256 and the retrieval time.
 
 **Done when:** `GET /api/v1/nisar/passes?area=camanava_2026` returns `dataKind` other than `"synthetic"`, with real product IDs, and the runbook has the "Real run results" section.
 
-**If blocked** (no access, unreadable layout, or the disk can't hold it): leave the synthetic product in place, record exactly what failed in `docs/CODEX_STATUS.md`, and move on to T2.
+**If blocked** (no access, unreadable layout, or the disk can't hold it): leave the synthetic product in place, record exactly what failed in `docs/project-log/CODEX_STATUS.md`, and move on to T2.
 
 ### T2: Real NISAR ground motion (laptop; after T1, or in parallel if bandwidth allows)
 
@@ -178,7 +178,7 @@ python scripts/20_nisar_flood_rhythm.py --manifest data/cache/nisar/nisar_manife
 
 ### T5: Validation data (research plus backend; no laptop needed)
 
-**Files you own:** `backend/processing/validation/` (new), `backend/scripts/60_validation.py` (new), `backend/tests/test_validation_*.py` (new), `backend/data/cache/validation/` (new), `docs/VALIDATION.md` (new).
+**Files you own:** `backend/processing/validation/` (new), `backend/scripts/60_validation.py` (new), `backend/tests/test_validation_*.py` (new), `backend/data/cache/validation/` (new), `docs/science/VALIDATION.md` (new).
 
 **Steps:**
 1. **Find independent flood evidence for CAMANAVA, June–November 2026**, in this order of preference:
@@ -186,16 +186,16 @@ python scripts/20_nisar_flood_rhythm.py --manifest data/cache/nisar/nisar_manife
    - Copernicus EMS or UNOSAT activations for Philippine floods in 2026;
    - NDRRMC situation reports or MMDA flood advisories listing flooded barangays or streets.
 
-   Record every source with URL, date and licence. **Use only what you actually find and can cite.** If nothing usable exists, say so in `docs/VALIDATION.md`.
+   Record every source with URL, date and licence. **Use only what you actually find and can cite.** If nothing usable exists, say so in `docs/science/VALIDATION.md`.
 2. **Agreement metrics:** where a raster source exists (for example DSWx), compute agreement with the NISAR per-pass water masks on the coarser common grid: overall agreement, F1, intersection over union, and the confusion matrix. Exclude nodata in either source. Where only barangay lists exist, compute barangay-level hit rate. Store the results in `backend/data/cache/validation/` and add `GET /api/v1/validation?area=camanava_2026` in a new `backend/app/validation_api.py` (register it as rule 1 allows).
 3. **Threshold sensitivity:** re-run the flood rhythm with HH/HV thresholds ±1 dB and report how much the "half or more" area changes. Use the pipeline functions in memory; do not overwrite the published product.
 4. **Subsidence comparison:** find **published, peer-reviewed or agency** subsidence rates for CAMANAVA or the Bulacan coast (InSAR studies of Metro Manila). Record the citation, method, period and rate exactly as published. Do not paraphrase numbers you haven't seen in the source. Compare them qualitatively with T2's line-of-sight result: same sign and pattern? Remember LOS vs vertical and 4 months vs years.
 
-**Done when:** `docs/VALIDATION.md` states each comparison, its result and its limitations honestly, including disagreements, and the endpoint serves the numbers. If T1 is not done, run the metrics on nothing and say so; do not compute against the synthetic product and present it as validation.
+**Done when:** `docs/science/VALIDATION.md` states each comparison, its result and its limitations honestly, including disagreements, and the endpoint serves the numbers. If T1 is not done, run the metrics on nothing and say so; do not compute against the synthetic product and present it as validation.
 
 ### T6: Hypotheses with real references (research; no laptop needed)
 
-**File you own:** `docs/HYPOTHESES_SOURCES.md` (new). Hand the final JSON to the coordinator through it. **Do not edit `frontend/public/hypotheses.json`**, which belongs to the frontend agent's folder; the coordinator will copy it in.
+**File you own:** `docs/science/HYPOTHESES_SOURCES.md` (new). Hand the final JSON to the coordinator through it. **Do not edit `frontend/public/hypotheses.json`**, which belongs to the frontend agent's folder; the coordinator will copy it in.
 
 **Task:** for each hypothesis below, find 1–2 **real, checkable** references (peer-reviewed papers, government reports such as MGB, NWRB, PAGASA or DPWH, or reputable agency pages). Give the full citation and URL. Say what the source actually states, quoting a sentence where possible.
 1. Groundwater over-extraction drives land subsidence in CAMANAVA and the Bulacan coast.
@@ -208,11 +208,11 @@ Then write the JSON the frontend expects: an array of `{ "id", "title", "titleFi
 
 **Rules:** if you cannot verify a reference, leave it out. A hypothesis with no verified reference is dropped. Every item is labelled as a hypothesis, not a finding.
 
-**Done when:** `docs/HYPOTHESES_SOURCES.md` contains the verified references and the final JSON block.
+**Done when:** `docs/science/HYPOTHESES_SOURCES.md` contains the verified references and the final JSON block.
 
 ### T7: README truth pass (after T1–T5; around 13:00)
 
-**Files you own:** `README.md` and `docs/DATA_MANIFEST.md`.
+**Files you own:** `README.md` and `docs/data/DATA_MANIFEST.md`.
 
 - Set each row of the challenge mapping table to its true status: done, done with synthetic data, partial, or cut.
 - Put limitations first, using the real-run findings from T1, T2 and T5.
@@ -236,7 +236,7 @@ If you can only do some of this, the priority is **T1 > T3 > T4 > T2 > T5 > T6 >
 
 ## 4. What to send back
 
-At the end of each task, append to `docs/CODEX_STATUS.md`:
+At the end of each task, append to `docs/project-log/CODEX_STATUS.md`:
 - task, status (done / partial / blocked) and commit hash;
 - real numbers produced, with their source and caveats;
 - anything that needs the coordinator (a `NEEDS-COORDINATOR:` line);

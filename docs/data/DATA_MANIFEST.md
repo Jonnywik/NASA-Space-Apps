@@ -4,31 +4,31 @@ The manifests linked below record retrieved metadata and cached products. Timest
 
 ## NISAR source granules
 
-[CMR catalogue manifest](../backend/data/cache/nisar/nisar_manifest_t140_A_f009_m4005.json), retrieved 2026-11-14 16:25:29 UTC, selects track 140 ascending, frame 009, GCOV mode 4005 and GUNW mode 4000. Study windows of 11 GCOV granules were read for the open-water product; nine GUNW windows were examined but no motion product was produced. The manifest records exact identifiers, versions and catalogue checksums; catalogue checksums do not establish that entire remote files were downloaded or independently verified. See the [runbook](NISAR_RUNBOOK.md).
+[CMR catalogue manifest](../../backend/data/cache/nisar/nisar_manifest_t140_A_f009_m4005.json), retrieved 2026-11-14 16:25:29 UTC, selects track 140 ascending, frame 009, GCOV mode 4005 and GUNW mode 4000. Study windows of 11 GCOV granules were read for the open-water product; nine GUNW windows were examined but no motion product was produced. The manifest records exact identifiers, versions and catalogue checksums; catalogue checksums do not establish that entire remote files were downloaded or independently verified. See the [runbook](../NISAR_RUNBOOK.md).
 
 | Collection | Provider | CMR concept ID | Use | Licence |
 |---|---|---|---|---|
 | GCOV Provisional / V1 | ASF DAAC via [NASA CMR](https://cmr.earthdata.nasa.gov/search) | C2854338529-ASF / C3622241360-ASF | Flood and backscatter | Not recorded in cache |
 | GUNW Provisional / V1 | ASF DAAC via [NASA CMR](https://cmr.earthdata.nasa.gov/search) | C2854335566-ASF / C3622247503-ASF | Line-of-sight motion | Not recorded in cache |
 
-The [SME2 manifest](../backend/data/cache/nisar/soil_moisture/manifest.json) records nine exact product IDs from `NISAR_L3_SME2_PROVISIONAL_V1`; it was generated 2026-11-15 04:36:21 UTC. Individual retrieval times are not recorded. The provisional 200 m soil-moisture product is not served by the API.
+The [SME2 manifest](../../backend/data/cache/nisar/soil_moisture/manifest.json) records nine exact product IDs from `NISAR_L3_SME2_PROVISIONAL_V1`; it was generated 2026-11-15 04:36:21 UTC. Individual retrieval times are not recorded. The provisional 200 m soil-moisture product is not served by the API.
 
 ## IMERG and OPERA
 
-- **Round 5 (15 Nov, coordinator):** 10 more OPERA DSWx-S1 references (Sentinel-1C, 10:06 UTC, tile T51PTS, 27 Jun – 25 Oct 2026), each 24.3 h before a NISAR track 32 D pass, retrieved from PO.DAAC with provider MD5 checks by `scripts/63_cross_track.py`. Granule ids, times and scores are in [cross_track.json](../backend/data/cache/validation/cross_track.json). IMERG for the 18:24 passes: [imerg_passes_t032D.json](../backend/data/cache/climate/imerg_passes_t032D.json). NISAR track 32 D GCOV manifest: [nisar_manifest_t032_D_f081_m4005.json](../backend/data/cache/nisar/nisar_manifest_t032_D_f081_m4005.json).
+- **Round 5 (15 Nov, coordinator):** 10 more OPERA DSWx-S1 references (Sentinel-1C, 10:06 UTC, tile T51PTS, 27 Jun – 25 Oct 2026), each 24.3 h before a NISAR track 32 D pass, retrieved from PO.DAAC with provider MD5 checks by `scripts/63_cross_track.py`. Granule ids, times and scores are in [cross_track.json](../../backend/data/cache/validation/cross_track.json). IMERG for the 18:24 passes: [imerg_passes_t032D.json](../../backend/data/cache/climate/imerg_passes_t032D.json). NISAR track 32 D GCOV manifest: [nisar_manifest_t032_D_f081_m4005.json](../../backend/data/cache/nisar/nisar_manifest_t032_D_f081_m4005.json).
 
-- [NASA GPM IMERG Late Run](https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_07/summary), `GPM_3IMERGHHL` V07, DOI 10.5067/GPM/IMERG/3B-HH-L/07: the [pass cache](../backend/data/cache/climate/imerg_passes.json) was retrieved 2026-11-15 05:16:57 UTC and summarizes half-hourly 0.1-degree rain before each pass. Granule-level retrieval records are not retained there.
-- [OPERA DSWx-S1 V1](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1), collection `C2949811996-POCLOUD`, tile `T51PTS`: a 2026-11-15 catalogue check found 40 granules in the area, with dates within two calendar days of 10 NISAR passes. Seventeen date-matched references were checked; 14 were all fill and three usable. The three references below were retrieved and provider MD5 verified on 2026-11-15; each is about 48 hours 15 minutes after the corresponding NISAR pass. See the linked comparison records for checksums and precise generation times. DSWx is a separate Sentinel-1 surface-water product, not ground truth; the comparison is total water, not flood accuracy. Details and threshold sensitivity are in [validation](VALIDATION.md).
+- [NASA GPM IMERG Late Run](https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_07/summary), `GPM_3IMERGHHL` V07, DOI 10.5067/GPM/IMERG/3B-HH-L/07: the [pass cache](../../backend/data/cache/climate/imerg_passes.json) was retrieved 2026-11-15 05:16:57 UTC and summarizes half-hourly 0.1-degree rain before each pass. Granule-level retrieval records are not retained there.
+- [OPERA DSWx-S1 V1](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1), collection `C2949811996-POCLOUD`, tile `T51PTS`: a 2026-11-15 catalogue check found 40 granules in the area, with dates within two calendar days of 10 NISAR passes. Seventeen date-matched references were checked; 14 were all fill and three usable. The three references below were retrieved and provider MD5 verified on 2026-11-15; each is about 48 hours 15 minutes after the corresponding NISAR pass. See the linked comparison records for checksums and precise generation times. DSWx is a separate Sentinel-1 surface-water product, not ground truth; the comparison is total water, not flood accuracy. Details and threshold sensitivity are in [validation](../science/VALIDATION.md).
 
 | CMR granule | Exact OPERA product, version 1.0 | Comparison record |
 |---|---|---|
-| `G4361329706-POCLOUD` | `OPERA_L3_DSWx-S1_T51PTS_20260917T214554Z_20261012T223352Z_S1D_30_v1.0` | [15 September](../backend/data/cache/validation/comparison_20260915_near_match.json) |
-| `G4361778874-POCLOUD` | `OPERA_L3_DSWx-S1_T51PTS_20261011T214554Z_20261013T061017Z_S1D_30_v1.0` | [9 October](../backend/data/cache/validation/comparison_20261009_near_match.json) |
-| `G4408674689-POCLOUD` | `OPERA_L3_DSWx-S1_T51PTS_20261104T214554Z_20261109T201952Z_S1D_30_v1.0` | [2 November](../backend/data/cache/validation/comparison_20261102_near_match.json) |
+| `G4361329706-POCLOUD` | `OPERA_L3_DSWx-S1_T51PTS_20260917T214554Z_20261012T223352Z_S1D_30_v1.0` | [15 September](../../backend/data/cache/validation/comparison_20260915_near_match.json) |
+| `G4361778874-POCLOUD` | `OPERA_L3_DSWx-S1_T51PTS_20261011T214554Z_20261013T061017Z_S1D_30_v1.0` | [9 October](../../backend/data/cache/validation/comparison_20261009_near_match.json) |
+| `G4408674689-POCLOUD` | `OPERA_L3_DSWx-S1_T51PTS_20261104T214554Z_20261109T201952Z_S1D_30_v1.0` | [2 November](../../backend/data/cache/validation/comparison_20261102_near_match.json) |
 
 ## Retrieved caches
 
-The [places manifest](../backend/data/cache/places/manifest.json) records source URLs, raw and derived SHA-256 hashes, and product paths; the [climate manifest](../backend/data/cache/climate/manifest.json) records query parameters and cached-file SHA-256 hashes. These are provenance records, not proof of independent scientific validation.
+The [places manifest](../../backend/data/cache/places/manifest.json) records source URLs, raw and derived SHA-256 hashes, and product paths; the [climate manifest](../../backend/data/cache/climate/manifest.json) records query parameters and cached-file SHA-256 hashes. These are provenance records, not proof of independent scientific validation.
 
 | Dataset | Source and licence as recorded | Version or period | Retrieved UTC | Use |
 |---|---|---|---|---|

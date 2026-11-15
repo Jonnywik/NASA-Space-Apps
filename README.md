@@ -7,7 +7,7 @@ NISAR sees CAMANAVA and the Bulacan coast through clouds and rain. Tanaw explore
 - **Urban street flooding is not visible in this open-water layer.** Water between buildings can brighten radar returns, while narrow streets, shadow and layover complicate detection. A missing signal does not mean the city did not flood.
 - Passes were around **05:30 Manila time**, roughly every 12 days; floods between passes or after the morning acquisition can be missed. IMERG gives coarse rainfall timing, not street-level rain.
 - **Ground motion and priority zones are unavailable.** The short GUNW record is dominated by ionospheric noise and the phase sign and correction state need further work; no motion measurement is presented. Exposure is not damage.
-- Most selected GCOV products and all selected SME2 products are provisional and may change. Water thresholds and the 2021 WorldCover mask affect the result. Three OPERA comparisons are more than 48 hours apart from the NISAR passes, compare total water including coast and permanent water, and are not flood accuracy. See [validation](docs/VALIDATION.md).
+- Most selected GCOV products and all selected SME2 products are provisional and may change. Water thresholds and the 2021 WorldCover mask affect the result. Three OPERA comparisons are more than 48 hours apart from the NISAR passes, compare total water including coast and permanent water, and are not flood accuracy. See [validation](docs/science/VALIDATION.md).
 - Soil moisture is a provisional 200 m product with recommended retrievals on only about 5–7% of study cells; it is not served as a flood layer. NASA POWER can overestimate dry-season rain, WorldPop is a 2020 model, and OSM building completeness is unknown. Conditional scenarios are not predictions.
 - Filipino wording, independent user testing, public deployment and the recording require confirmation; none is claimed here. Sentinel-1 is separate context, never NISAR.
 
@@ -32,7 +32,7 @@ Statuses describe the evidence and implementation; they do not imply a verified 
 
 ## Data sources
 
-The [data manifest](docs/DATA_MANIFEST.md) records granules, versions, retrieval dates and source limitations. The derived NISAR product is large and gitignored; the cached catalogue and rule do not themselves contain its pixels.
+The [data manifest](docs/data/DATA_MANIFEST.md) records granules, versions, retrieval dates and source limitations. The derived NISAR product is large and gitignored; the cached catalogue and rule do not themselves contain its pixels.
 
 For NISAR passes on 15 September, 9 October and 2 November, agreement with OPERA was 0.8712, 0.8499 and 0.8750; F1 was 0.7291, 0.6662 and 0.7386; IoU was 0.5737, 0.4994 and 0.5855. Each reference was acquired about 48 hours 15 minutes later. The comparison includes coastal and permanent water; OPERA may also include inundated vegetation. These scores are not ground-truth flood accuracy.
 
@@ -42,7 +42,7 @@ Changing both thresholds by -1, 0 and +1 dB yields half-or-more areas of 0.0230,
 
 A fresh clone does not include the derived NISAR product (`backend/data/output/camanava_2026/nisar/`, 376 MB). Download it separately as **tanaw-data-camanava_2026-v1**, which matches commit `ce42105`.
 
-- Download: the [`data-package-v1` branch](https://github.com/Jonnywik/NASA-SA-Final/tree/data-package-v1) holds the zip as four parts ([part00](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00), [part01](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01), [part02](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02), [part03](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03); no sign-in needed). Join them into `tanaw-data-camanava_2026-v1.zip` (commands on that branch's README) and check the SHA-256. See [docs/DATA_PACKAGE.md](docs/DATA_PACKAGE.md).
+- Download: the [`data-package-v1` branch](https://github.com/Jonnywik/NASA-SA-Final/tree/data-package-v1) holds the zip as four parts ([part00](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00), [part01](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01), [part02](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02), [part03](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03); no sign-in needed). Join them into `tanaw-data-camanava_2026-v1.zip` (commands on that branch's README) and check the SHA-256. See [docs/data/DATA_PACKAGE.md](docs/data/DATA_PACKAGE.md).
 - Size: 392,437,688 bytes.
 - SHA-256: `3290a66b2fc115bd666c1f199c17c7e5d0c6f978132264eb28335219110a2cfa`
 
@@ -89,7 +89,7 @@ Open http://localhost:3000. To run a production build instead of the dev server,
 
 Unzip the package at the repository root. It only creates `backend/data/output/camanava_2026/`. Do not regenerate or edit those files, or the bound validation and timelapse results will report "unavailable".
 
-A clean-checkout run is recorded in [docs/DATA_PACKAGE.md](docs/DATA_PACKAGE.md). It used Linux and the dev server.
+A clean-checkout run is recorded in [docs/data/DATA_PACKAGE.md](docs/data/DATA_PACKAGE.md). It used Linux and the dev server.
 
 ## Reproduce locally on Windows
 
@@ -137,11 +137,31 @@ npm run test:api
 npm run build
 ```
 
+## Repository layout
+
+```
+.
+├── backend/              FastAPI service and data processing (Python)
+│   ├── app/              API routers (/api/v1)
+│   ├── processing/       NISAR, climate, places and validation code
+│   ├── scripts/          numbered pipeline steps (19–63), run from backend/
+│   ├── tests/            unit tests
+│   └── data/cache/       small committed inputs and results (the NISAR product is in the data package)
+├── frontend/             Next.js app (components/, utils/, app/, public/, tests/)
+├── docs/                 documentation, see docs/README.md
+│   ├── science/  data/  design/  submission/  screenshots/  project-log/
+│   └── API_CONTRACT.md, NISAR_RUNBOOK.md, SUBMISSION_SCOPE.md
+├── AGENTS.md             instructions for the AI coding agents
+└── LICENSE
+```
+
 ## Further documentation
 
-- [Data manifest](docs/DATA_MANIFEST.md), [validation](docs/VALIDATION.md), [source review](docs/SOURCE_REVIEW.md), and [integration checks](docs/INTEGRATION_CHECK.md)
+The full index is in [docs/README.md](docs/README.md). Key documents:
 - [NISAR runbook](docs/NISAR_RUNBOOK.md), [API contract](docs/API_CONTRACT.md), and [submission scope](docs/SUBMISSION_SCOPE.md)
-- [Coherence pipeline](backend/COHERENCE_PIPELINE.md), [P2 pipeline](backend/DREI_P2_PIPELINE.md), and [P3 pipeline](backend/P3_PIPELINE.md)
+- [Data manifest](docs/data/DATA_MANIFEST.md), [data package](docs/data/DATA_PACKAGE.md), [validation](docs/science/VALIDATION.md), and [source review](docs/science/SOURCE_REVIEW.md)
+- [Coherence pipeline](docs/science/COHERENCE_PIPELINE.md), [P2 pipeline](docs/science/DREI_P2_PIPELINE.md), and [P3 pipeline](docs/science/P3_PIPELINE.md)
+- [Screenshots on real data](docs/screenshots/current/)
 
 ## AI assistance and licence
 

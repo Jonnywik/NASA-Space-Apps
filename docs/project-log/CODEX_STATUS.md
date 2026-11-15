@@ -20,7 +20,7 @@ This update supersedes the older status below: real GCOV windows were processed,
 | Task | Status | Evidence / blocker |
 |---|---|---|
 | R2.1 GUNW wavelength | Complete | File frequency gives 0.2419632429378531 m; 12 focused tests passed. No public motion result is authorized. |
-| R2.2 OPERA comparison | Complete, limited | Three usable near matches compared with the regenerated v6 product; results and sensitivity are in [validation](VALIDATION.md). All 355 backend tests passed. |
+| R2.2 OPERA comparison | Complete, limited | Three usable near matches compared with the regenerated v6 product; results and sensitivity are in [validation](../science/VALIDATION.md). All 355 backend tests passed. |
 | R2.3 README truth pass | Complete in working tree | README and data manifest describe real data, limitations, granules, validation and reproduction. No commit or push by this agent. |
 
 No additional phase-sign or motion research, priority output, user research or video is claimed by this update.

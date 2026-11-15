@@ -1,6 +1,6 @@
 # Tanaw interface design spec v2 ("Mangrove")
 
-This is the approved design for restyling the Tanaw frontend. It is Antigravity task **A6** (see `docs/ANTIGRAVITY_TASKS.md`).
+This is the approved design for restyling the Tanaw frontend. It is Antigravity task **A6** (see `docs/project-log/ANTIGRAVITY_TASKS.md`).
 
 - **Design canvas (private to the project owner):** https://claude.ai/artifact/RfXSbuREG44jnVdYaPdvq3. Ask the owner for a share link or screenshots if you need to see it.
 - **Board source, for exact markup and styles:** `docs/design/v2-mangrove/*.dc.html`. These files are Claude Design components and won't render on their own. Read them for structure, spacing and colours; don't copy their runtime.
@@ -18,7 +18,7 @@ This is the approved design for restyling the Tanaw frontend. It is Antigravity 
 
 ## 0. Ground rules
 
-1. **Restyle and re-lay-out; don't rewire.** Keep every API call, data hook, error state and test that exists. Change layout, styling and where components sit. If the design needs data the API doesn't provide, show the existing unavailable state and log a `NEEDS-BACKEND:` line in `docs/ANTIGRAVITY_STATUS.md`.
+1. **Restyle and re-lay-out; don't rewire.** Keep every API call, data hook, error state and test that exists. Change layout, styling and where components sit. If the design needs data the API doesn't provide, show the existing unavailable state and log a `NEEDS-BACKEND:` line in `docs/project-log/ANTIGRAVITY_STATUS.md`.
 2. **Stay inside `frontend/`.** Do not edit `backend/`.
 3. **Honesty rules still apply** (`AGENTS.md` §2). Never show a number without its source. Synthetic values always carry a **Demo** tag (see §4.9). Say "exposure", not "damage", and "line-of-sight motion", not "sinking". Scenarios are "conditional, not predictions".
 4. **No invented content.** The boards use placeholders like `[km²]` and `[n]`. In the app those come from the API. The board's map shapes and chart bar heights are illustrations; only the History and Future rainfall numbers on the boards are real.
@@ -268,7 +268,7 @@ Keep the existing unavailable messages, restyled as a soft card: dashed `--line`
 
 ## 9. Language
 - English is the default. Filipino is chosen in **Settings**; the choice is remembered in `localStorage`, wrapped in try/catch.
-- All new strings go in `frontend/utils/i18n.js`. Mark new Filipino strings "pending native review" until the team's reviewer signs them off (`docs/FIL_REVIEW.md`).
+- All new strings go in `frontend/utils/i18n.js`. Mark new Filipino strings "pending native review" until the team's reviewer signs them off (`docs/submission/FIL_REVIEW.md`).
 
 ## 10. Acceptance
 - [ ] The app opens on Flood rhythm, with the shell and Mangrove tokens as above.
@@ -278,7 +278,7 @@ Keep the existing unavailable messages, restyled as a soft card: dashed `--line`
 - [ ] The yellow banner is gone, and every synthetic number and overlay carries a Demo tag.
 - [ ] Pass times show both UTC and Manila time.
 - [ ] Lint, build and `test:api` pass. There are no console errors on the real backend.
-- [ ] Screenshots of every mode (1366×768) and the phone view are committed to `frontend/screenshots/v2/`.
+- [ ] Screenshots of every mode (1366×768) and the phone view are committed to `docs/screenshots/archive/v2-design-synthetic/`.
 
 ## 11. Out of scope
 Radar lens, GIF/MP4 export, new backend fields, satellite tiles that need a key or payment, and any change to analysis logic or wording rules.

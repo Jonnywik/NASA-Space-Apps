@@ -1,6 +1,6 @@
 # AGENTS.md: instructions for coding agents working on Tanaw
 
-**Current assignments (15 Nov, about 14:45 Manila; coding freeze moved to 18:00, push by 17:15):** Read the **"v6 decision"** section at the top of `docs/SUBMISSION_SCOPE.md` first: the app serves **real NISAR data**. **Codex:** Round 3 in `docs/CODEX_TASKS.md` (v6 briefings, downloads, timelapse GIF, CI) on branch `codex/round3`. **Antigravity:** A8, then A9 (new overlays, soil-moisture card, downloads and timelapse buttons) in `docs/ANTIGRAVITY_TASKS.md` on `antigravity/a8-polish`. **Coordinator:** rain-response and coherence-change NISAR layers and the soil-moisture endpoint (`nisar_api.py`, `processing/nisar_flood/`). **Don't regenerate the real NISAR product** where it exists (validation is hash-bound). The coordinator reviews and merges.
+**Current assignments (15 Nov, about 14:45 Manila; coding freeze moved to 18:00, push by 17:15):** Read the **"v6 decision"** section at the top of `docs/SUBMISSION_SCOPE.md` first: the app serves **real NISAR data**. **Codex:** Round 3 in `docs/project-log/CODEX_TASKS.md` (v6 briefings, downloads, timelapse GIF, CI) on branch `codex/round3`. **Antigravity:** A8, then A9 (new overlays, soil-moisture card, downloads and timelapse buttons) in `docs/project-log/ANTIGRAVITY_TASKS.md` on `antigravity/a8-polish`. **Coordinator:** rain-response and coherence-change NISAR layers and the soil-moisture endpoint (`nisar_api.py`, `processing/nisar_flood/`). **Don't regenerate the real NISAR product** where it exists (validation is hash-bound). The coordinator reviews and merges.
 
 Read this file first, then `docs/SUBMISSION_SCOPE.md` (the plan) and `docs/API_CONTRACT.md` (endpoint shapes and file ownership). Those two documents are the source of truth. If this file and they disagree, they win, and you should fix this file.
 
@@ -63,7 +63,7 @@ Verify each row against the code before relying on it.
 | Climate: NASA POWER rainfall history, anomalies, trend, season rank, seasonal outlook, 12-month scenarios, flood scenario, timeline availability | **Done, real data, registered**, 73 tests. Decision: scenarios stay on NASA POWER with an inline dry-season caveat (POWER over-reads Dec–Apr rain here); do not switch them to ERA5 | `backend/processing/climate/`, `backend/app/climate_api.py`, `backend/scripts/30_fetch_climate.py`, `backend/data/cache/climate/` |
 | NISAR: catalogue search, windowed GCOV reader, water rule, flood rhythm, flooded vegetation, polarization view, synthetic demo, API | **REAL data published (15 Nov).** 11 GCOV passes, track 140 A / frame 9, rule HH < −12.5 dB and HV < −22.5 dB, WorldCover water mask. Flood rhythm 0.37 km² (half or more of passes). Product folder gitignored; regenerate with the v6 commands. Ground motion (GUNW) attempted, not usable (see runbook). NISAR soil moisture (SME2) cached, not served. | `backend/processing/nisar_flood/`, `backend/app/nisar_api.py`, `backend/scripts/19`–`22`, `docs/NISAR_RUNBOOK.md`, `backend/data/cache/nisar/` |
 | Frontend CAMANAVA workspace: Story, Season, Flood rhythm, Ground motion, History, Future, spot check, search, explainer cards, EN/FIL toggle, Limits drawer | **Mangrove redesign (A6) merged.** Real-data wording, IMERG timing and the explainer are Antigravity's A7. | `frontend/components/CamanavaWorkspace.jsx` and the other new components, `frontend/utils/` |
-| Packaging: MIT licence, CI, README, data manifest | Done | `LICENSE`, `.github/workflows/ci.yml`, `README.md`, `docs/DATA_MANIFEST.md` |
+| Packaging: MIT licence, CI, README, data manifest | Done | `LICENSE`, `.github/workflows/ci.yml`, `README.md`, `docs/data/DATA_MANIFEST.md` |
 
 Real facts already established:
 - NASA's catalogue (CMR) lists 11 NISAR GCOV dates (9 provisional, 2 V1) on track 140 A / frame 009 over the area, and about 9 consecutive 12-day GUNW pairs. Files are 2–5 GB each and need a free Earthdata login to download.
@@ -91,7 +91,7 @@ This must run on a machine with an Earthdata login.
 6. Run the GUNW chain: script `21`, then the existing `10_ingest_nisar.py`, `11_phase_to_los.py` and `12_motion_series.py` for event `camanava_2026`. Check the reference area, the sign convention and the correction state. Report cumulative line-of-sight displacement over the season; do not present a 4-month result as an annual rate without marking it as an extrapolation.
 7. Remove or replace the synthetic demo outputs so the API serves `dataKind: "observed"` or `"derived"` for NISAR layers.
 
-**Done when:** the app shows real NISAR flood rhythm and ground motion for CAMANAVA with no synthetic badge, and `docs/DATA_MANIFEST.md` lists the exact granules used with hashes.
+**Done when:** the app shows real NISAR flood rhythm and ground motion for CAMANAVA with no synthetic badge, and `docs/data/DATA_MANIFEST.md` lists the exact granules used with hashes.
 
 **If this step fails,** do not fake it. Keep the synthetic badge, say plainly in the README what could not be read and why, and continue with the steps below.
 
@@ -111,7 +111,7 @@ This must run on a machine with an Earthdata login.
 
 ### Step 5: Packaging and submission
 1. Update `README.md`: set each row of the challenge table to its true status, put limitations first, and document one-command reproduction.
-2. Fill `docs/DATA_MANIFEST.md` for every dataset.
+2. Fill `docs/data/DATA_MANIFEST.md` for every dataset.
 3. Run a user test with three people outside the team, fix the top two problems, and record what happened in the README.
 4. Record the 30-second video following section 6 of the scope document, using verified numbers only. Write the AI-use disclosure for the submission page.
 
