@@ -18,6 +18,13 @@ This overrides sections 3, 11 and 16 of `Tanaw-final-development-plan.md`. Its h
 - **Ground motion is not usable yet:** the 9 real interferograms are dominated by ionospheric noise (40–60 mm across the area), the phase sign isn't stated in the product spec, and 4 months is too short. **No ground-motion result is shown as a NISAR measurement.**
 - **NISAR soil moisture (SME2)** is retrievable for only 5–7 % of study cells (farmland at the edges), and doesn't track rain (ρ = −0.33, n = 9).
 
+### v6.1 science and validation hardening (15 Nov, about 16:00)
+- **A second NISAR track reproduces the result independently.** Track 32 descending (10 passes at 18:24 Manila; track 140 passes at 05:30) with its own Manila Bay calibration (HH < −13.0 dB vs −12.5) finds 0.10–0.86 km² per pass and 0.43 km² recurring (vs 0.37). **99 % of the 05:30 track's recurring water lies within 30 m of the 18:24 track's** (random shift: 0.04 %), **0 km² on built-up land.** Even the evening passes, after the afternoon thunderstorms, show no street water.
+- **Validation went from 3 near matches (> 48 h apart) to 13 matches; 10 are same-time-of-day Sentinel-1C OPERA DSWx-S1 maps 24 h before each descending pass:** median F1 0.74, IoU 0.58, agreement 0.87, **precision 0.97**, recall 0.60.
+- **Headline correlations survive bootstrap, leave-one-out and permutation tests:** open water vs rain ρ −0.77 (p 0.008, always negative without any one pass), brightening vs rain ρ +0.93 / +0.94 (p < 0.001). The rain-response map is far beyond chance (70 % of cells > 0.5 vs ≤ 26 % with shuffled rain).
+- **Downgraded: storm coherence loss.** After allowing for its 24-day interval, only 0.04–0.09 km² of loss remains, so the storm's effect is not separable. Keep the layer exploratory and never use it in the video.
+- Pitch line for Validity: *"Two NISAR orbits, morning and evening, processed separately, find the same water to within 30 m. Sentinel-1 agrees 97 % of the time when NISAR says water."*
+
 ### New story (use for the video, README and project page)
 > **"NISAR sees CAMANAVA every 12 days, through clouds and rain. Here is what its L-band radar shows about our flooding, and what it can't see yet."**
 

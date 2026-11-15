@@ -229,3 +229,11 @@ All of these serve **small committed caches** under `backend/data/cache/`, so th
 - **`GET /downloads/{id}`** returns the file, with the right `Content-Disposition`. Only listed ids are served.
 - **`GET /nisar/timelapse.gif?area=`** (registered from `downloads_api.py`) returns an animated GIF of the 11 real passes: HH backscatter with the open-water overlay, a date and Manila-time caption, and a small IMERG 48-hour rain bar. Built by `scripts/28_nisar_timelapse.py` into `backend/data/cache/nisar/timelapse.gif` (keep it under about 8 MB).
 - **Briefing** (`/briefing/place`): update to the v6 story, adding the IMERG rain facts for the latest pass. No "flooding" wording for the open-water layer.
+
+## Round 5 additions (15 Nov, coordinator): robustness and cross-track validation
+
+Both are read-only, offline results bound to the canonical product manifest SHA-256 (`productManifestSha256`); a mismatch or missing file returns 404 `data_unavailable`, an unknown area 404 `unknown_area`.
+
+- **`GET /validation/robustness?area=`** (script 62): `correlations: [{label, n, rho, pPermutation, bootstrap95: [lo, hi], leaveOneOut: [min, max], signHoldsWithoutAnyOnePass}]`, `rainResponseField: {cells, observedMedianRho, observedShareAbove05, nullMedianRho95, nullShareAbove05_95, nullShareAbove05Mean, pFieldMedian, pFieldShare, permutations}`, `coherenceLoss: {landKm2, naiveKm2DropOver03, intervalCorrectedKm2DropOver03, intervalCorrectedMedian, calmPairsKm2DropOver03, byLandCoverCorrected}`.
+- **`GET /validation/cross-track?area=`** (script 63): `ascending` and `descending` summaries (`track, passes, localTime, rule, halfOrMoreKm2, openWaterKm2Range`; descending also `series` and `rainCorrelation`), `geometryAgreement: {ascendingKm2, descendingKm2, exactOverlapKm2, toleranceM, shareAscendingNearDescending, shareDescendingNearAscending, chanceShareMean, chanceShareMax, byLandCoverOverlapKm2, builtUpOverlapKm2}`, `operaMatches: [{nisarDate, referenceTime, referenceGranule, hoursApart, validPixels, overallAgreement, f1, iou, nisarRecall, nisarPrecision}]`, `operaSummary`, `limitations`.
+- `GET /nisar/coherence-change` `stats` gains `km2DropOver03IntervalCorrected`.

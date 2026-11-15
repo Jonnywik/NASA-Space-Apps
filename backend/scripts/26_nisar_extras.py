@@ -147,6 +147,11 @@ def coherence_change():
     bounds = write_png_overlay(ex.ramp_rgba(drop_land, ex.DROP_STOPS, transparent_below=0.05), grid, OUT / "coherence_change.png")
     cell_km2 = abs(grid.transform[0] * grid.transform[4]) / 1e6
     land = np.isfinite(drop_land)
+    # Interval control (script 62 has the full test): with Markov decorrelation a 24-day pair is expected to keep about
+    # (median 12-day coherence)^2, so only loss beyond that can be credited to the storm.
+    with np.errstate(invalid="ignore"):
+        excess = np.nanmedian(np.stack(calm), axis=0) ** 2 - storm
+    excess[~land] = np.nan
     doc = {
         "schemaVersion": "1.0", "area": "camanava_2026", "dataKind": "derived", "generatedAt": now(),
         "title": "Coherence loss across the 8 Aug 2026 storm",
@@ -157,12 +162,15 @@ def coherence_change():
         "legend": [{"value": v, "color": c} for v, c in ex.DROP_STOPS],
         "stats": {"cells": int(land.sum()), "medianDrop": round(float(np.nanmedian(drop_land)), 3),
                   "km2DropOver03": round(float(np.sum(drop_land[land] > 0.3) * cell_km2), 2),
-                  "landKm2": round(float(land.sum() * cell_km2), 1)},
+                  "landKm2": round(float(land.sum() * cell_km2), 1),
+                  "km2DropOver03IntervalCorrected": round(float(np.sum(excess[land] > 0.3) * cell_km2), 2)},
         "byLandCover": ex.by_landcover(drop_land, lc),
         "nativeResolution": {"x": 80, "y": 80, "units": "m"},
         "source": {"name": "NASA-ISRO NISAR L2 GUNW (ASF), provisional", "url": "https://nisar-docs.asf.alaska.edu/gunw/"},
-        "warnings": ["The storm pair spans 24 days (one pass is missing around 29 Jul), the calm pairs 12 days: a longer interval "
-                     "also lowers coherence, so part of the loss is expected even without the storm."],
+        "warnings": ["The storm pair spans 24 days (one pass is missing around 29 Jul), the calm pairs 12 days. A longer interval "
+                     "also lowers coherence: allowing for that (expected 24-day coherence = median 12-day coherence squared), "
+                     f"only {round(float(np.sum(excess[land] > 0.3) * cell_km2), 2)} km2 of loss over 0.3 is left. "
+                     "Most of this layer can be explained by the longer interval alone; the storm's effect cannot be separated."],
         "limitations": [
             "Exploratory. Coherence loss can come from standing water, wet or changed vegetation, construction, or noise; it is never a flood map.",
             "80 m cells; dense urban areas usually keep high coherence.",

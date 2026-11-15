@@ -36,7 +36,7 @@ Lint, build and `test:api` must pass. Add screenshots of the two new overlays an
 
 ## Round 3 (15 Nov, about 14:20): A8, final polish on real data. Push by 16:30.
 
-> **Owner decision (15 Nov, 15:00): A8.1, A8.3 and A8.5 are ON HOLD; don't do them unless the owner asks.** Antigravity's scope for this round is A8.0, A8.2, A8.4 and A8.6, plus A9. Merged so far: A8.2 and A8.4 (`8c16b76`) and A9.1–A9.3 (`56479e6`). **Still to push: A8.6** (final check and laptop screenshots with the street basemap, into `frontend/screenshots/v2-real/`) and A9.4.
+> **Owner decision (15 Nov, 16:00): A8.1, A8.3 and A8.5 are DISMISSED (not part of the submission).** (Earlier: on hold.) Antigravity's scope for this round is A8.0, A8.2, A8.4 and A8.6, plus A9. Merged so far: A8.2 and A8.4 (`8c16b76`) and A9.1–A9.3 (`56479e6`). **Still to push: A8.6** (final check and laptop screenshots with the street basemap, into `frontend/screenshots/v2-real/`) and A9.4.
 
 
 

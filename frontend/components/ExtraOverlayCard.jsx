@@ -90,6 +90,9 @@ export function CoherenceChangeCard({ tier, onSources }) {
       stats={[
         { label: t("cohChange.km2Over03"), value: `${fmt(d?.stats?.km2DropOver03, 2) ?? "—"} km²` },
         { label: t("cohChange.medianDrop"), value: fmt(d?.stats?.medianDrop, 3) },
+        ...(d?.stats?.km2DropOver03IntervalCorrected != null
+          ? [{ label: t("cohChange.corrected"), value: `${fmt(d.stats.km2DropOver03IntervalCorrected, 2)} km²` }]
+          : []),
       ]}
       medianCol={t("cohChange.medianCol")}
       medianValue={(r) => r.median ?? r.medianDrop}

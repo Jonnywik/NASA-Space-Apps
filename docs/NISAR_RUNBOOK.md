@@ -243,3 +243,34 @@ The cached GCOV windows (`data/raw/nisar_windows/*.npz`, written by script 20) s
 - After the 8 Aug storm (10 Aug pass), built-up land averaged **+0.63 dB** above its seasonal median.
 
 The published statement (ρ = 0.80) stands. No other result used the flawed calculation.
+
+## Science and validation hardening (15 Nov 2026, about 16:00, coordinator)
+
+### Robustness of the headline findings (`scripts/62_robustness.py` → `data/cache/validation/robustness.json`, `GET /api/v1/validation/robustness`)
+No download needed. It is bound to the product manifest SHA-256 like `/validation`, so rerun it after any product regeneration.
+
+| Finding (track 140 A, n = 11) | ρ | permutation p | 95 % bootstrap | leave-one-pass-out |
+|---|---|---|---|---|
+| Open water outside permanent water vs 48 h IMERG | −0.77 | 0.008 | −0.98 to −0.34 | −0.88 to −0.72 (always negative) |
+| Mean HH change, built-up land, vs 48 h IMERG | +0.93 | 0.0002 | 0.67 to 0.99 | 0.90 to 0.95 |
+| Mean HH change, other land, vs 48 h IMERG | +0.94 | < 0.0001 | 0.70 to 1.00 | 0.92 to 0.95 |
+
+- **The rain-response map is not chance.** The rain dates were shuffled 2,000 times and the whole map recomputed each time. With shuffled rain, at most 26 % of land cells (95th percentile; 6 % on average) reach ρ > 0.5; the real map has **70 %** (field p < 0.001). Shuffling keeps the radar's spatial pattern, so this test allows for neighbouring cells being alike.
+- **Correction: the storm coherence loss does not survive the interval control.** With Markov decorrelation, a 24-day pair keeps about (12-day coherence)². Allowing for that leaves **0.04–0.09 km²** with loss over 0.3 (naive: 3.2 km² on classified land, 4.8 km² including unclassified cells). The storm pair loses more than any calm pair (calm pairs: 0.2–1.5 km² on the same naive measure), but the storm and the longer interval cannot be separated with this data. The layer stays in the app as exploratory and its card now says so (`km2DropOver03IntervalCorrected`).
+
+### Independent replication on a second NISAR track (`scripts/63_cross_track.py` → `data/cache/validation/cross_track.json`, `GET /api/v1/validation/cross-track`)
+Script 19 lists **track 32 descending, frame 81: 100 % coverage, 10 passes, 28 Jun – 26 Oct 2026, at 10:24 UTC = 18:24 Manila the same day** (track 140 A passes at 05:30). It was processed separately into `data/output/camanava_2026/nisar_t032D/` (gitignored). The canonical ascending product and its validation hash were not touched.
+
+```
+cd backend
+python scripts/19_nisar_search.py --track 32 --direction D --frame 81
+python scripts/20_nisar_flood_rhythm.py --manifest data/cache/nisar/nisar_manifest_t032_D_f081_m4005.json --out-dir data/output/camanava_2026/nisar_t032D --calibrate --permanent-mask data/cache/places/worldcover_water_mask.tif --landcover data/cache/places/esa_worldcover_2021_clip.tif
+python scripts/31_fetch_imerg_passes.py --manifest data/cache/nisar/nisar_manifest_t032_D_f081_m4005.json --out data/cache/climate/imerg_passes_t032D.json
+python scripts/63_cross_track.py      # needs EARTHDATA_TOKEN for PO.DAAC (OPERA)
+```
+Pitfall: three 120 m trial windows from an old test run (28 Jun, 10 Jul, 22 Jul) were in `data/raw/nisar_windows/` and gave 32–58 km² of fake "open water". They were removed and reread at 10 m. If you see a pass with tens of km², check the cached window's grid (`transform[0]` must be 10).
+
+- **Its own Manila Bay calibration gives HH < −13.0 dB, HV < −22.5 dB** (track 140 A: −12.5 / −22.5).
+- **Open water outside permanent water: 0.10–0.86 km² per pass; 0.43 km² on half or more of passes** (track 140 A: 0.13–0.57 and 0.37).
+- **Same places:** **99 %** of the ascending track's recurring open water lies within 30 m of the descending track's recurring open water (76 % the other way). A randomly shifted map gives 0.04 % on average. Exact pixel overlap is 0.19 km², all of it on cropland (0.12), grassland, wetland and tree cover, with **0 km² on built-up land**: fishponds, paddies and wetland margins, not streets.
+- **OPERA DSWx-S1 (Sentinel-1C, 10:06 UTC), 24.3 h before each descending pass, 10 matches** (the ascending validation had 3 matches, each more than 48 h apart). Median **F1 0.74, IoU 0.58, agreement 0.87; precision 0.97, recall 0.60** (range F1 0.68–0.82). NISAR's water rule is conservative: what it calls water, Sentinel-1 almost always calls water. It misses some water OPERA includes, mostly inundated vegetation and shallow coastal edges. Total water, not flood-only accuracy; two satellites, not ground truth.

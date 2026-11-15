@@ -111,18 +111,21 @@ def main(argv=None):
     ap.add_argument("--hours", type=int, default=48)
     ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--recompute", action="store_true", help="rebuild the summaries from the cached file's series (no download)")
+    ap.add_argument("--manifest", default=str(MANIFEST), help="GCOV manifest from script 19 (default: track 140 A)")
+    ap.add_argument("--out", default=str(OUT), help="output JSON (default: data/cache/climate/imerg_passes.json)")
     a = ap.parse_args(argv)
+    MANIFEST_PATH, OUT_PATH = Path(a.manifest), Path(a.out)
     if a.recompute:
-        doc = json.loads(OUT.read_text())
+        doc = json.loads(OUT_PATH.read_text())
         for p in doc["passes"]:
             t = datetime.fromisoformat(p["acquisitionTime"].replace("Z", "+00:00"))
             series = [s for s in p["series"] if datetime.fromisoformat(s["end"].replace("Z", "+00:00")) <= t]
             p.update({**summarise(series, t), "series": series})
-        OUT.write_text(json.dumps(doc, indent=1))
-        print(f"recomputed {OUT}")
+        OUT_PATH.write_text(json.dumps(doc, indent=1))
+        print(f"recomputed {OUT_PATH}")
         return
     remote.get_token()
-    m = json.loads(MANIFEST.read_text())
+    m = json.loads(MANIFEST_PATH.read_text())
     passes = []
     for row in m["gcov"]:
         t = datetime.fromisoformat(row["acquisitionTime"].replace("Z", "+00:00"))
@@ -167,10 +170,10 @@ def main(argv=None):
         ],
         "warnings": [],
     }
-    OUT.write_text(json.dumps(doc, indent=1))
-    print(f"\nWrote {OUT}")
+    OUT_PATH.write_text(json.dumps(doc, indent=1))
+    print(f"\nWrote {OUT_PATH}")
     for p in out_passes:
-        print(f"  {p['date']} (pass 05:30 Manila): last6h {p['last6hMm']} mm, last24h {p['last24hMm']} mm, last48h {p['last48hMm']} mm, "
+        print(f"  {p['date']} (pass {p['acquisitionTimeManila']}): last6h {p['last6hMm']} mm, last24h {p['last24hMm']} mm, last48h {p['last48hMm']} mm, "
               f"peak {p['peakMmHr']} mm/hr at {p['peakAt']}, hours since rain {p['hoursSinceRain']}, missing {p['missingHalfHours']}")
 
 

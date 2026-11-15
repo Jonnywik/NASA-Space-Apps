@@ -44,6 +44,8 @@ import {
   getSeasonRank,
   getTimelineAvailability,
   getValidation,
+  getRobustness,
+  getCrossTrack,
   searchPlaces,
   timelapseGifUrl,
 } from "../utils/api";
@@ -220,6 +222,8 @@ function Workspace({ onRegional }) {
   const needRhythm = useLatched(mode === "rhythm" || mode === "motion");
   const rhythmTier = useTier(needRhythm ? () => getNisarRhythm(AREA_ID) : null, [needRhythm]);
   const validationTier = useTier(needRhythm ? () => getValidation(AREA_ID) : null, [needRhythm]);
+  const robustnessTier = useTier(needRhythm ? () => getRobustness(AREA_ID) : null, [needRhythm]);
+  const crossTrackTier = useTier(needRhythm ? () => getCrossTrack(AREA_ID) : null, [needRhythm]);
   const needRhythmTable = useLatched(mode === "rhythm");
   const exposureRhythm = useTier(needRhythmTable ? () => getPlaceExposure(AREA_ID, "rhythm_half") : null, [needRhythmTable]);
   const needMotion = useLatched(mode === "motion");
@@ -630,7 +634,7 @@ function Workspace({ onRegional }) {
                 onPlace={onZone}
                 onSources={() => setLimitsOpen(true)}
               />
-              <ValidationPanel tier={validationTier} />
+              <ValidationPanel tier={validationTier} robustness={robustnessTier} crossTrack={crossTrackTier} />
               <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
             </>
           )}
@@ -689,7 +693,7 @@ function Workspace({ onRegional }) {
                 onPlace={onZone}
                 onSources={() => setLimitsOpen(true)}
               />
-              <ValidationPanel tier={validationTier} />
+              <ValidationPanel tier={validationTier} robustness={robustnessTier} crossTrack={crossTrackTier} />
               <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
             </>
           )}

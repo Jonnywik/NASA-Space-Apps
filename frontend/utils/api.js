@@ -415,6 +415,14 @@ export async function exportPlaceBriefing(lon, lat, lang, format) {
   return request(`${V1}/briefing/place`, { lon, lat, lang, format }, "Could not export the briefing", "blob");
 }
 
+export async function getCrossTrack(area = AREA_ID) {
+  return request(`${V1}/validation/cross-track`, { area }, "Could not load the cross-track check");
+}
+
+export async function getRobustness(area = AREA_ID) {
+  return request(`${V1}/validation/robustness`, { area }, "Could not load robustness checks");
+}
+
 export async function getValidation(area = AREA_ID) {
   return request(`${V1}/validation`, { area }, "Could not load validation");
 }
