@@ -1,0 +1,9 @@
+{
+  "dataKind": "derived",
+  "gifSha256": "d24b6e7e0b877a2042fd7a7c0e9584c2524517f95ef097c8ccc93cab98cc3239",
+  "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc",
+  "imergCacheSha256": "e1410c57833528990f33ce33aea683c039aa927d79ca94a09125dc093f23f4c9",
+  "source": "NASA-ISRO NISAR L2 GCOV via ASF; NASA GPM IMERG via GES DISC",
+  "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee",
+  "imergFingerprint": "0bc775487470ed06bcd874f5e599e7aac332e0974604f51d914ba2039e0f80ee"
+}

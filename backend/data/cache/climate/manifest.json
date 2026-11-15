@@ -1,0 +1,52 @@
+{
+  "availability": {
+    "bytes": 2111,
+    "file": "availability.json",
+    "query": {
+      "cmr": "NISAR GCOV, Sentinel-1",
+      "stac": "landsat-c2-l2"
+    },
+    "retrievedAt": "2026-11-14T16:25:58Z",
+    "sha256": "cf8953ae28254acce8c42cd526c367f7e047208ca891b4dca8f0ee70c28d2a0c"
+  },
+  "era5_daily": {
+    "bytes": 169291,
+    "file": "era5_daily.json",
+    "query": {
+      "end": "2026-11-14",
+      "lat": 14.7,
+      "lon": 120.96,
+      "start": "2000-01-01",
+      "url": "https://archive-api.open-meteo.com/v1/archive"
+    },
+    "retrievedAt": "2026-11-14T16:23:27Z",
+    "sha256": "90e25d38b65ad9277fcd8fc63af4a559a8151a88aacb2d708a6e3a610892917d"
+  },
+  "outlook_raw": {
+    "bytes": 87556,
+    "file": "outlook_raw.json",
+    "query": {
+      "lat": 14.7,
+      "lon": 120.96,
+      "models": "ecmwf_seas5",
+      "url": "https://seasonal-api.open-meteo.com/v1/seasonal"
+    },
+    "retrievedAt": "2026-11-14T16:25:51Z",
+    "sha256": "f6f17bd1ca6937229b39edc3aeb955f77af900dbf298a43133742e1c040e8fa2"
+  },
+  "power_daily": {
+    "bytes": 241546,
+    "file": "power_daily.json",
+    "query": {
+      "community": "AG",
+      "end": "2026-11-14",
+      "lat": 14.7,
+      "lon": 120.96,
+      "parameter": "PRECTOTCORR",
+      "start": "1991-01-01",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point"
+    },
+    "retrievedAt": "2026-11-14T16:25:20Z",
+    "sha256": "3eac0b4a16a85cec1ebf48c54f5ef4f3efcbb8b93bd1e2fd24cf41dd869d24ae"
+  }
+}

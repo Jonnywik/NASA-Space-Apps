@@ -19,10 +19,18 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import FileResponse, JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.p3_api import make_router
 from app.coherence_api import make_router as make_coherence_router
 from app.route_api import make_router as make_route_router
+from app.places_api import make_router as make_places_router
+from app.climate_api import make_router as make_climate_router
+from app.nisar_api import make_router as make_nisar_router
+from app.spot_api import make_router as make_spot_router
+from app.validation_api import make_router as make_validation_router
+from app.downloads_api import make_router as make_downloads_router
 from processing.p3.catalog import capabilities
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -30,6 +38,26 @@ EVENTS_FILE = ROOT / "events.json"
 OUTPUT = ROOT / "data" / "output"
 
 app = FastAPI(title="Tanaw API", version="0.1")
+
+
+# One error shape for every route: {"detail": {"code": ..., "message": ...}} (docs/API_CONTRACT.md).
+# FastAPI's own validation errors (a list) and the legacy string details are wrapped; structured details pass through.
+@app.exception_handler(RequestValidationError)
+async def _validation_error(_request, exc: RequestValidationError):
+    parts = []
+    for err in exc.errors()[:3]:
+        where = ".".join(str(x) for x in err.get("loc", ())[1:]) or "request"
+        parts.append(f"{where}: {err.get('msg', 'invalid value')}")
+    return JSONResponse(status_code=422, content={"detail": {"code": "invalid_request", "message": "; ".join(parts) or "Invalid request"}})
+
+
+@app.exception_handler(StarletteHTTPException)
+async def _http_error(_request, exc: StarletteHTTPException):
+    detail = exc.detail
+    if not isinstance(detail, dict):
+        code = {404: "data_unavailable", 405: "method_not_allowed"}.get(exc.status_code, "invalid_request")
+        detail = {"code": code, "message": str(detail)}
+    return JSONResponse(status_code=exc.status_code, content={"detail": detail}, headers=getattr(exc, "headers", None))
 
 # Make big responses smaller on the wire
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -133,3 +161,9 @@ def overlay(event: str, which: str):
 app.include_router(make_router(OUTPUT, read_public_events))
 app.include_router(make_coherence_router(OUTPUT, read_public_events))
 app.include_router(make_route_router(OUTPUT, read_public_events))
+app.include_router(make_places_router(OUTPUT, read_public_events))
+app.include_router(make_climate_router(OUTPUT, read_public_events))
+app.include_router(make_nisar_router(OUTPUT, read_public_events))
+app.include_router(make_spot_router(OUTPUT, read_public_events))
+app.include_router(make_validation_router(OUTPUT, read_public_events))
+app.include_router(make_downloads_router(OUTPUT, read_public_events))

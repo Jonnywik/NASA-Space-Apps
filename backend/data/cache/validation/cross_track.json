@@ -1,0 +1,310 @@
+{
+ "schemaVersion": "1.0",
+ "area": "camanava_2026",
+ "dataKind": "derived",
+ "generatedAt": "2026-11-15T09:41:30Z",
+ "productManifestSha256": "49c00d050b9414f113b7c5311ee8fe2b32696a6623a073871400dfedf4fc990c",
+ "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee",
+ "descendingManifestSha256": "f17b1f5a2e989be493b4f1efe2787bf8571f7e03132b1daeb435f61253c29131",
+ "title": "Independent check: NISAR track 32 descending (18:24 Manila)",
+ "ascending": {
+  "track": "140 A frame 9",
+  "passes": 11,
+  "localTime": "05:30",
+  "rule": {
+   "hhThresholdDb": -12.5,
+   "hvThresholdDb": -22.5
+  },
+  "halfOrMoreKm2": 0.3721,
+  "openWaterKm2Range": [
+   0.1338,
+   0.575
+  ]
+ },
+ "descending": {
+  "track": "32 D frame 81",
+  "passes": 10,
+  "localTime": "18:24",
+  "rule": {
+   "hhThresholdDb": -13.0,
+   "hvThresholdDb": -22.5
+  },
+  "halfOrMoreKm2": 0.4301,
+  "openWaterKm2Range": [
+   0.1003,
+   0.8573
+  ],
+  "series": [
+   {
+    "date": "2026-06-28",
+    "acquisitionTimeManila": "2026-06-28T18:24:00+08:00",
+    "openWaterKm2": 0.8573,
+    "maturity": "provisional",
+    "rain48hMm": 0.57
+   },
+   {
+    "date": "2026-07-10",
+    "acquisitionTimeManila": "2026-07-10T18:24:00+08:00",
+    "openWaterKm2": 0.7832,
+    "maturity": "provisional",
+    "rain48hMm": 23.69
+   },
+   {
+    "date": "2026-07-22",
+    "acquisitionTimeManila": "2026-07-22T18:23:59+08:00",
+    "openWaterKm2": 0.8084,
+    "maturity": "provisional",
+    "rain48hMm": 20.08
+   },
+   {
+    "date": "2026-08-15",
+    "acquisitionTimeManila": "2026-08-15T18:23:58+08:00",
+    "openWaterKm2": 0.5387,
+    "maturity": "provisional",
+    "rain48hMm": 50.83
+   },
+   {
+    "date": "2026-08-27",
+    "acquisitionTimeManila": "2026-08-27T18:23:57+08:00",
+    "openWaterKm2": 0.1003,
+    "maturity": "provisional",
+    "rain48hMm": 14.38
+   },
+   {
+    "date": "2026-09-08",
+    "acquisitionTimeManila": "2026-09-08T18:23:57+08:00",
+    "openWaterKm2": 0.3836,
+    "maturity": "provisional",
+    "rain48hMm": 23.79
+   },
+   {
+    "date": "2026-09-20",
+    "acquisitionTimeManila": "2026-09-20T18:23:57+08:00",
+    "openWaterKm2": 0.4436,
+    "maturity": "provisional",
+    "rain48hMm": 14.24
+   },
+   {
+    "date": "2026-10-02",
+    "acquisitionTimeManila": "2026-10-02T18:23:57+08:00",
+    "openWaterKm2": 0.495,
+    "maturity": "provisional",
+    "rain48hMm": 13.19
+   },
+   {
+    "date": "2026-10-14",
+    "acquisitionTimeManila": "2026-10-14T18:23:58+08:00",
+    "openWaterKm2": 0.1088,
+    "maturity": "provisional",
+    "rain48hMm": 3.13
+   },
+   {
+    "date": "2026-10-26",
+    "acquisitionTimeManila": "2026-10-26T18:23:58+08:00",
+    "openWaterKm2": 0.5892,
+    "maturity": "v1",
+    "rain48hMm": 2.07
+   }
+  ],
+  "rainCorrelation": {
+   "label": "Open water outside permanent water vs 48 h IMERG rain",
+   "n": 10,
+   "rho": -0.152,
+   "pPermutation": 0.6781
+  },
+  "brighteningCorrelations": [
+   {
+    "label": "Mean HH change over built-up land vs 48 h IMERG rain",
+    "n": 10,
+    "rho": 0.273,
+    "pPermutation": 0.4422
+   },
+   {
+    "label": "Mean HH change over other land vs 48 h IMERG rain",
+    "n": 10,
+    "rho": 0.2,
+    "pPermutation": 0.5787
+   }
+  ]
+ },
+ "geometryAgreement": {
+  "ascendingKm2": 0.372,
+  "descendingKm2": 0.43,
+  "exactOverlapKm2": 0.185,
+  "toleranceM": 30,
+  "shareAscendingNearDescending": 0.99,
+  "shareDescendingNearAscending": 0.756,
+  "chanceShareMean": 0.0004,
+  "chanceShareMax": 0.0078,
+  "byLandCoverOverlapKm2": [
+   {
+    "class": 10,
+    "name": "Tree cover",
+    "km2": 0.007
+   },
+   {
+    "class": 30,
+    "name": "Grassland",
+    "km2": 0.033
+   },
+   {
+    "class": 40,
+    "name": "Cropland",
+    "km2": 0.122
+   },
+   {
+    "class": 90,
+    "name": "Herbaceous wetland",
+    "km2": 0.022
+   },
+   {
+    "class": 95,
+    "name": "Mangroves",
+    "km2": 0.001
+   }
+  ],
+  "builtUpOverlapKm2": 0.0
+ },
+ "rainLinkReplicated": false,
+ "rainLinkNote": "The rain link (less open water and brighter land after rain) is seen on the 05:30 track but not reproduced on the 18:24 track; the location of recurring water is.",
+ "operaMatches": [
+  {
+   "nisarDate": "2026-06-28",
+   "referenceTime": "2026-06-27T10:06:01.000Z",
+   "referenceGranule": "G4240651445-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.888,
+   "f1": 0.784,
+   "iou": 0.645,
+   "nisarRecall": 0.658,
+   "nisarPrecision": 0.972
+  },
+  {
+   "nisarDate": "2026-07-10",
+   "referenceTime": "2026-07-09T10:06:01.000Z",
+   "referenceGranule": "G4256830586-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.868,
+   "f1": 0.738,
+   "iou": 0.584,
+   "nisarRecall": 0.6,
+   "nisarPrecision": 0.956
+  },
+  {
+   "nisarDate": "2026-07-22",
+   "referenceTime": "2026-07-21T10:06:02.000Z",
+   "referenceGranule": "G4260837221-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.896,
+   "f1": 0.801,
+   "iou": 0.668,
+   "nisarRecall": 0.683,
+   "nisarPrecision": 0.969
+  },
+  {
+   "nisarDate": "2026-08-15",
+   "referenceTime": "2026-08-14T10:06:03.000Z",
+   "referenceGranule": "G4279558102-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.869,
+   "f1": 0.726,
+   "iou": 0.57,
+   "nisarRecall": 0.579,
+   "nisarPrecision": 0.974
+  },
+  {
+   "nisarDate": "2026-08-27",
+   "referenceTime": "2026-08-26T10:06:04.000Z",
+   "referenceGranule": "G4307301579-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.849,
+   "f1": 0.68,
+   "iou": 0.515,
+   "nisarRecall": 0.519,
+   "nisarPrecision": 0.985
+  },
+  {
+   "nisarDate": "2026-09-08",
+   "referenceTime": "2026-09-07T10:06:04.000Z",
+   "referenceGranule": "G4313374392-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.865,
+   "f1": 0.724,
+   "iou": 0.567,
+   "nisarRecall": 0.574,
+   "nisarPrecision": 0.98
+  },
+  {
+   "nisarDate": "2026-09-20",
+   "referenceTime": "2026-09-19T10:06:04.000Z",
+   "referenceGranule": "G4318081204-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.871,
+   "f1": 0.737,
+   "iou": 0.583,
+   "nisarRecall": 0.592,
+   "nisarPrecision": 0.976
+  },
+  {
+   "nisarDate": "2026-10-02",
+   "referenceTime": "2026-10-01T10:06:05.000Z",
+   "referenceGranule": "G4332125112-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.886,
+   "f1": 0.774,
+   "iou": 0.631,
+   "nisarRecall": 0.642,
+   "nisarPrecision": 0.973
+  },
+  {
+   "nisarDate": "2026-10-14",
+   "referenceTime": "2026-10-13T10:06:05.000Z",
+   "referenceGranule": "G4365725675-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.87,
+   "f1": 0.733,
+   "iou": 0.579,
+   "nisarRecall": 0.585,
+   "nisarPrecision": 0.981
+  },
+  {
+   "nisarDate": "2026-10-26",
+   "referenceTime": "2026-10-25T10:06:04.000Z",
+   "referenceGranule": "G4388601853-POCLOUD",
+   "hoursApart": 24.3,
+   "validPixels": 466248,
+   "overallAgreement": 0.903,
+   "f1": 0.816,
+   "iou": 0.689,
+   "nisarRecall": 0.704,
+   "nisarPrecision": 0.971
+  }
+ ],
+ "operaSummary": {
+  "n": 10,
+  "medianF1": 0.738,
+  "medianIoU": 0.583,
+  "medianAgreement": 0.871,
+  "medianRecall": 0.596,
+  "medianPrecision": 0.974,
+  "hoursApartRange": [
+   24.3,
+   24.3
+  ]
+ },
+ "limitations": [
+  "Agreement with Sentinel-1 OPERA DSWx-S1 is agreement between two satellites, not ground truth.",
+  "OPERA scenes are about 24 hours before each NISAR pass; water can change in a day.",
+  "Total water includes permanent and coastal water, so these scores do not measure flood-only accuracy.",
+  "Provisional NISAR products; the descending track uses its own Manila Bay calibration."
+ ]
+}

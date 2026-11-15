@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "1.0",
+  "area": "camanava_2026",
+  "bbox": [
+    120.88,
+    14.6,
+    121.04,
+    14.82
+  ],
+  "generatedAt": "2026-11-14T16:19:04Z",
+  "inputs": {
+    "boundaries": {
+      "name": "Philippines - Subnational Administrative Boundaries (COD-AB), admin3 + admin4",
+      "url": "https://data.humdata.org/dataset/caf116df-f984-4deb-85ca-41b349d3f313/resource/3fa0dbcf-e07d-4506-9821-ba15baa6da07/download/phl_admin_boundaries.gdb.zip",
+      "landingPage": "https://data.humdata.org/dataset/cod-ab-phl",
+      "license": "CC BY-IGO",
+      "datasetDate": "boundaries valid_on 2025-02-13 (version v03); HDX metadata modified 2026-05-28",
+      "retrievedAt": "2026-11-14T16:14:02Z",
+      "rawFile": "data/raw/places/phl_admin_boundaries.gdb.zip",
+      "bytes": 360586879,
+      "sha256": "e7fc18f1383a21066ecfbe595c5c1d77375c93341dedf7284f09d66dbd28c5ad"
+    },
+    "population": {
+      "name": "WorldPop 2020 Philippines, constrained individual countries 100 m (BSGM), people per pixel",
+      "url": "https://data.worldpop.org/GIS/Population/Global_2000_2020_Constrained/2020/BSGM/PHL/phl_ppp_2020_constrained.tif",
+      "landingPage": "https://hub.worldpop.org/geodata/summary?id=36130",
+      "license": "CC BY 4.0",
+      "datasetDate": "2020 (file last modified 2020-09-20)",
+      "retrievedAt": "2026-11-14T16:14:22Z",
+      "rawFile": "data/raw/places/phl_ppp_2020_constrained.tif",
+      "bytes": 22779445,
+      "sha256": "20309fd14e11281b9ba1fc7e52c47df3b2f572ac7777a303f0c1e8db3ff7e3f1"
+    },
+    "landcover": {
+      "name": "ESA WorldCover 2021 v200 10 m, tile N12E120",
+      "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N12E120_Map.tif",
+      "landingPage": "https://esa-worldcover.org/en/data-access",
+      "license": "CC BY 4.0",
+      "datasetDate": "2021 (file last modified 2022-10-26)",
+      "retrievedAt": "2026-11-14T16:15:51Z",
+      "rawFile": "data/raw/places/ESA_WorldCover_10m_2021_v200_N12E120_Map.tif",
+      "bytes": 30807251,
+      "sha256": "7b4250aad81026b4d597cfd25f80d13cb3bc1b21bac1daa223a26d14a418b48b"
+    },
+    "buildings": {
+      "name": "OpenStreetMap buildings of the Philippines (HOT export, GeoParquet)",
+      "url": "https://production-raw-data-api.s3.amazonaws.com/ISO3/PHL/_layers/osm/buildings.parquet",
+      "landingPage": "https://data.humdata.org/dataset/hotosm_phl_buildings",
+      "license": "ODbL 1.0 (c) OpenStreetMap contributors",
+      "datasetDate": "2026-10-12 (HDX dataset date); resource modified 2026-10-13",
+      "retrievedAt": "2026-11-14T16:16:18Z",
+      "rawFile": "data/raw/places/hotosm_phl_buildings.parquet",
+      "bytes": 1213954877,
+      "sha256": "0c3229c11fcfc2237dbad65df875c7371838fa682bae66b7d6c50c6e531595ad"
+    }
+  },
+  "products": {
+    "city": {
+      "path": "data/cache/places/boundaries_city.geojson",
+      "bytes": 171368,
+      "sha256": "b9911ffd30bff08c7d19130b1e26b36f6d614f20b66fed67f30e4968dc9ae075"
+    },
+    "barangay": {
+      "path": "data/cache/places/boundaries_barangay.geojson",
+      "bytes": 758847,
+      "sha256": "9a673fa0a11e93a9db1d03f444c4b82076bebf25e8e798619647dcf5cc771bb6"
+    },
+    "gazetteer": {
+      "path": "data/cache/places/gazetteer.json",
+      "bytes": 220419,
+      "sha256": "86e31c881f31aef1855e3c6fed50c46ea956f81ec6cad30edad111d48cc210dd"
+    },
+    "population": {
+      "path": "data/cache/places/worldpop_phl_2020_constrained_clip.tif",
+      "bytes": 122614,
+      "sha256": "f9b5f18425b939628c6a99b1ac19b45ecc794f1f868e767bf3136c87bcdf8182"
+    },
+    "landcover": {
+      "path": "data/cache/places/esa_worldcover_2021_clip.tif",
+      "bytes": 384845,
+      "sha256": "39dd5bc4bad14c0d568bcff9cc401d0d7228b3e9978e2b4a8f03170f38fa134b"
+    },
+    "buildings": {
+      "path": "data/cache/places/buildings_osm_centroids.parquet",
+      "bytes": 2748700,
+      "sha256": "9aa41429d04dbf2b519e39fb323fea5de81cbd14ddfdf019691286ffaf2de7af"
+    }
+  },
+  "stats": {
+    "boundaries": {
+      "cities": 16,
+      "barangays": 1042,
+      "studyCities": [
+        "Caloocan City",
+        "City of Malabon",
+        "City of Meycauayan",
+        "City of Navotas",
+        "City of Valenzuela",
+        "Marilao",
+        "Obando"
+      ],
+      "studyCityCount": 7,
+      "studyBarangays": 300,
+      "barangaysWithoutCityPolygon": 0
+    },
+    "population": {
+      "totalPeopleInBboxClip": 5219806,
+      "cellsWithPeople": 31110,
+      "shape": [
+        264,
+        192
+      ]
+    },
+    "landcover": {
+      "shape": [
+        2640,
+        1920
+      ],
+      "classShare": {
+        "10 Tree cover": 0.1308,
+        "20 Shrubland": 0.0006,
+        "30 Grassland": 0.0482,
+        "40 Cropland": 0.0324,
+        "50 Built-up": 0.4276,
+        "60 Bare / sparse vegetation": 0.0102,
+        "80 Permanent water bodies": 0.3465,
+        "90 Herbaceous wetland": 0.0025,
+        "95 Mangroves": 0.0012
+      }
+    },
+    "buildings": {
+      "rowsScanned": 11995371,
+      "buildings": 427220,
+      "totalFootprintKm2": 62.347,
+      "completeness": "unknown",
+      "snapshotDate": "2026-10-12"
+    }
+  },
+  "notes": [
+    "Overpass (overpass-api.de) refused connections from the build environment; buildings come from the HOT OSM export on HDX (same ODbL OpenStreetMap data, snapshot 2026-10-12).",
+    "OSM building completeness is unknown.",
+    "WorldPop constrained: cells without built settlement carry no value and count as zero people.",
+    "WorldCover classes: {10: 'Tree cover', 20: 'Shrubland', 30: 'Grassland', 40: 'Cropland', 50: 'Built-up', 60: 'Bare / sparse vegetation', 70: 'Snow and ice', 80: 'Permanent water bodies', 90: 'Herbaceous wetland', 95: 'Mangroves', 100: 'Moss and lichen'}"
+  ],
+  "populationProduct": "constrained individual-country 100 m, BSGM, 2020"
+}

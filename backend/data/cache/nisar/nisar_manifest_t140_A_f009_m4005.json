@@ -1,0 +1,821 @@
+{
+ "schemaVersion": "1.0",
+ "kind": "nisar-cmr-manifest",
+ "dataKind": "observed",
+ "retrievedAt": "2026-11-14T16:25:29Z",
+ "source": {
+  "name": "NASA CMR (ASF DAAC NISAR collections)",
+  "url": "https://cmr.earthdata.nasa.gov/search",
+  "version": "granules.umm_json"
+ },
+ "query": {
+  "bbox": [
+   120.88,
+   14.6,
+   121.04,
+   14.82
+  ],
+  "requests": {
+   "C2854338529-ASF": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?collection_concept_id=C2854338529-ASF&bounding_box=120.88%2C14.6%2C121.04%2C14.82&page_size=200&page_num=1&sort_key=start_date",
+   "C3622241360-ASF": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?collection_concept_id=C3622241360-ASF&bounding_box=120.88%2C14.6%2C121.04%2C14.82&page_size=200&page_num=1&sort_key=start_date",
+   "C2854335566-ASF": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?collection_concept_id=C2854335566-ASF&bounding_box=120.88%2C14.6%2C121.04%2C14.82&page_size=200&page_num=1&sort_key=start_date",
+   "C3622247503-ASF": "https://cmr.earthdata.nasa.gov/search/granules.umm_json?collection_concept_id=C3622247503-ASF&bounding_box=120.88%2C14.6%2C121.04%2C14.82&page_size=200&page_num=1&sort_key=start_date"
+  }
+ },
+ "selection": {
+  "track": 140,
+  "direction": "A",
+  "frame": 9,
+  "mode": "4005",
+  "gunwMode": "4000",
+  "gcovDates": [
+   "2026-06-23",
+   "2026-07-05",
+   "2026-07-17",
+   "2026-08-10",
+   "2026-08-22",
+   "2026-09-03",
+   "2026-09-15",
+   "2026-09-27",
+   "2026-10-09",
+   "2026-10-21",
+   "2026-11-02"
+  ],
+  "gunwPairs": 9
+ },
+ "warnings": [
+  "Selection mixes Provisional and V1 processing; record both in the method notes.",
+  "GUNW pair 2026-07-17 -> 2026-08-10 spans 24 days, not 12."
+ ],
+ "trackSummary": [
+  {
+   "product": "GUNW",
+   "track": 32,
+   "direction": "D",
+   "frame": 81,
+   "mode": "4000",
+   "dates": null,
+   "pairs": 8,
+   "firstDate": "2026-06-28",
+   "lastDate": "2026-10-02",
+   "bboxCoverageFraction": {
+    "min": 1.0,
+    "max": 1.0
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 2.32
+  },
+  {
+   "product": "GCOV",
+   "track": 32,
+   "direction": "D",
+   "frame": 81,
+   "mode": "4005",
+   "dates": 10,
+   "pairs": null,
+   "firstDate": "2026-06-28",
+   "lastDate": "2026-10-26",
+   "bboxCoverageFraction": {
+    "min": 1.0,
+    "max": 1.0
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 5.51
+  },
+  {
+   "product": "GUNW",
+   "track": 39,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "dates": null,
+   "pairs": 8,
+   "firstDate": "2026-06-28",
+   "lastDate": "2026-10-02",
+   "bboxCoverageFraction": {
+    "min": 0.0,
+    "max": 0.0
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 2.32
+  },
+  {
+   "product": "GCOV",
+   "track": 39,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "dates": 10,
+   "pairs": null,
+   "firstDate": "2026-06-28",
+   "lastDate": "2026-10-26",
+   "bboxCoverageFraction": {
+    "min": 0.0,
+    "max": 0.0001
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 5.23
+  },
+  {
+   "product": "GUNW",
+   "track": 133,
+   "direction": "D",
+   "frame": 81,
+   "mode": "2000",
+   "dates": null,
+   "pairs": 9,
+   "firstDate": "2026-06-23",
+   "lastDate": "2026-10-09",
+   "bboxCoverageFraction": {
+    "min": 0.3511,
+    "max": 0.3614
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 2.32
+  },
+  {
+   "product": "GCOV",
+   "track": 133,
+   "direction": "D",
+   "frame": 81,
+   "mode": "2005",
+   "dates": 11,
+   "pairs": null,
+   "firstDate": "2026-06-23",
+   "lastDate": "2026-11-02",
+   "bboxCoverageFraction": {
+    "min": 0.3511,
+    "max": 0.371
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 1.48
+  },
+  {
+   "product": "GUNW",
+   "track": 133,
+   "direction": "D",
+   "frame": 81,
+   "mode": "4000",
+   "dates": null,
+   "pairs": 9,
+   "firstDate": "2026-06-23",
+   "lastDate": "2026-10-09",
+   "bboxCoverageFraction": {
+    "min": 0.352,
+    "max": 0.3592
+   },
+   "fullFrame": [
+    false
+   ],
+   "typicalSizeGB": 1.79
+  },
+  {
+   "product": "GCOV",
+   "track": 133,
+   "direction": "D",
+   "frame": 81,
+   "mode": "4005",
+   "dates": 11,
+   "pairs": null,
+   "firstDate": "2026-06-23",
+   "lastDate": "2026-11-02",
+   "bboxCoverageFraction": {
+    "min": 0.352,
+    "max": 0.3592
+   },
+   "fullFrame": [
+    false
+   ],
+   "typicalSizeGB": 3.62
+  },
+  {
+   "product": "GUNW",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "dates": null,
+   "pairs": 9,
+   "firstDate": "2026-06-23",
+   "lastDate": "2026-10-09",
+   "bboxCoverageFraction": {
+    "min": 1.0,
+    "max": 1.0
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 2.31
+  },
+  {
+   "product": "GCOV",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "dates": 11,
+   "pairs": null,
+   "firstDate": "2026-06-23",
+   "lastDate": "2026-11-02",
+   "bboxCoverageFraction": {
+    "min": 1.0,
+    "max": 1.0
+   },
+   "fullFrame": [
+    true
+   ],
+   "typicalSizeGB": 5.41
+  }
+ ],
+ "gcov": [
+  {
+   "title": "NISAR_L2_PR_GCOV_023_140_A_009_4005_DHDH_A_20260623T213035_20260623T213109_P05023_N_F_J_001",
+   "date": "2026-06-23",
+   "acquisitionTime": "2026-06-23T21:30:35Z",
+   "acquisitionTimeManila": "2026-06-24T05:30:35+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_023_140_A_009_4005_DHDH_A_20260623T213035_20260623T213109_P05023_N_F_J_001/NISAR_L2_PR_GCOV_023_140_A_009_4005_DHDH_A_20260623T213035_20260623T213109_P05023_N_F_J_001.h5",
+   "sizeBytes": 5280628736,
+   "md5": "5fe76eb44d334bd6d2b5665537d43393",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4244943597-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_024_140_A_009_4005_DHDH_A_20260705T213034_20260705T213109_P05023_N_F_J_001",
+   "date": "2026-07-05",
+   "acquisitionTime": "2026-07-05T21:30:34Z",
+   "acquisitionTimeManila": "2026-07-06T05:30:34+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_024_140_A_009_4005_DHDH_A_20260705T213034_20260705T213109_P05023_N_F_J_001/NISAR_L2_PR_GCOV_024_140_A_009_4005_DHDH_A_20260705T213034_20260705T213109_P05023_N_F_J_001.h5",
+   "sizeBytes": 5431623680,
+   "md5": "b3a72e5cf11d1af20ad284cc58c0677b",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4246539551-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_025_140_A_009_4005_DHDH_A_20260717T213034_20260717T213108_P05023_N_F_J_001",
+   "date": "2026-07-17",
+   "acquisitionTime": "2026-07-17T21:30:34Z",
+   "acquisitionTimeManila": "2026-07-18T05:30:34+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_025_140_A_009_4005_DHDH_A_20260717T213034_20260717T213108_P05023_N_F_J_001/NISAR_L2_PR_GCOV_025_140_A_009_4005_DHDH_A_20260717T213034_20260717T213108_P05023_N_F_J_001.h5",
+   "sizeBytes": 5289017344,
+   "md5": "ab7d324904671652d32cdad47650f0c2",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4254853290-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_027_140_A_009_4005_DHDH_A_20260810T213032_20260810T213107_P05023_N_F_J_001",
+   "date": "2026-08-10",
+   "acquisitionTime": "2026-08-10T21:30:32Z",
+   "acquisitionTimeManila": "2026-08-11T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_027_140_A_009_4005_DHDH_A_20260810T213032_20260810T213107_P05023_N_F_J_001/NISAR_L2_PR_GCOV_027_140_A_009_4005_DHDH_A_20260810T213032_20260810T213107_P05023_N_F_J_001.h5",
+   "sizeBytes": 5431623680,
+   "md5": "55e29d48f1aa99b744b2c5db88bffe39",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4279137937-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_028_140_A_009_4005_DHDH_A_20260822T213032_20260822T213106_P05023_N_F_J_001",
+   "date": "2026-08-22",
+   "acquisitionTime": "2026-08-22T21:30:32Z",
+   "acquisitionTimeManila": "2026-08-23T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_028_140_A_009_4005_DHDH_A_20260822T213032_20260822T213106_P05023_N_F_J_001/NISAR_L2_PR_GCOV_028_140_A_009_4005_DHDH_A_20260822T213032_20260822T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 5276434432,
+   "md5": "990cc7dbe55521dc28d351ed83ffb538",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4288837354-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_029_140_A_009_4005_DHDH_A_20260903T213032_20260903T213106_P05023_N_F_J_001",
+   "date": "2026-09-03",
+   "acquisitionTime": "2026-09-03T21:30:32Z",
+   "acquisitionTimeManila": "2026-09-04T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_029_140_A_009_4005_DHDH_A_20260903T213032_20260903T213106_P05023_N_F_J_001/NISAR_L2_PR_GCOV_029_140_A_009_4005_DHDH_A_20260903T213032_20260903T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 5481955328,
+   "md5": "ff76dda9305fb8ba6498985dff6a38c1",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4303920382-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_030_140_A_009_4005_DHDH_A_20260915T213031_20260915T213106_P05023_N_F_J_001",
+   "date": "2026-09-15",
+   "acquisitionTime": "2026-09-15T21:30:31Z",
+   "acquisitionTimeManila": "2026-09-16T05:30:31+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_030_140_A_009_4005_DHDH_A_20260915T213031_20260915T213106_P05023_N_F_J_001/NISAR_L2_PR_GCOV_030_140_A_009_4005_DHDH_A_20260915T213031_20260915T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 5423235072,
+   "md5": "f27c91796dc7616b6f062fc08ac3d25a",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4314540434-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_031_140_A_009_4005_DHDH_A_20260927T213031_20260927T213106_P05023_N_F_J_001",
+   "date": "2026-09-27",
+   "acquisitionTime": "2026-09-27T21:30:31Z",
+   "acquisitionTimeManila": "2026-09-28T05:30:31+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_031_140_A_009_4005_DHDH_A_20260927T213031_20260927T213106_P05023_N_F_J_001/NISAR_L2_PR_GCOV_031_140_A_009_4005_DHDH_A_20260927T213031_20260927T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 5427429376,
+   "md5": "8af1b6a733a476fcebe8eb1bb1655e86",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4328375353-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_032_140_A_009_4005_DHDH_A_20261009T213031_20261009T213106_P05023_N_F_J_001",
+   "date": "2026-10-09",
+   "acquisitionTime": "2026-10-09T21:30:31Z",
+   "acquisitionTimeManila": "2026-10-10T05:30:31+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_032_140_A_009_4005_DHDH_A_20261009T213031_20261009T213106_P05023_N_F_J_001/NISAR_L2_PR_GCOV_032_140_A_009_4005_DHDH_A_20261009T213031_20261009T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 5414846464,
+   "md5": "104535b085f5579e4783acb0dc893186",
+   "collection": "C2854338529-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4358868566-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_033_140_A_009_4005_DHDH_A_20261021T213032_20261021T213106_P05036_N_F_J_001",
+   "date": "2026-10-21",
+   "acquisitionTime": "2026-10-21T21:30:32Z",
+   "acquisitionTimeManila": "2026-10-22T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_033_140_A_009_4005_DHDH_A_20261021T213032_20261021T213106_P05036_N_F_J_001/NISAR_L2_PR_GCOV_033_140_A_009_4005_DHDH_A_20261021T213032_20261021T213106_P05036_N_F_J_001.h5",
+   "sizeBytes": 5276434432,
+   "md5": "aed45ba9793094528370c13a9178dfa6",
+   "collection": "C3622241360-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_V1",
+   "maturity": "v1",
+   "productVersion": "1.0.20",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4404197169-ASF"
+  },
+  {
+   "title": "NISAR_L2_PR_GCOV_034_140_A_009_4005_DHDH_A_20261102T213032_20261102T213106_P05036_N_F_J_001",
+   "date": "2026-11-02",
+   "acquisitionTime": "2026-11-02T21:30:32Z",
+   "acquisitionTimeManila": "2026-11-03T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_140_A_009_4005_DHDH_A_20261102T213032_20261102T213106_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_140_A_009_4005_DHDH_A_20261102T213032_20261102T213106_P05036_N_F_J_001.h5",
+   "sizeBytes": 5276434432,
+   "md5": "3ad47d3ea9eaaf27263c73662e5036c9",
+   "collection": "C3622241360-ASF",
+   "collectionShortName": "NISAR_L2_GCOV_V1",
+   "maturity": "v1",
+   "productVersion": "1.0.20",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4005",
+   "polarizations": "DHDH",
+   "frequencyAPolarizations": [
+    "HH",
+    "HV"
+   ],
+   "rangeBandwidthMHz": "40+5",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4408731464-ASF"
+  }
+ ],
+ "gunw": [
+  {
+   "title": "NISAR_L2_PR_GUNW_023_140_A_009_024_4000_SH_20260623T213035_20260623T213109_20260705T213034_20260705T213109_P05023_N_F_J_001",
+   "date": "2026-06-23",
+   "acquisitionTime": "2026-06-23T21:30:35Z",
+   "acquisitionTimeManila": "2026-06-24T05:30:35+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_023_140_A_009_024_4000_SH_20260623T213035_20260623T213109_20260705T213034_20260705T213109_P05023_N_F_J_001/NISAR_L2_PR_GUNW_023_140_A_009_024_4000_SH_20260623T213035_20260623T213109_20260705T213034_20260705T213109_P05023_N_F_J_001.h5",
+   "sizeBytes": 2306867200,
+   "md5": "064e350c31f610be33177c6b323292f5",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4247654982-ASF",
+   "referenceTime": "2026-06-23T21:30:35Z",
+   "secondaryTime": "2026-07-05T21:30:34Z",
+   "referenceDate": "2026-06-23",
+   "secondaryDate": "2026-07-05",
+   "referenceCycle": 23,
+   "secondaryCycle": 24,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_024_140_A_009_025_4000_SH_20260705T213034_20260705T213109_20260717T213034_20260717T213108_P05023_N_F_J_001",
+   "date": "2026-07-05",
+   "acquisitionTime": "2026-07-05T21:30:34Z",
+   "acquisitionTimeManila": "2026-07-06T05:30:34+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_024_140_A_009_025_4000_SH_20260705T213034_20260705T213109_20260717T213034_20260717T213108_P05023_N_F_J_001/NISAR_L2_PR_GUNW_024_140_A_009_025_4000_SH_20260705T213034_20260705T213109_20260717T213034_20260717T213108_P05023_N_F_J_001.h5",
+   "sizeBytes": 2306867200,
+   "md5": "cb376403333175aeec3b609667322601",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4255490889-ASF",
+   "referenceTime": "2026-07-05T21:30:34Z",
+   "secondaryTime": "2026-07-17T21:30:34Z",
+   "referenceDate": "2026-07-05",
+   "secondaryDate": "2026-07-17",
+   "referenceCycle": 24,
+   "secondaryCycle": 25,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_025_140_A_009_027_4000_SH_20260717T213034_20260717T213108_20260810T213032_20260810T213107_P05023_N_F_J_001",
+   "date": "2026-07-17",
+   "acquisitionTime": "2026-07-17T21:30:34Z",
+   "acquisitionTimeManila": "2026-07-18T05:30:34+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_025_140_A_009_027_4000_SH_20260717T213034_20260717T213108_20260810T213032_20260810T213107_P05023_N_F_J_001/NISAR_L2_PR_GUNW_025_140_A_009_027_4000_SH_20260717T213034_20260717T213108_20260810T213032_20260810T213107_P05023_N_F_J_001.h5",
+   "sizeBytes": 2311061504,
+   "md5": "150d659811617217a97169aa0f46ac3e",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4279404165-ASF",
+   "referenceTime": "2026-07-17T21:30:34Z",
+   "secondaryTime": "2026-08-10T21:30:32Z",
+   "referenceDate": "2026-07-17",
+   "secondaryDate": "2026-08-10",
+   "referenceCycle": 25,
+   "secondaryCycle": 27,
+   "pairDays": 24
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_027_140_A_009_028_4000_SH_20260810T213032_20260810T213107_20260822T213032_20260822T213106_P05023_N_F_J_001",
+   "date": "2026-08-10",
+   "acquisitionTime": "2026-08-10T21:30:32Z",
+   "acquisitionTimeManila": "2026-08-11T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_027_140_A_009_028_4000_SH_20260810T213032_20260810T213107_20260822T213032_20260822T213106_P05023_N_F_J_001/NISAR_L2_PR_GUNW_027_140_A_009_028_4000_SH_20260810T213032_20260810T213107_20260822T213032_20260822T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 2306867200,
+   "md5": "fc7b4fb717ede1efef68121d08d4c9b7",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4288985000-ASF",
+   "referenceTime": "2026-08-10T21:30:32Z",
+   "secondaryTime": "2026-08-22T21:30:32Z",
+   "referenceDate": "2026-08-10",
+   "secondaryDate": "2026-08-22",
+   "referenceCycle": 27,
+   "secondaryCycle": 28,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_028_140_A_009_029_4000_SH_20260822T213032_20260822T213106_20260903T213032_20260903T213106_P05023_N_F_J_001",
+   "date": "2026-08-22",
+   "acquisitionTime": "2026-08-22T21:30:32Z",
+   "acquisitionTimeManila": "2026-08-23T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_028_140_A_009_029_4000_SH_20260822T213032_20260822T213106_20260903T213032_20260903T213106_P05023_N_F_J_001/NISAR_L2_PR_GUNW_028_140_A_009_029_4000_SH_20260822T213032_20260822T213106_20260903T213032_20260903T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 2302672896,
+   "md5": "1ab4116fb224b10957411e8415d6ee36",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4299477496-ASF",
+   "referenceTime": "2026-08-22T21:30:32Z",
+   "secondaryTime": "2026-09-03T21:30:32Z",
+   "referenceDate": "2026-08-22",
+   "secondaryDate": "2026-09-03",
+   "referenceCycle": 28,
+   "secondaryCycle": 29,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_029_140_A_009_030_4000_SH_20260903T213032_20260903T213106_20260915T213031_20260915T213106_P05023_N_F_J_001",
+   "date": "2026-09-03",
+   "acquisitionTime": "2026-09-03T21:30:32Z",
+   "acquisitionTimeManila": "2026-09-04T05:30:32+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_029_140_A_009_030_4000_SH_20260903T213032_20260903T213106_20260915T213031_20260915T213106_P05023_N_F_J_001/NISAR_L2_PR_GUNW_029_140_A_009_030_4000_SH_20260903T213032_20260903T213106_20260915T213031_20260915T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 2302672896,
+   "md5": "22920c47be8ee0b58041269476900eae",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4318899381-ASF",
+   "referenceTime": "2026-09-03T21:30:32Z",
+   "secondaryTime": "2026-09-15T21:30:31Z",
+   "referenceDate": "2026-09-03",
+   "secondaryDate": "2026-09-15",
+   "referenceCycle": 29,
+   "secondaryCycle": 30,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_030_140_A_009_031_4000_SH_20260915T213031_20260915T213106_20260927T213031_20260927T213106_P05023_N_F_J_001",
+   "date": "2026-09-15",
+   "acquisitionTime": "2026-09-15T21:30:31Z",
+   "acquisitionTimeManila": "2026-09-16T05:30:31+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_030_140_A_009_031_4000_SH_20260915T213031_20260915T213106_20260927T213031_20260927T213106_P05023_N_F_J_001/NISAR_L2_PR_GUNW_030_140_A_009_031_4000_SH_20260915T213031_20260915T213106_20260927T213031_20260927T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 2344615936,
+   "md5": "139901c17fc8403436c22953a1056909",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4328741257-ASF",
+   "referenceTime": "2026-09-15T21:30:31Z",
+   "secondaryTime": "2026-09-27T21:30:31Z",
+   "referenceDate": "2026-09-15",
+   "secondaryDate": "2026-09-27",
+   "referenceCycle": 30,
+   "secondaryCycle": 31,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_031_140_A_009_032_4000_SH_20260927T213031_20260927T213106_20261009T213031_20261009T213106_P05023_N_F_J_001",
+   "date": "2026-09-27",
+   "acquisitionTime": "2026-09-27T21:30:31Z",
+   "acquisitionTimeManila": "2026-09-28T05:30:31+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GUNW_PROVISIONAL_V1/NISAR_L2_PR_GUNW_031_140_A_009_032_4000_SH_20260927T213031_20260927T213106_20261009T213031_20261009T213106_P05023_N_F_J_001/NISAR_L2_PR_GUNW_031_140_A_009_032_4000_SH_20260927T213031_20260927T213106_20261009T213031_20261009T213106_P05023_N_F_J_001.h5",
+   "sizeBytes": 2336227328,
+   "md5": "8909789ae69d52fcd06f2a7f74efbc6b",
+   "collection": "C2854335566-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_PROVISIONAL_V1",
+   "maturity": "provisional",
+   "productVersion": "1.0.11",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4359295422-ASF",
+   "referenceTime": "2026-09-27T21:30:31Z",
+   "secondaryTime": "2026-10-09T21:30:31Z",
+   "referenceDate": "2026-09-27",
+   "secondaryDate": "2026-10-09",
+   "referenceCycle": 31,
+   "secondaryCycle": 32,
+   "pairDays": 12
+  },
+  {
+   "title": "NISAR_L2_PR_GUNW_032_140_A_009_033_4000_SH_20261009T213031_20261009T213106_20261021T213032_20261021T213106_P05036_N_F_J_001",
+   "date": "2026-10-09",
+   "acquisitionTime": "2026-10-09T21:30:31Z",
+   "acquisitionTimeManila": "2026-10-10T05:30:31+08:00",
+   "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/L2_L_GUNW/NISAR_L2_PR_GUNW_032_140_A_009_033_4000_SH_20261009T213031_20261009T213106_20261021T213032_20261021T213106_P05036_N_F_J_001/NISAR_L2_PR_GUNW_032_140_A_009_033_4000_SH_20261009T213031_20261009T213106_20261021T213032_20261021T213106_P05036_N_F_J_001.h5",
+   "sizeBytes": 2311061504,
+   "md5": "95bb8d52e14c614360de107b6452b174",
+   "collection": "C3622247503-ASF",
+   "collectionShortName": "NISAR_L2_GUNW_V1",
+   "maturity": "v1",
+   "productVersion": "1.0.20",
+   "track": 140,
+   "direction": "A",
+   "frame": 9,
+   "mode": "4000",
+   "polarizations": "SH",
+   "frequencyAPolarizations": [
+    "HH"
+   ],
+   "rangeBandwidthMHz": "40",
+   "fullFrame": true,
+   "bboxCoverageFraction": 1.0,
+   "cmrConceptId": "G4409895778-ASF",
+   "referenceTime": "2026-10-09T21:30:31Z",
+   "secondaryTime": "2026-10-21T21:30:32Z",
+   "referenceDate": "2026-10-09",
+   "secondaryDate": "2026-10-21",
+   "referenceCycle": 32,
+   "secondaryCycle": 33,
+   "pairDays": 12
+  }
+ ],
+ "gunwChainGaps": []
+}

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tanaw · Season</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E5B3A}a:hover{color:#123B25}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 820px; box-sizing: border-box; padding: 12px; background: #F2F5F1; color: #16231B; font-family: Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums">
+<div style="display: flex; flex-direction: column; min-height: 796px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; overflow: hidden">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 0 16px; min-height: 58px; border-bottom: 1px solid #DCE3DB">
+    <a href="#home" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #16231B">
+      <svg width="30" height="22" viewBox="0 0 30 22" fill="none" stroke="#1E5B3A" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M2 19 L11 6 L17 14 L21 9 L28 19"></path><path d="M2 19 C8 16 14 22 20 18 C24 16 26 17 28 19"></path></svg>
+      <span style="font-weight: 700; font-size: 19px; letter-spacing: 0.06em">TANAW</span>
+    </a>
+    <span aria-hidden="true" style="width: 1px; height: 28px; background: #DCE3DB"></span>
+    <button type="button" aria-haspopup="listbox" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #16231B; font: inherit; font-weight: 600; font-size: 14px">CAMANAVA · 2026 wet season
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <div style="display: flex; align-items: center; gap: 8px; margin-left: auto">
+      <button type="button" style="height: 40px; padding: 0 14px; border: 1px solid #1E5B3A; border-radius: 10px; background: #FFFFFF; color: #1E5B3A; font: inherit; font-weight: 600; font-size: 13px">Take the tour</button>
+      <a href="#sources" style="display: flex; align-items: center; height: 40px; padding: 0 10px; color: #16231B; font-size: 13px; text-decoration: none">Sources and limits</a>
+      <button type="button" aria-label="Settings: language, base map, units" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16231B" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; flex: 1 1 auto; min-height: 0">
+    <nav aria-label="Modes" style="flex: 0 0 84px; box-sizing: border-box; padding: 10px 8px; border-right: 1px solid #DCE3DB; display: flex; flex-direction: column; gap: 4px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="5">
+        <a href="{{m.href}}" aria-current="{{m.current}}" style="{{m.style}}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"></path></svg>
+          <span>{{m.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <section aria-label="Map" style="position: relative; flex: 999 1 480px; min-width: 0; min-height: 590px; background: #E8EBE3; overflow: hidden">
+      <svg viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative map comparing the 5 July and 17 July passes with a swipe divider" style="position: absolute; inset: 0; width: 100%; height: 100%">
+        <rect width="900" height="600" fill="#F1F2EC"></rect>
+        <path d="M0 0 H330 C312 90 350 160 326 240 C305 310 342 400 318 470 C300 540 330 580 312 600 H0 Z" fill="#D3E2EA"></path>
+        <path d="M326 240 C410 262 500 250 590 280 C680 305 780 290 900 312" fill="none" stroke="#B5CCD8" stroke-width="7"></path>
+        <path d="M318 470 C410 450 520 480 610 458 C700 438 790 468 900 450" fill="none" stroke="#B5CCD8" stroke-width="5"></path>
+        <path d="M338 200 C352 228 354 255 345 275 C336 296 352 316 342 340 L334 340 C330 300 338 260 335 230 Z" fill="#2171B5" fill-opacity="0.75"></path>
+        <path d="M520 170 C560 160 600 180 600 210 C600 240 560 250 530 240 C505 230 500 190 520 170 Z" fill="#2171B5" fill-opacity="0.75"></path>
+        <path d="M560 330 C600 320 640 340 636 370 C632 400 590 404 566 390 C544 376 540 344 560 330 Z" fill="#2171B5" fill-opacity="0.75"></path>
+        <path d="M600 420 C626 410 650 424 648 444 C646 462 620 466 604 458 C588 448 586 430 600 420 Z" fill="#E69F00" fill-opacity="0.8"></path>
+        <rect x="300" y="60" width="360" height="500" fill="none" stroke="#1B2430" stroke-width="1.8" stroke-dasharray="8 6"></rect>
+      </svg>
+      <div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: #1E5B3A"></div>
+      <button type="button" aria-label="Drag to compare passes; arrow keys move the divider" style="position: absolute; top: 46%; left: calc(50% - 22px); width: 44px; height: 44px; border: 2px solid #FFFFFF; border-radius: 50%; background: #1E5B3A; color: #FFFFFF; font-size: 14px; box-shadow: 0 2px 8px rgba(20,30,40,0.25)">◂▸</button>
+      <span style="position: absolute; top: 84px; left: calc(50% - 128px); padding: 4px 10px; border-radius: 8px; background: rgba(255,255,255,0.95); border: 1px solid #DCE3DB; font-size: 12px; font-weight: 600">5 Jul</span>
+      <span style="position: absolute; top: 84px; left: calc(50% + 14px); padding: 4px 10px; border-radius: 8px; background: #1E5B3A; color: #FFFFFF; font-size: 12px; font-weight: 600">17 Jul</span>
+
+      <label style="position: absolute; top: 16px; left: 16px; right: 200px; max-width: 400px; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; box-shadow: 0 2px 10px rgba(20,30,40,0.12)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Find my barangay or city</span>
+        <input type="search" placeholder="Find my barangay or city" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 15px; color: #16231B">
+      </label>
+
+      <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; align-items: flex-start">
+        <button type="button" aria-expanded="false" aria-haspopup="dialog" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px 0 10px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 12px; box-shadow: 0 2px 8px rgba(20,30,40,0.12); color: #16231B; font: inherit; font-size: 13px; font-weight: 600">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+          Map tools
+          <span style="font-size: 11px; font-weight: 500; color: #4A5850">Single pass · Flood view</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+      </div>
+
+      <div style="position: absolute; right: 16px; bottom: 26px; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 12px; font-size: 12px; box-shadow: 0 1px 4px rgba(20,30,40,0.10)">
+        <span style="font-weight: 600">This pass</span>
+        <span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #2171B5"></span>Open water</span>
+        <span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 9px; height: 9px; margin: 1.5px; transform: rotate(45deg); background: #E69F00"></span>Possible flooded vegetation</span>
+        <span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #D3E2EA; border: 1px solid #9DB6C4"></span>Permanent water (not counted)</span>
+      </div>
+      <span style="position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #3A4552">© OpenStreetMap contributors · NISAR: NASA/ISRO via ASF</span>
+    </section>
+
+    <aside aria-label="Findings" style="flex: 1 1 300px; max-width: 340px; box-sizing: border-box; padding: 20px; border-left: 1px solid #DCE3DB; display: flex; flex-direction: column; gap: 16px">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #1E5B3A">SEASON · PASS 3 OF 11</span>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-family: 'Source Serif 4', serif; font-size: 25px; line-height: 1.22; font-weight: 600">17 July: [km²] of CAMANAVA under water</h1>
+        <span style="font-size: 12px; color: #4A5850">Radar pass at 21:30 UTC on 17 Jul, which is 05:30 on 18 Jul in Manila</span>
+        <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="align-self: flex-start; padding: 1px 6px; border: 1px dashed #7A5B00; border-radius: 4px; background: #FFF6DE; color: #7A5B00; font-size: 11px; font-weight: 600">Demo number</span></sc-if>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Change since 5 Jul</span>
+          <span style="font-size: 24px; font-weight: 700">[km²]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; font-weight: 600; color: #7A5B00">Demo</span></sc-if>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Rain, 10–16 Jul</span>
+          <span style="font-size: 24px; font-weight: 700">62.0 mm</span>
+          <span style="font-size: 11px; color: #4A5850">NASA POWER daily</span>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Possible flooded vegetation</span>
+          <span style="font-size: 24px; font-weight: 700">[km²]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; font-weight: 600; color: #7A5B00">Demo</span></sc-if>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Valid coverage</span>
+          <span style="font-size: 24px; font-weight: 700">[%]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; font-weight: 600; color: #7A5B00">Demo</span></sc-if>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid #DCE3DB">
+        <span style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 600">In plain words</span>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6">NISAR passed over before dawn on 18 July, after a week with 62 mm of rain. Drag the divider on the map to compare it with the pass 12 days earlier. [The finding for this pass appears once real NISAR data is processed.]</p>
+      </div>
+      <span style="margin-top: auto; font-size: 11px; color: #4A5850">NISAR L2 GCOV · track 140 ascending · 30 m · <a href="#sources">Sources and limits</a></span>
+    </aside>
+  </div>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 10px 16px; border-top: 1px solid #DCE3DB">
+    <div style="display: flex; align-items: center; gap: 2px">
+      <button type="button" aria-label="Previous pass" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: #16231B">‹</button>
+      <span style="min-width: 112px; text-align: center; font-size: 13px; font-weight: 600">17 Jul 2026</span>
+      <button type="button" aria-label="Next pass" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: #16231B">›</button>
+      <button type="button" aria-label="Play the season" style="width: 40px; height: 40px; margin-left: 4px; border: 0; border-radius: 50%; background: #1E5B3A; color: #FFFFFF; font-size: 13px">▶</button>
+    </div>
+    <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+      <div role="slider" aria-label="Season timeline" aria-valuetext="17 July 2026, pass 3 of 11" tabindex="0" style="position: relative; height: 46px; border-radius: 8px; background: #F2F5F1">
+        <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 34px; display: flex; align-items: flex-end; gap: 1px; padding: 0 2px">
+          <sc-for list="{{rain}}" as="r" hint-placeholder-count="133"><span style="{{r.style}}"></span></sc-for>
+        </div>
+        <sc-for list="{{passes}}" as="p" hint-placeholder-count="11"><span title="{{p.label}}" style="{{p.style}}"></span></sc-for>
+      </div>
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 11px; color: #4A5850"><span>23 Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>2 Nov</span></div>
+    </div>
+    <span style="font-size: 11px; color: #4A5850; max-width: 150px">Bars: daily rain, NASA POWER. Dots: NISAR passes.</span>
+  </footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showDemo":{"editor":"boolean","default":true},"$preview":{"width":1366,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const icons = {
+      season: 'M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z',
+      rhythm: 'M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 18c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 6c2-3 4-3 6 0s4 3 6 0 4-3 6 0',
+      motion: 'M12 3v14M6 11l6 6 6-6M4 21h16',
+      history: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2',
+      future: 'M3 17l6-6 4 4 8-8M15 7h6v6'
+    };
+    const active = 'season';
+    const modes = [['season','Season'],['rhythm','Flood rhythm'],['motion','Ground motion'],['history','History'],['future','Future']].map(([k, label]) => ({
+      href: '#' + k, label, icon: icons[k], current: k === active ? 'page' : 'false',
+      style: 'display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 2px; border-radius: 10px; text-decoration: none; font-size: 11px; text-align: center; line-height: 1.2; '
+        + (k === active ? 'background: #E3EFE7; color: #1E5B3A; font-weight: 700' : 'color: #4A5850; font-weight: 500')
+    }));
+    const mm = [0.4,4.2,3.7,8.6,1.4,2.5,3.6,36.9,7.2,2.6,3.8,3.1,2.2,1.2,6.4,5.9,4.3,25.3,15.8,10.2,9.3,0.3,0.0,1.1,1.8,1.5,2.5,5.1,14.1,6.9,3.8,14.2,16.5,2.6,6.6,24.5,39.2,6.8,15.5,3.9,12.0,15.2,12.6,20.5,19.4,19.5,105.2,37.1,44.3,10.0,19.9,21.1,14.8,4.0,9.7,62.4,37.5,11.2,3.6,0.3,1.3,1.2,1.9,2.1,2.1,6.0,44.2,41.6,19.3,2.8,0.4,3.5,15.3,14.5,22.0,13.2,20.5,17.7,8.7,12.6,2.1,0.9,7.9,6.4,14.5,12.9,21.1,19.5,2.6,6.2,20.1,16.3,9.2,12.1,7.5,4.4,2.1,4.4,1.4,1.6,3.4,16.6,16.1,11.6,9.4,15.1,6.5,9.0,3.5,10.7,23.7,10.6,7.7,5.6,2.6,5.3,4.4,4.1,4.0,3.4,3.5,4.3,0.4,6.7,1.6,4.3,3.8,1.6,3.3,4.8,6.7,9.6,4.3];
+    const rain = mm.map((v, i) => ({ style: 'flex: 1; min-width: 0; height: ' + Math.max(1, Math.round(Math.sqrt(v / 105.2) * 32)) + 'px; border-radius: 1px; background: ' + (i >= 17 && i <= 23 ? '#2171B5' : '#6BAED6') + (i >= 17 && i <= 23 ? '' : '; opacity: 0.55') }));
+    const offsets = [0,12,24,48,60,72,84,96,108,120,132];
+    const names = ['23 Jun','5 Jul','17 Jul','10 Aug','22 Aug','3 Sep','15 Sep','27 Sep','9 Oct','21 Oct','2 Nov'];
+    const passes = offsets.map((o, i) => {
+      const sel = i === 2, cmp = i === 1;
+      const size = sel ? 16 : 10;
+      return { label: 'NISAR pass ' + names[i], style: 'position: absolute; top: ' + (sel ? 0 : 3) + 'px; left: calc(' + (o / 132 * 100).toFixed(2) + '% - ' + size / 2 + 'px); width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; box-sizing: border-box; border: 2px solid #FFFFFF; background: ' + (sel ? '#1E5B3A' : cmp ? '#6BAED6' : '#4A5850') };
+    });
+    return { modes, rain, passes, showDemo: this.props.showDemo ?? true };
+  }
+}
+</script>
+</body>
+</html>

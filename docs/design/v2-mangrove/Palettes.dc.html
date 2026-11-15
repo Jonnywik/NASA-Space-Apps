@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tanaw · Colour palette options</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 820px; box-sizing: border-box; padding: 32px; background: #FAFAF8; color: #1B2430; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px">
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Source Serif 4', serif; font-size: 30px; font-weight: 600">Colour palette options</h1>
+    <p style="margin: 0; font-size: 14px; color: #4A5562">Interface colours stay calm; data colours always mean the same thing. Preview each one on the map-first board with its Palette tweak.</p>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; flex: 1">
+    <sc-for list="{{palettes}}" as="p" hint-placeholder-count="4">
+      <section style="{{p.card}}">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="{{p.eyebrow}}">{{p.key}}</span>
+          <h2 style="{{p.title}}">{{p.name}}</h2>
+          <span style="{{p.desc}}">{{p.blurb}}</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="{{p.label}}">Interface</span>
+          <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{p.ui}}" as="s" hint-placeholder-count="4">
+              <span style="display: flex; flex-direction: column; gap: 3px">
+                <span style="{{s.chip}}"></span>
+                <span style="{{s.text}}">{{s.name}}</span>
+                <span style="{{s.hex}}">{{s.value}}</span>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="{{p.label}}">Data</span>
+          <span style="display: flex; flex-direction: column; gap: 3px">
+            <span style="display: flex; height: 16px; border-radius: 4px; overflow: hidden">
+              <sc-for list="{{p.ramp}}" as="c" hint-placeholder-count="4"><span style="{{c}}"></span></sc-for>
+            </span>
+            <span style="{{p.small}}">Flood rhythm: water on 1–2 → 9–11 passes</span>
+          </span>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{p.data}}" as="s" hint-placeholder-count="3">
+              <span style="display: flex; flex-direction: column; gap: 3px">
+                <span style="{{s.chip}}"></span>
+                <span style="{{s.text}}">{{s.name}}</span>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="{{p.sample}}">
+          <span style="{{p.sampleEyebrow}}">FLOOD RHYTHM</span>
+          <span style="{{p.sampleHead}}">[km²] under water on half the passes</span>
+          <span style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="{{p.btn}}">Briefing</span>
+            <span style="{{p.btn2}}">Take the tour</span>
+          </span>
+          <span style="{{p.railActive}}">Flood rhythm</span>
+        </div>
+        <span style="{{p.note}}">{{p.contrast}}</span>
+      </section>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const defs = [
+      { key:'OPTION 1 · DEFAULT', name:'Mangrove', blurb:'Calm civic green, from the coastal mangroves of Obando and Navotas. Closest to the Civic Atlas reference.', primary:'#1E5B3A', primarySoft:'#E3EFE7', ground:'#F2F5F1', surface:'#FFFFFF', ink:'#16231B', muted:'#4A5850', line:'#DCE3DB', ramp:['#C6DBEF','#6BAED6','#2171B5','#08306B'], veg:'#E69F00', motion:'#7B3294', scen:'#8A7BB5', contrast:'Green on white 8.0:1. Data blue and interface green never compete.' },
+      { key:'OPTION 2', name:'Harbour', blurb:'Deep Manila Bay navy with cyan water. Feels like an agency tool; brand and water are both blue, kept apart by lightness.', primary:'#0F4C6E', primarySoft:'#E0ECF4', ground:'#F1F5F8', surface:'#FFFFFF', ink:'#122130', muted:'#475766', line:'#D6E0E8', ramp:['#C7E9F1','#7CCBE0','#2A9FC4','#0B5E7E'], veg:'#E08A00', motion:'#B03A82', scen:'#6E7FB0', contrast:'Navy on white 9.2:1. Risk: brand navy close to the darkest water class.' },
+      { key:'OPTION 3', name:'Clay', blurb:'Warm terracotta and sand, like adobe and capiz. Friendly and local; flooded vegetation turns olive so orange stays brand-only.', primary:'#9C4426', primarySoft:'#F5E4DA', ground:'#F7F2EA', surface:'#FFFDF9', ink:'#2B2019', muted:'#5E5248', line:'#E8DDCF', ramp:['#CFE1F2','#88B6E0','#3B82C4','#164C86'], veg:'#5E9A2E', motion:'#6A51A3', scen:'#A28AB8', contrast:'Terracotta on white 6.3:1. Warmest; least “scientific”.' },
+      { key:'OPTION 4', name:'Instrument', blurb:'Cool slate and white, like a lab instrument panel. Most neutral; lets the data carry all the colour.', primary:'#2C4A5A', primarySoft:'#E2EAEE', ground:'#F3F4F5', surface:'#FFFFFF', ink:'#101820', muted:'#4A5560', line:'#D8DDE2', ramp:['#D0E4F0','#79B3D9','#2C7FB8','#173F6E'], veg:'#E69F00', motion:'#CC79A7', scen:'#7F8C99', contrast:'Slate on white 9.4:1. Most precise; can feel cold for residents.' }
+    ];
+    const chip = (c, border) => 'height: 40px; border-radius: 8px; background: ' + c + '; border: 1px solid ' + (border || 'rgba(0,0,0,0.08)');
+    const palettes = defs.map((d) => ({
+      key: d.key, name: d.name, blurb: d.blurb, contrast: d.contrast,
+      card: 'display: flex; flex-direction: column; gap: 16px; padding: 18px; border-radius: 16px; background: ' + d.surface + '; border: 1px solid ' + d.line + '; color: ' + d.ink,
+      eyebrow: 'font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: ' + d.primary,
+      title: "margin: 0; font-family: 'Source Serif 4', serif; font-size: 24px; font-weight: 600; color: " + d.ink,
+      desc: 'font-size: 12px; line-height: 1.5; color: ' + d.muted,
+      label: 'font-size: 12px; font-weight: 600; color: ' + d.ink,
+      small: 'font-size: 11px; color: ' + d.muted,
+      ui: [['Primary', d.primary], ['Tint', d.primarySoft], ['Ground', d.ground], ['Ink', d.ink]].map(([n, v]) => ({ name: n, value: v, chip: chip(v), text: 'font-size: 11px; font-weight: 600; color: ' + d.ink, hex: 'font-size: 10px; color: ' + d.muted })),
+      ramp: d.ramp.map((c) => 'flex: 1; background: ' + c),
+      data: [['Flooded veg.', d.veg], ['Ground motion', d.motion], ['Scenario', d.scen]].map(([n, v]) => ({ name: n, chip: 'height: 22px; border-radius: 6px; background: ' + v, text: 'font-size: 11px; color: ' + d.ink })),
+      sample: 'display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: ' + d.ground + '; border: 1px solid ' + d.line,
+      sampleEyebrow: 'font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: ' + d.primary,
+      sampleHead: "font-family: 'Source Serif 4', serif; font-size: 17px; font-weight: 600; line-height: 1.25; color: " + d.ink,
+      btn: 'display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 8px; background: ' + d.primary + '; color: #FFFFFF; font-size: 12px; font-weight: 600',
+      btn2: 'display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid ' + d.primary + '; color: ' + d.primary + '; background: ' + d.surface + '; font-size: 12px; font-weight: 600',
+      railActive: 'align-self: flex-start; padding: 6px 10px; border-radius: 8px; background: ' + d.primarySoft + '; color: ' + d.primary + '; font-size: 12px; font-weight: 700',
+      note: 'margin-top: auto; font-size: 11px; line-height: 1.45; color: ' + d.muted
+    }));
+    return { palettes };
+  }
+}
+</script>
+</body>
+</html>

@@ -48,3 +48,6 @@ yarn-error.log*
 next-env.d.ts
 
 backend/data/output/test_event/
+
+# NISAR study-area outputs: regenerate with scripts 20 (real) or 22 (synthetic demo)
+backend/data/output/camanava_2026/

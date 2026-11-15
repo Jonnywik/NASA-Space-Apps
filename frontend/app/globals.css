@@ -5,33 +5,98 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #1E5B3A;
+  --primary-strong: #123B25;
+  --primary-soft: #E3EFE7;
+  --ground: #F2F5F1;
+  --surface: #FFFFFF;
+  --ink: #16231B;
+  --muted: #4A5850;
+  --line: #DCE3DB;
+  --line-strong: #C9D1C7;
+  --demo-bg: #FFF6DE;
+  --demo-ink: #7A5B00;
+
+  --water-1: #C6DBEF;
+  --water-2: #6BAED6;
+  --water-3: #2171B5;
+  --water-4: #08306B;
+  --veg: #E69F00;
+  --perm-water: #D3E2EA;
+  --perm-water-stroke: #9DB6C4;
+
+  --motion-away-3: #7B3294;
+  --motion-away-2: #9970AB;
+  --motion-away-1: #C2A5CF;
+  --motion-stable: #F2F0F2;
+  --motion-toward-1: #A6DBA0;
+  --motion-toward-2: #1B7837;
+
+  --scenario-stroke: #6B5A9E;
+  --scenario-fill: #E7E3F1;
+  --scenario-bar: #8A7BB5;
+  --outlook-fill: #DCEAF5;
+
+  --background: var(--ground);
+  --foreground: var(--ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   margin: 0;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink);
+  background: var(--ground);
+  font-family: var(--font-sans), Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.font-serif-display {
+  font-family: var(--font-serif), "Source Serif 4", Georgia, serif;
+}
+
+a {
+  color: var(--primary);
+}
+a:hover {
+  color: var(--primary-strong);
 }
 
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background: #0f172a;
-  font-family: Arial, Helvetica, sans-serif;
+  background: #E8EBE3;
+  font-family: var(--font-sans), Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.88) !important;
+  color: #3A4552 !important;
+  font-size: 10px !important;
+  padding: 2px 6px !important;
+  border-radius: 6px 0 0 0;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.leaflet-container :focus-visible {
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
   }
 }

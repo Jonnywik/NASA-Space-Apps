@@ -1,0 +1,101 @@
+{
+  "area": "camanava_2026",
+  "status": "partial",
+  "dataKind": "derived",
+  "source": {
+    "nisar": {
+      "dataKind": "derived",
+      "date": "2026-11-02",
+      "acquisitionTime": "2026-11-02T21:30:32Z",
+      "source": "NISAR L2 GCOV threshold-derived total open water",
+      "url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_V1/NISAR_L2_PR_GCOV_034_140_A_009_4005_DHDH_A_20261102T213032_20261102T213106_P05036_N_F_J_001/NISAR_L2_PR_GCOV_034_140_A_009_4005_DHDH_A_20261102T213032_20261102T213106_P05036_N_F_J_001.h5",
+      "productId": "NISAR_L2_PR_GCOV_034_140_A_009_4005_DHDH_A_20261102T213032_20261102T213106_P05036_N_F_J_001",
+      "dbSha256": "8eedadc2efc85c241bd67cf6c4f29476d9870aff0839c7af1e0ef15b2f1a2547",
+      "binarySha256": "7a7d5990a546673992e1470693504a48606985ffe59b0686615cc759c182ec86",
+      "rule": {
+        "description": "Open water where HH < hhThresholdDb and HV < hvThresholdDb on the same pixel. One fixed rule is applied to every pass. Pixels without valid HH and HV are nodata, not dry. Water in dense urban blocks is under-detected because double-bounce makes streets bright.",
+        "hhThresholdDb": -12.5,
+        "hvThresholdDb": -22.5,
+        "calibration": {
+          "status": "calibrated",
+          "method": "95% quantile of known open-water dB, pooled over passes, plus a 1.0 dB margin for wind-roughened water, rounded to 0.5 dB",
+          "marginDb": 1.0,
+          "quantile": 0.95,
+          "knownWater": "Manila Bay open water, box [120.885, 14.62, 120.897, 14.7] (WGS84), chosen from map knowledge, not from SAR data",
+          "passes": [
+            "20260623",
+            "20260705",
+            "20260717",
+            "20260810",
+            "20260822",
+            "20260903",
+            "20260915",
+            "20260927",
+            "20261009",
+            "20261021",
+            "20261102"
+          ],
+          "waterPixels": 1259038,
+          "waterHhDb": {
+            "p05": -20.783884048461914,
+            "p50": -16.068462371826172,
+            "p95": -13.3618803024292
+          },
+          "waterHvDb": {
+            "p05": -27.00003433227539,
+            "p50": -25.376953125,
+            "p95": -23.67302894592285
+          },
+          "warnings": []
+        }
+      },
+      "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc",
+      "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
+    },
+    "reference": {
+      "dataKind": "derived",
+      "date": "2026-11-04",
+      "acquisitionTime": "2026-11-04T21:46:11.000Z",
+      "source": "OPERA DSWx-S1 BWTR total water",
+      "url": "https://cmr.earthdata.nasa.gov/search/concepts/G4408674689-POCLOUD.html",
+      "granuleId": "G4408674689-POCLOUD",
+      "productId": "OPERA_L3_DSWx-S1_T51PTS_20261104T214554Z_20261109T201952Z_S1D_30_v1.0",
+      "sourceMd5": "3380ea5469bd8023b24c32c83e718e06",
+      "binarySha256": "eedb9a6ff860a9eb9a4755189c92e96b843e68f4daa5cdb869e3aee30b51e617"
+    }
+  },
+  "generatedAt": "2026-11-15T06:14:57.431863+00:00",
+  "nativeResolution": "coarser common raster grid",
+  "units": {
+    "agreement": "fraction",
+    "validPixels": "pixels"
+  },
+  "temporalMatch": {
+    "calendarDays": 2,
+    "elapsedHours": 48.26083333333333,
+    "within48Hours": false
+  },
+  "comparison": "NISAR total open water versus DSWx total water including inundated vegetation; not flood-only accuracy.",
+  "agreement": {
+    "confusionMatrix": {
+      "tp": 82335,
+      "tn": 325635,
+      "fp": 2282,
+      "fn": 55996
+    },
+    "validPixels": 466248,
+    "overallAgreement": 0.8750064343439543,
+    "f1": 0.7386027235050325,
+    "iou": 0.5855432996949073
+  },
+  "sensitivity": null,
+  "warnings": [
+    "Threshold sensitivity and ground-motion comparison are not included.",
+    "NEAR MATCH: acquisitions are more than 48 hours apart despite passing the two-calendar-day gate."
+  ],
+  "limitations": [
+    "Nearest-neighbour comparison is on the coarser raster grid; the date gate permits two calendar days, not necessarily 48 hours.",
+    "NISAR detects open water while DSWx also includes inundated vegetation; neither is a flood-only map.",
+    "Agreement with another satellite product is not ground truth."
+  ]
+}

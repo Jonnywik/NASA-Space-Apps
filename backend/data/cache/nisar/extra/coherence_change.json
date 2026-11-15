@@ -1,0 +1,154 @@
+{
+ "schemaVersion": "1.0",
+ "area": "camanava_2026",
+ "dataKind": "derived",
+ "generatedAt": "2026-11-15T09:39:33Z",
+ "title": "Coherence loss across the 8 Aug 2026 storm",
+ "method": "NISAR L2 GUNW HH coherence at 80 m: median coherence of the other 12-day pairs minus the coherence of the pair 17 Jul -> 10 Aug 2026, which spans the 8-9 Aug storm. Positive = coherence lost. WorldCover water and no-data cells excluded.",
+ "stormPair": {
+  "reference": "2026-07-17",
+  "secondary": "2026-08-10",
+  "days": 24
+ },
+ "calmPairs": [
+  {
+   "reference": "2026-06-23",
+   "secondary": "2026-07-05"
+  },
+  {
+   "reference": "2026-07-05",
+   "secondary": "2026-07-17"
+  },
+  {
+   "reference": "2026-08-10",
+   "secondary": "2026-08-22"
+  },
+  {
+   "reference": "2026-08-22",
+   "secondary": "2026-09-03"
+  },
+  {
+   "reference": "2026-09-03",
+   "secondary": "2026-09-15"
+  },
+  {
+   "reference": "2026-09-15",
+   "secondary": "2026-09-27"
+  },
+  {
+   "reference": "2026-09-27",
+   "secondary": "2026-10-09"
+  },
+  {
+   "reference": "2026-10-09",
+   "secondary": "2026-10-21"
+  }
+ ],
+ "overlayUrl": "/api/v1/nisar/extra/coherence_change.png",
+ "bounds": [
+  [
+   14.586628,
+   120.865683
+  ],
+  [
+   14.833294,
+   121.054342
+  ]
+ ],
+ "legend": [
+  {
+   "value": 0.05,
+   "color": "#FDE0EF"
+  },
+  {
+   "value": 0.2,
+   "color": "#F1B6DA"
+  },
+  {
+   "value": 0.35,
+   "color": "#DE77AE"
+  },
+  {
+   "value": 0.5,
+   "color": "#C51B7D"
+  },
+  {
+   "value": 0.7,
+   "color": "#4D004B"
+  }
+ ],
+ "stats": {
+  "cells": 42981,
+  "medianDrop": 0.067,
+  "km2DropOver03": 3.17,
+  "landKm2": 275.1,
+  "km2DropOver03IntervalCorrected": 0.04
+ },
+ "byLandCover": [
+  {
+   "class": 10,
+   "name": "Tree cover",
+   "cells": 7734,
+   "median": 0.107
+  },
+  {
+   "class": 20,
+   "name": "Shrubland",
+   "cells": 24,
+   "median": 0.084
+  },
+  {
+   "class": 30,
+   "name": "Grassland",
+   "cells": 2842,
+   "median": 0.099
+  },
+  {
+   "class": 40,
+   "name": "Cropland",
+   "cells": 1986,
+   "median": 0.117
+  },
+  {
+   "class": 50,
+   "name": "Built-up",
+   "cells": 29892,
+   "median": 0.055
+  },
+  {
+   "class": 60,
+   "name": "Bare / sparse",
+   "cells": 303,
+   "median": 0.05
+  },
+  {
+   "class": 90,
+   "name": "Herbaceous wetland",
+   "cells": 121,
+   "median": 0.032
+  },
+  {
+   "class": 95,
+   "name": "Mangroves",
+   "cells": 79,
+   "median": 0.108
+  }
+ ],
+ "nativeResolution": {
+  "x": 80,
+  "y": 80,
+  "units": "m"
+ },
+ "source": {
+  "name": "NASA-ISRO NISAR L2 GUNW (ASF), provisional",
+  "url": "https://nisar-docs.asf.alaska.edu/gunw/"
+ },
+ "warnings": [
+  "The storm pair spans 24 days (one pass is missing around 29 Jul), the calm pairs 12 days. A longer interval also lowers coherence: allowing for that (expected 24-day coherence = median 12-day coherence squared), only 0.04 km2 of loss over 0.3 is left. Most of this layer can be explained by the longer interval alone; the storm's effect cannot be separated."
+ ],
+ "limitations": [
+  "Exploratory. Coherence loss can come from standing water, wet or changed vegetation, construction, or noise; it is never a flood map.",
+  "80 m cells; dense urban areas usually keep high coherence.",
+  "Provisional NISAR products; WorldCover 2021 classes."
+ ]
+}

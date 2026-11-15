@@ -1,0 +1,36 @@
+{
+ "hhThresholdDb": -12.5,
+ "hvThresholdDb": -22.5,
+ "calibration": {
+  "status": "calibrated",
+  "method": "95% quantile of known open-water dB, pooled over passes, plus a 1.0 dB margin for wind-roughened water, rounded to 0.5 dB",
+  "marginDb": 1.0,
+  "quantile": 0.95,
+  "knownWater": "Manila Bay open water, box [120.885, 14.62, 120.897, 14.7] (WGS84), chosen from map knowledge, not from SAR data",
+  "passes": [
+   "20260623",
+   "20260705",
+   "20260717",
+   "20260810",
+   "20260822",
+   "20260903",
+   "20260915",
+   "20260927",
+   "20261009",
+   "20261021",
+   "20261102"
+  ],
+  "waterPixels": 1259038,
+  "waterHhDb": {
+   "p05": -20.783884048461914,
+   "p50": -16.068462371826172,
+   "p95": -13.3618803024292
+  },
+  "waterHvDb": {
+   "p05": -27.00003433227539,
+   "p50": -25.376953125,
+   "p95": -23.67302894592285
+  },
+  "warnings": []
+ }
+}

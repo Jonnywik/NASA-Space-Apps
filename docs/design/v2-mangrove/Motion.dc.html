@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tanaw · Ground motion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E5B3A}a:hover{color:#123B25}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 820px; box-sizing: border-box; padding: 12px; background: #F2F5F1; color: #16231B; font-family: Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums">
+<div style="display: flex; flex-direction: column; min-height: 796px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; overflow: hidden">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 0 16px; min-height: 58px; border-bottom: 1px solid #DCE3DB">
+    <a href="#home" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #16231B">
+      <svg width="30" height="22" viewBox="0 0 30 22" fill="none" stroke="#1E5B3A" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M2 19 L11 6 L17 14 L21 9 L28 19"></path><path d="M2 19 C8 16 14 22 20 18 C24 16 26 17 28 19"></path></svg>
+      <span style="font-weight: 700; font-size: 19px; letter-spacing: 0.06em">TANAW</span>
+    </a>
+    <span aria-hidden="true" style="width: 1px; height: 28px; background: #DCE3DB"></span>
+    <button type="button" aria-haspopup="listbox" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #16231B; font: inherit; font-weight: 600; font-size: 14px">CAMANAVA · 2026 wet season
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <div style="display: flex; align-items: center; gap: 8px; margin-left: auto">
+      <button type="button" style="height: 40px; padding: 0 14px; border: 1px solid #1E5B3A; border-radius: 10px; background: #FFFFFF; color: #1E5B3A; font: inherit; font-weight: 600; font-size: 13px">Take the tour</button>
+      <a href="#sources" style="display: flex; align-items: center; height: 40px; padding: 0 10px; color: #16231B; font-size: 13px; text-decoration: none">Sources and limits</a>
+      <button type="button" aria-label="Settings: language, base map, units" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16231B" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; flex: 1 1 auto; min-height: 0">
+    <nav aria-label="Modes" style="flex: 0 0 84px; box-sizing: border-box; padding: 10px 8px; border-right: 1px solid #DCE3DB; display: flex; flex-direction: column; gap: 4px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="5">
+        <a href="{{m.href}}" aria-current="{{m.current}}" style="{{m.style}}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"></path></svg>
+          <span>{{m.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <section aria-label="Map" style="position: relative; flex: 999 1 480px; min-width: 0; min-height: 590px; background: #E8EBE3; overflow: hidden">
+      <svg viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative ground-motion map: purple areas moved away from the satellite, green moved toward it" style="position: absolute; inset: 0; width: 100%; height: 100%">
+        <rect width="900" height="600" fill="#F1F2EC"></rect>
+        <path d="M0 0 H330 C312 90 350 160 326 240 C305 310 342 400 318 470 C300 540 330 580 312 600 H0 Z" fill="#D3E2EA"></path>
+        <path d="M326 240 C410 262 500 250 590 280 C680 305 780 290 900 312" fill="none" stroke="#B5CCD8" stroke-width="7"></path>
+        <path d="M330 90 C400 80 470 110 470 170 C470 230 420 260 380 300 C350 330 360 380 340 420 L326 420 C320 300 330 200 330 90 Z" fill="#C2A5CF" fill-opacity="0.85"></path>
+        <path d="M335 120 C385 115 430 140 428 180 C426 220 390 240 362 270 C346 290 350 320 338 340 L332 340 C330 260 334 180 335 120 Z" fill="#9970AB" fill-opacity="0.9"></path>
+        <path d="M338 150 C370 150 395 165 394 190 C393 212 372 225 352 240 L340 240 C337 210 338 180 338 150 Z" fill="#7B3294" fill-opacity="0.95"></path>
+        <path d="M480 300 C560 290 650 320 660 380 C670 440 600 470 530 460 C480 452 460 400 470 350 Z" fill="#E7E3EC" fill-opacity="0.9"></path>
+        <path d="M600 120 C640 110 690 130 690 160 C690 190 650 200 620 192 C596 184 588 140 600 120 Z" fill="#A6DBA0" fill-opacity="0.85"></path>
+        <rect x="660" y="470" width="44" height="44" fill="none" stroke="#16231B" stroke-width="2"></rect>
+        <rect x="300" y="60" width="360" height="500" fill="none" stroke="#1B2430" stroke-width="1.8" stroke-dasharray="8 6"></rect>
+      </svg>
+      <span style="position: absolute; left: 69%; top: 87%; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.92); font-size: 11px; font-weight: 600">Reference area</span>
+
+      <label style="position: absolute; top: 16px; left: 16px; right: 200px; max-width: 400px; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; box-shadow: 0 2px 10px rgba(20,30,40,0.12)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Find my barangay or city</span>
+        <input type="search" placeholder="Find my barangay or city" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 15px; color: #16231B">
+      </label>
+
+      <div style="position: absolute; top: 16px; right: 16px; width: 316px; display: flex; flex-direction: column; gap: 8px; align-items: flex-end">
+        <button type="button" aria-expanded="true" aria-controls="map-tools-motion" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px 0 10px; background: #E3EFE7; border: 1px solid #1E5B3A; border-radius: 12px; box-shadow: 0 2px 8px rgba(20,30,40,0.12); color: #123B25; font: inherit; font-size: 13px; font-weight: 700">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+          Map tools
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+        </button>
+        <div id="map-tools-motion" role="dialog" aria-label="Map tools" style="width: 100%; box-sizing: border-box; max-height: 440px; overflow-y: auto; padding: 14px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; box-shadow: 0 6px 20px rgba(20,30,40,0.18); display: flex; flex-direction: column; gap: 14px; font-size: 13px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #4A5850">MAP MODE</span>
+            <div role="radiogroup" aria-label="Map mode" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+              <button type="button" role="radio" aria-checked="true" style="display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 4px; border: 2px solid #1E5B3A; border-radius: 10px; background: #FFFFFF; font: inherit; font-size: 12px; font-weight: 700; color: #123B25"><span aria-hidden="true" style="height: 34px; border-radius: 6px; background: #F1F2EC; border: 1px solid #DCE3DB"></span>Streets</button>
+              <button type="button" role="radio" aria-checked="false" style="display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 4px; border: 1px solid #DCE3DB; border-radius: 10px; background: #FFFFFF; font: inherit; font-size: 12px; color: #16231B"><span aria-hidden="true" style="height: 34px; border-radius: 6px; background: #5F7356"></span>Satellite</button>
+              <button type="button" role="radio" aria-checked="false" style="display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 4px; border: 1px solid #DCE3DB; border-radius: 10px; background: #FFFFFF; font: inherit; font-size: 12px; color: #16231B"><span aria-hidden="true" style="height: 34px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D1C7"></span>Minimal</button>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid #DCE3DB">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #4A5850">OVERLAY · ONE AT A TIME</span>
+            <div role="radiogroup" aria-label="Data overlay" style="display: flex; flex-direction: column; gap: 2px">
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 8px; border-radius: 8px"><input type="radio" name="ov-m" style="width: 18px; height: 18px; accent-color: #1E5B3A"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 2px; background: linear-gradient(90deg, #C6DBEF, #08306B)"></span>Flood rhythm</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 8px; border-radius: 8px"><input type="radio" name="ov-m" style="width: 18px; height: 18px; accent-color: #1E5B3A"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 2px; background: #2171B5"></span>Single NISAR pass</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 8px; border-radius: 8px; background: #E3EFE7; font-weight: 600"><input type="radio" name="ov-m" checked style="width: 18px; height: 18px; accent-color: #1E5B3A"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 2px; background: linear-gradient(90deg, #7B3294, #F2F0F2, #1B7837)"></span>Ground motion</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 8px; border-radius: 8px"><input type="radio" name="ov-m" style="width: 18px; height: 18px; accent-color: #1E5B3A"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 2px; background: repeating-linear-gradient(45deg, #6B5A9E 0 2px, #E7E3F1 2px 5px)"></span>Flood scenario</label>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-left: 8px; padding: 10px; border-left: 2px solid #1E5B3A; background: #F2F5F1; border-radius: 0 8px 8px 0">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 12px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1E5B3A">Outline often-flooded areas</label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 12px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1E5B3A">Show reference area</label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 12px">Opacity<input type="range" min="0" max="100" value="80" style="flex: 1; accent-color: #1E5B3A"><span>80%</span></label>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #DCE3DB">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #4A5850">LAYERS</span>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1E5B3A">Barangay boundaries</label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1E5B3A">Place labels</label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" style="width: 18px; height: 18px; accent-color: #1E5B3A">Roads</label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1E5B3A">Rivers and waterways</label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #1E5B3A">Study area outline</label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" style="width: 18px; height: 18px; accent-color: #1E5B3A">Buildings (OpenStreetMap)</label>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid #DCE3DB">
+            <button type="button" style="height: 36px; padding: 0 4px; border: 0; background: transparent; color: #1E5B3A; font: inherit; font-size: 13px; font-weight: 600; text-decoration: underline">Reset map</button>
+            <button type="button" style="height: 36px; padding: 0 16px; border: 0; border-radius: 9px; background: #1E5B3A; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 600">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <div role="dialog" aria-label="Spot check: Niugan, City of Malabon" style="position: absolute; left: 16px; bottom: 16px; width: 330px; max-width: calc(100% - 32px); box-sizing: border-box; padding: 14px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; box-shadow: 0 4px 16px rgba(20,30,40,0.16); display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: flex-start; gap: 8px">
+          <div style="flex: 1; display: flex; flex-direction: column">
+            <span style="font-family: 'Source Serif 4', serif; font-size: 19px; font-weight: 600">Niugan</span>
+            <span style="font-size: 12px; color: #4A5850">City of Malabon</span>
+          </div>
+          <button type="button" aria-label="Close spot check" style="width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; font-size: 18px; color: #16231B">×</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <span style="font-size: 15px; font-weight: 600">[mm] away from the satellite since 23 Jun</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="padding: 1px 6px; border: 1px dashed #7A5B00; border-radius: 4px; background: #FFF6DE; color: #7A5B00; font-size: 11px; font-weight: 600">Demo</span></sc-if>
+        </div>
+        <div role="img" aria-label="Line-of-sight motion at this point over 10 dates (placeholder)" style="position: relative; height: 56px; border-left: 1px solid #DCE3DB; border-bottom: 1px solid #DCE3DB">
+          <svg viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%"><path d="M0 6 L33 9 L66 12 L99 16 L132 20 L165 25 L198 30 L231 33 L264 38 L300 42" fill="none" stroke="#7B3294" stroke-width="2.5" stroke-dasharray="5 4"></path></svg>
+        </div>
+        <span style="font-size: 11px; color: #4A5850">Placeholder line until the interferogram run is processed.</span>
+      </div>
+
+      <div style="position: absolute; right: 16px; bottom: 26px; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 12px; font-size: 12px; box-shadow: 0 1px 4px rgba(20,30,40,0.10)">
+        <span style="font-weight: 600">Line-of-sight motion, 23 Jun – 21 Oct (mm)</span>
+        <span style="display: flex; height: 12px; border-radius: 3px; overflow: hidden" aria-hidden="true">
+          <span style="flex: 1; background: #7B3294"></span><span style="flex: 1; background: #9970AB"></span><span style="flex: 1; background: #C2A5CF"></span><span style="flex: 1; background: #F2F0F2"></span><span style="flex: 1; background: #A6DBA0"></span><span style="flex: 1; background: #1B7837"></span>
+        </span>
+        <span style="display: flex; justify-content: space-between; gap: 12px"><span>Away from satellite</span><span>Stable</span><span>Toward</span></span>
+        <span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border: 2px solid #16231B; box-sizing: border-box"></span>Reference area (set to 0)</span>
+      </div>
+      <span style="position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #3A4552">© OpenStreetMap contributors · NISAR: NASA/ISRO via ASF</span>
+    </section>
+
+    <aside aria-label="Findings" style="flex: 1 1 300px; max-width: 340px; box-sizing: border-box; padding: 20px; border-left: 1px solid #DCE3DB; display: flex; flex-direction: column; gap: 16px">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #7B3294">GROUND MOTION · LINE OF SIGHT</span>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-family: 'Source Serif 4', serif; font-size: 25px; line-height: 1.22; font-weight: 600">Parts of the coast moved [mm] away from the satellite in four months</h1>
+        <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="align-self: flex-start; padding: 1px 6px; border: 1px dashed #7A5B00; border-radius: 4px; background: #FFF6DE; color: #7A5B00; font-size: 11px; font-weight: 600">Demo number</span></sc-if>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Interferogram pairs</span>
+          <span style="font-size: 24px; font-weight: 700">9</span>
+          <span style="font-size: 11px; color: #4A5850">12 days apart</span>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Period</span>
+          <span style="font-size: 18px; font-weight: 700; line-height: 1.35">23 Jun – 21 Oct</span>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Area moving away</span>
+          <span style="font-size: 24px; font-weight: 700">[km²]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; font-weight: 600; color: #7A5B00">Demo</span></sc-if>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Also often flooded</span>
+          <span style="font-size: 24px; font-weight: 700">[km²]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; font-weight: 600; color: #7A5B00">Demo</span></sc-if>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid #DCE3DB">
+        <span style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 600">In plain words</span>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6">NISAR measures how far the ground moved along its slanted line of sight, compared with a reference area set to zero. Moving away usually means sinking, but sideways motion can also contribute. Four months is a short record; published studies cover years. [The finding appears once the interferograms are processed and reviewed.]</p>
+      </div>
+      <span style="margin-top: auto; font-size: 11px; color: #4A5850">NISAR L2 GUNW · track 140 ascending · <a href="#sources">Sources and limits</a></span>
+    </aside>
+  </div>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 10px 16px; border-top: 1px solid #DCE3DB">
+    <div style="display: flex; align-items: center; gap: 2px">
+      <button type="button" aria-label="Previous date" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: #16231B">‹</button>
+      <span style="min-width: 150px; text-align: center; font-size: 13px; font-weight: 600">Total, 23 Jun → 21 Oct</span>
+      <button type="button" aria-label="Next date" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: #16231B">›</button>
+      <button type="button" aria-label="Play the motion build-up" style="width: 40px; height: 40px; margin-left: 4px; border: 0; border-radius: 50%; background: #1E5B3A; color: #FFFFFF; font-size: 13px">▶</button>
+    </div>
+    <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+      <div role="slider" aria-label="Motion timeline" aria-valuetext="Total from 23 June to 21 October" tabindex="0" style="position: relative; height: 46px; border-radius: 8px; background: #F2F5F1">
+        <span aria-hidden="true" style="position: absolute; left: 0; width: 90.9%; top: 20px; height: 6px; border-radius: 3px; background: #C2A5CF"></span>
+        <sc-for list="{{epochs}}" as="p" hint-placeholder-count="10"><span title="{{p.label}}" style="{{p.style}}"></span></sc-for>
+      </div>
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 11px; color: #4A5850"><span>23 Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>2 Nov</span></div>
+    </div>
+    <span style="font-size: 11px; color: #4A5850; max-width: 150px">Dots: dates linked by 12-day interferograms.</span>
+  </footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showDemo":{"editor":"boolean","default":true},"$preview":{"width":1366,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const icons = {
+      season: 'M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z',
+      rhythm: 'M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 18c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 6c2-3 4-3 6 0s4 3 6 0 4-3 6 0',
+      motion: 'M12 3v14M6 11l6 6 6-6M4 21h16',
+      history: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2',
+      future: 'M3 17l6-6 4 4 8-8M15 7h6v6'
+    };
+    const active = 'motion';
+    const modes = [['season','Season'],['rhythm','Flood rhythm'],['motion','Ground motion'],['history','History'],['future','Future']].map(([k, label]) => ({
+      href: '#' + k, label, icon: icons[k], current: k === active ? 'page' : 'false',
+      style: 'display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 2px; border-radius: 10px; text-decoration: none; font-size: 11px; text-align: center; line-height: 1.2; '
+        + (k === active ? 'background: #E3EFE7; color: #1E5B3A; font-weight: 700' : 'color: #4A5850; font-weight: 500')
+    }));
+    const offsets = [0,12,24,48,60,72,84,96,108,120];
+    const names = ['23 Jun','5 Jul','17 Jul','10 Aug','22 Aug','3 Sep','15 Sep','27 Sep','9 Oct','21 Oct'];
+    const epochs = offsets.map((o, i) => ({ label: names[i], style: 'position: absolute; top: 16px; left: calc(' + (o / 132 * 100).toFixed(2) + '% - 7px); width: 14px; height: 14px; border-radius: 50%; box-sizing: border-box; border: 2px solid #FFFFFF; background: ' + (i === 9 ? '#7B3294' : '#4A5850') }));
+    return { modes, epochs, showDemo: this.props.showDemo ?? true };
+  }
+}
+</script>
+</body>
+</html>

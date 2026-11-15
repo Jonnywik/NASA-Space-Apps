@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tanaw · Map tools</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 420px; height: 820px; box-sizing: border-box; padding: 16px; background: #E8EBE3; color: #16231B; font-family: Inter, system-ui, sans-serif; overflow: hidden">
+  <svg viewBox="0 0 420 820" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%">
+    <rect width="420" height="820" fill="#F1F2EC"></rect>
+    <path d="M0 0 H120 C110 200 140 400 115 820 H0 Z" fill="#D3E2EA"></path>
+    <path d="M115 380 C200 400 300 380 420 410" fill="none" stroke="#B5CCD8" stroke-width="6"></path>
+  </svg>
+
+  <div style="position: relative; display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
+    <button type="button" aria-expanded="{{expanded}}" aria-controls="map-tools-panel" onClick="{{toggle}}" style="{{btnStyle}}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+      Map tools
+      <span style="font-size: 11px; font-weight: 500; color: #4A5850">{{summary}}</span>
+    </button>
+
+    <sc-if value="{{open}}" hint-placeholder-val="{{ true }}">
+      <div id="map-tools-panel" role="dialog" aria-label="Map tools" style="width: 340px; box-sizing: border-box; padding: 14px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; box-shadow: 0 6px 20px rgba(20,30,40,0.18); display: flex; flex-direction: column; gap: 14px; font-size: 13px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #4A5850">MAP MODE</span>
+          <div role="radiogroup" aria-label="Map mode" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+            <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+              <button type="button" role="radio" aria-checked="{{m.checked}}" onClick="{{m.pick}}" style="{{m.style}}"><span aria-hidden="true" style="{{m.thumb}}"></span>{{m.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid #DCE3DB">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #4A5850">OVERLAY · ONE AT A TIME</span>
+          <div role="radiogroup" aria-label="Data overlay" style="display: flex; flex-direction: column; gap: 2px">
+            <sc-for list="{{overlays}}" as="o" hint-placeholder-count="4">
+              <button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">
+                <span aria-hidden="true" style="{{o.dot}}"></span>
+                <span aria-hidden="true" style="{{o.swatch}}"></span>
+                <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 1px"><span>{{o.label}}</span><span style="font-size: 11px; font-weight: 400; color: #4A5850">{{o.hint}}</span></span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-left: 8px; padding: 10px; border-left: 2px solid #1E5B3A; background: #F2F5F1; border-radius: 0 8px 8px 0">
+            <span style="font-size: 11px; font-weight: 600; color: #4A5850">{{optTitle}}</span>
+            <sc-for list="{{opts}}" as="x" hint-placeholder-count="2">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; min-height: 28px"><input type="checkbox" checked="{{x.on}}" onChange="{{x.flip}}" style="width: 18px; height: 18px; accent-color: #1E5B3A">{{x.label}}</label>
+            </sc-for>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px">Opacity<input type="range" min="0" max="100" value="80" style="flex: 1; accent-color: #1E5B3A"><span>80%</span></label>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 2px; padding-top: 12px; border-top: 1px solid #DCE3DB">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #4A5850">LAYERS</span>
+          <sc-for list="{{layers}}" as="l" hint-placeholder-count="6">
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 32px"><input type="checkbox" checked="{{l.on}}" onChange="{{l.flip}}" style="width: 18px; height: 18px; accent-color: #1E5B3A">{{l.label}}</label>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid #DCE3DB">
+          <button type="button" onClick="{{reset}}" style="height: 36px; padding: 0 4px; border: 0; background: transparent; color: #1E5B3A; font: inherit; font-size: 13px; font-weight: 600; text-decoration: underline">Reset map</button>
+          <button type="button" onClick="{{toggle}}" style="height: 36px; padding: 0 16px; border: 0; border-radius: 9px; background: #1E5B3A; color: #FFFFFF; font: inherit; font-size: 13px; font-weight: 600">Done</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":420,"height":820}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.initial();
+  }
+  initial() {
+    return { open: true, mode: 'streets', overlay: 'rhythm', off: {}, layersOff: { roads: true, buildings: true } };
+  }
+  renderVals() {
+    const s = this.state;
+    const MODES = [['streets', 'Streets', 'background: #F1F2EC; border: 1px solid #DCE3DB'], ['satellite', 'Satellite', 'background: #5F7356'], ['minimal', 'Minimal', 'background: #FFFFFF; border: 1px solid #C9D1C7']];
+    const modes = MODES.map(([k, label, th]) => ({
+      label, checked: s.mode === k ? 'true' : 'false', pick: () => this.setState({ mode: k }),
+      thumb: 'display: block; height: 34px; border-radius: 6px; ' + th,
+      style: 'display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 4px; border-radius: 10px; background: #FFFFFF; font: inherit; font-size: 12px; '
+        + (s.mode === k ? 'border: 2px solid #1E5B3A; font-weight: 700; color: #123B25' : 'border: 1px solid #DCE3DB; color: #16231B')
+    }));
+    const OV = {
+      rhythm: { label: 'Flood rhythm', hint: 'How often each place had water, all passes', swatch: 'linear-gradient(90deg, #C6DBEF, #08306B)', title: 'Flood rhythm options', opts: [['perm', 'Show permanent water (grey)'], ['veg', 'Show possible flooded vegetation']] },
+      pass: { label: 'Single NISAR pass', hint: 'Water on one date; pick it on the timeline', swatch: '#2171B5', title: 'Single pass options', opts: [['hh', 'Radar image underneath (HH)'], ['cmp', 'Compare two passes with a swipe']] },
+      motion: { label: 'Ground motion', hint: 'Line-of-sight motion, 23 Jun – 21 Oct', swatch: 'linear-gradient(90deg, #7B3294, #F2F0F2, #1B7837)', title: 'Ground motion options', opts: [['outline', 'Outline often-flooded areas'], ['ref', 'Show reference area']] },
+      scenario: { label: 'Flood scenario', hint: 'Exploratory what-if for a chosen month', swatch: 'repeating-linear-gradient(45deg, #6B5A9E 0 2px, #E7E3F1 2px 5px)', title: 'Scenario options', opts: [['rhythm', 'Show observed flood rhythm underneath']] }
+    };
+    const overlays = Object.keys(OV).map((k) => {
+      const on = s.overlay === k;
+      return {
+        label: OV[k].label, hint: OV[k].hint, checked: on ? 'true' : 'false', pick: () => this.setState({ overlay: k }),
+        swatch: 'width: 24px; height: 10px; flex: none; border-radius: 2px; background: ' + OV[k].swatch,
+        dot: 'width: 16px; height: 16px; flex: none; box-sizing: border-box; border-radius: 50%; ' + (on ? 'border: 5px solid #1E5B3A' : 'border: 2px solid #8A968D'),
+        style: 'display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 8px; border: 0; border-radius: 8px; font: inherit; font-size: 13px; text-align: left; color: #16231B; '
+          + (on ? 'background: #E3EFE7; font-weight: 600' : 'background: transparent')
+      };
+    });
+    const cur = OV[s.overlay];
+    const opts = cur.opts.map(([k, label]) => ({ label, on: !s.off[k], flip: () => this.setState({ off: { ...s.off, [k]: !s.off[k] } }) }));
+    const LAYERS = [['bgy', 'Barangay boundaries'], ['labels', 'Place labels'], ['roads', 'Roads'], ['rivers', 'Rivers and waterways'], ['study', 'Study area outline'], ['buildings', 'Buildings (OpenStreetMap)']];
+    const layers = LAYERS.map(([k, label]) => ({ label, on: !s.layersOff[k], flip: () => this.setState({ layersOff: { ...s.layersOff, [k]: !s.layersOff[k] } }) }));
+    const nOn = LAYERS.filter(([k]) => !s.layersOff[k]).length;
+    const modeName = MODES.find(([k]) => k === s.mode)[1];
+    return {
+      open: s.open, expanded: s.open ? 'true' : 'false',
+      toggle: () => this.setState({ open: !s.open }),
+      reset: () => this.setState(this.initial()),
+      summary: cur.label + ' · ' + modeName + ' · ' + nOn + ' layers',
+      btnStyle: 'display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px 0 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(20,30,40,0.12); font: inherit; font-size: 13px; font-weight: 700; '
+        + (s.open ? 'background: #E3EFE7; border: 1px solid #1E5B3A; color: #123B25' : 'background: #FFFFFF; border: 1px solid #DCE3DB; color: #16231B'),
+      modes, overlays, opts, optTitle: cur.title, layers
+    };
+  }
+}
+</script>
+</body>
+</html>
