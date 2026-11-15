@@ -1,4 +1,4 @@
-# Antigravity task list: small frontend tasks for 15 Nov 2026
+# Antigravity task list for 15 Nov 2026 (current: Round 2, A7)
 
 Antigravity: read `AGENTS.md` first for context, rules and how to run. This file gives you a **short list of small, needed tasks** that don't overlap with Codex (`docs/CODEX_TASKS.md`), which is working on the backend and the real NISAR run.
 
@@ -12,6 +12,40 @@ Coding freezes at 17:00 Manila time. Each task is meant to take 30–90 minutes.
 - **Before each push:** `cd frontend && npm run lint && npm run build` must pass.
 - **Rules from `AGENTS.md` section 2 apply in full.** No invented numbers, stories or references. Synthetic data keeps its badge. Say "exposure", not "damage". Say "line-of-sight motion", not "sinking".
 - **Running the app:** start the backend with `cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000`, then the frontend with `cd frontend && npm run dev`. Don't use fixture mode for checking; it's for development only.
+
+## Round 2 (15 Nov, about 13:15): A7, the real-data copy and new layers. Do this now.
+
+A6 is merged into `main` (thank you). The app now serves **real NISAR data**; read the "v6 decision" section at the top of `docs/SUBMISSION_SCOPE.md` first. Work on a new branch **`antigravity/a7-real-data`** from the latest `main`. Same boundaries as before (`frontend/` only, plus your status and Filipino review docs). Same checks before each push: lint, build, `test:api`.
+
+To see real data locally you need the real product. Regenerate it with the two commands in that section (needs `EARTHDATA_TOKEN`), or ask the coordinator.
+
+### A7.1 Wording (do first; about 30 min)
+- Remove every claim that NISAR shows **flooded streets**. Flood rhythm describes "open water on land that is usually dry"; e.g. the plain-words text "darker blue shows streets that flooded again and again" must change.
+- Generate the findings headline and "In plain words" from the API values. Never hard-code numbers. With the real data, the headline reads like "0.37 km² of usually-dry land had open water on half or more of NISAR's passes".
+- Search `i18n.js` and the components for "street", "flooded streets", "damage" and "sinking", and fix each, in both English and Filipino (Filipino marked pending review).
+
+### A7.2 "What NISAR can and can't see" (about 45 min)
+Add a fifth card to "How radar sees" and a short note in the Flood rhythm findings, opened from the "?":
+- Calm open water reflects the radar away and looks **dark**.
+- In a flooded street, the radar bounces off the water and then a wall straight back to the satellite (**double-bounce**), so the street looks **bright**, not dark. Narrow streets, building shadows and layover also hide the street surface.
+- NISAR passes CAMANAVA at about **05:30 Manila time** every 12 days, so floods that rise in the afternoon and drain overnight are missed.
+- The radar does see the whole area get "wetter" after rainy weeks: built-up and open land brighten together (Spearman ρ = 0.80 with 7-day rain, n = 11). This is general wetness, not a flood map.
+
+### A7.3 IMERG rain timing (about 60 min; after the coordinator adds the endpoint)
+`GET /api/v1/climate/imerg/passes?area=camanava_2026` (see `docs/API_CONTRACT.md`) returns, for each NISAR pass, the half-hourly NASA GPM IMERG rain over the 48 hours before the pass, with totals and "hours since the last rain".
+- **Season:** in the findings for the selected pass, add a card "Rain before this pass (NASA GPM IMERG)" with the last-24 h and last-48 h totals, the peak and when it was, and "last heavy rain N h before the pass". Add a small half-hourly bar sparkline ending at the pass time, marked "pass 05:30".
+- **Spot card:** one line, "Rain in the 24 h before this pass: X mm (GPM IMERG, ~11 km cell)".
+- Badge: "NASA GPM IMERG". Show the API's limitations in the Limits drawer. A null total means "incomplete data", not 0.
+
+### A7.4 Ground motion and priority zones (about 30 min)
+- **Ground motion:** a clear unavailable state: "Not available yet. Four months of NISAR interferograms are dominated by ionospheric noise; ground motion needs a longer record and ionosphere correction." Keep the "How radar sees" InSAR card.
+- If you add literature context, use only references already verified in `docs/HYPOTHESES_SOURCES.md` (the Codex section, e.g. Eco et al. 2020). Label it "Published study (not NISAR)" and give no numbers that aren't in that file.
+- **Priority zones:** "Not available: needs ground motion."
+
+### A7.5 Real-data screenshots (about 20 min)
+Re-take every mode at 1366×768, plus the phone view, against the real product, into `frontend/screenshots/v2-real/`. Check that no Demo tags remain on NISAR values.
+
+**Done when:** no copy claims flooded streets; the explainer card exists in English and Filipino; IMERG timing shows in Season and the spot card; Ground motion and priority zones show honest unavailable states; real screenshots are committed; lint, build and `test:api` pass; and `docs/ANTIGRAVITY_STATUS.md` is updated. Push the branch and tell the owner; the coordinator reviews and merges.
 
 ## Status update (15 Nov, coordinator): do A6, then A2 and A5
 

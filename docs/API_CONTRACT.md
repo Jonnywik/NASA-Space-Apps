@@ -183,3 +183,31 @@ Data and licences (full detail with sha256 in `backend/data/cache/places/manifes
 Script `50_priority_zones.py` writes `priority_mask.tif` (0/1, nodata 255) and `priority_manifest.json` alongside the NISAR product. The manifest binds the output and source hashes, motion run, threshold, sensitivity and exposure. Both spot-check and `/places/exposure?mask=priority` require intact priority provenance and reject changed flood/motion inputs. Synthetic provenance propagates from either input. The script rejects upsampling a coarser flood mask onto a finer motion grid; preparing a coarser common motion product is required for that case.
 
 `GET /api/v1/validation?area=camanava_2026` reads offline comparison results. A valid measured comparison returns `dataKind: derived`, `status: partial`, `agreement` (confusion matrix, validPixels, overallAgreement, F1 and IoU), source metadata, generatedAt, nativeResolution, units, warnings and limitations. Missing/invalid/literature-only caches return 404 `data_unavailable`; unknown area returns 404 `unknown_area`. Literature context and synthetic fixtures do not establish observed validation. Script `60_validation.py` requires normalized binary rasters, compatible north-up CRS grids and documented independent-source provenance. Acquisition dates must be within two days.
+
+## IMERG rain before NISAR passes (coordinator, 15 Nov)
+
+### `GET /climate/imerg/passes?area=camanava_2026&series=true|false`
+Served from `backend/data/cache/climate/imerg_passes.json`, which `scripts/31_fetch_imerg_passes.py` writes. It needs `EARTHDATA_TOKEN` and the owner's GES DISC data-use approval; the file is committed, so the API needs no token. Returns 404 `data_unavailable` if the file is absent.
+
+```json
+{
+  "schemaVersion": "1.0", "area": "camanava_2026", "dataKind": "observed", "retrievedAt": "...",
+  "source": {"name": "NASA GPM IMERG Late Run half-hourly V07 (GPM_3IMERGHHL)", "url": "...", "doi": "10.5067/GPM/IMERG/3B-HH-L/07", "provider": "NASA GES DISC"},
+  "units": {"rate": "mm/hr", "totals": "mm"},
+  "nativeResolution": "0.1 degree (about 11 km), 30 minutes",
+  "spatialAggregation": "mean of the 0.1-degree cells overlapping the study bbox [...] (N cells)",
+  "hoursBeforePass": 48, "rainThresholdMmHr": 1.0,
+  "passes": [{
+    "date": "2026-08-10", "acquisitionTime": "2026-08-10T21:30:32Z", "acquisitionTimeManila": "2026-08-11T05:30:32+08:00",
+    "last3hMm": 0.0, "last6hMm": 0.0, "last12hMm": 0.4, "last24hMm": 3.1, "last48hMm": 20.6,
+    "peakMmHr": 6.2, "peakAt": "2026-08-09T...Z",
+    "hoursSinceRain": 30.5, "hoursSinceRainNote": "hours since the last half-hour with an area-mean rate >= 1.0 mm/hr",
+    "missingHalfHours": 0,
+    "series": [{"start": "...Z", "end": "...Z", "meanMmHr": 0.2, "maxCellMmHr": 0.9}]
+  }],
+  "limitations": ["..."], "warnings": []
+}
+```
+- The values above are illustrative of the shape only; read the real file.
+- **Totals are `null` if any half-hour in the window is missing.** `hoursSinceRain` is `null` when no half-hour reached the threshold; the note says which.
+- `series=false` drops the half-hourly series and keeps only the totals.

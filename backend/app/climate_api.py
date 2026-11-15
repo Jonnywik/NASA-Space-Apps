@@ -388,4 +388,19 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
                                 "'catalogue_only' means the data exists but is not processed into Tanaw",
                                 "dates are the first and last scenes over the study bounding box"]}
 
+    @router.get("/climate/imerg/passes")
+    def imerg_passes(area: str = AREA_ID, series: bool = True):
+        """NASA GPM IMERG half-hourly rain in the hours before each NISAR pass (written by scripts/31)."""
+        check_area(area)
+        path = cache / "imerg_passes.json"
+        if not path.is_file():
+            raise err(404, "data_unavailable", "IMERG rain before NISAR passes has not been fetched (run scripts/31_fetch_imerg_passes.py)")
+        try:
+            doc = json.loads(path.read_text())
+        except (OSError, ValueError):
+            raise err(503, "upstream_unavailable", "the cached IMERG file could not be read")
+        if not series:
+            doc = {**doc, "passes": [{k: v for k, v in p.items() if k != "series"} for p in doc.get("passes", [])]}
+        return doc
+
     return router

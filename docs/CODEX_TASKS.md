@@ -4,6 +4,31 @@ Codex: read `AGENTS.md` first (context, rules, how to run). This file gives you 
 
 Written 15 Nov 2026, about 01:30 Manila time. Coding freezes at 17:00.
 
+## Round 2 (15 Nov, about 13:15): do these now
+
+**State:** T1 was run by the coordinator on real data and is published. T2 was attempted and stopped: ionosphere noise, undocumented phase sign, 4-month record. NISAR soil moisture and NASA GPM IMERG rain were added. Antigravity's A6 redesign is merged. Read the "v6 decision" section of `docs/SUBMISSION_SCOPE.md` and the runbook sections "Real run results", "Ground motion (T2)" and "Soil moisture" first. Work on `main` in `Jonnywik/NASA-SA-Final`, backend and docs only (Antigravity owns `frontend/`). Pull before you start, and run the full backend suite before each push.
+
+The real NISAR product is not in git (376 MB). Regenerate it with the two commands in the v6 section (needs `EARTHDATA_TOKEN`).
+
+### R2.1 Fix the GUNW wavelength (15 min)
+`backend/processing/nisar_flood/gunw_chain.py` hard-codes 1.2575 GHz → 0.2384 m. The real GUNW file's `science/LSAR/GUNW/grids/frequencyA/centerFrequency` is **1.239 GHz → 0.2420 m**. Read the centre frequency from the file in `inspect_local_file`/`build_ingest_config` and use it. Fall back to the constant only if absent, with a warning. Add a test.
+
+### R2.2 T5 validation with OPERA DSWx-S1 (about 90 min)
+The catalogue (CMR `C2949811996-POCLOUD`) has 40 DSWx-S1 granules on tile T51PTS matching 10 of the 11 NISAR passes within ±2 days (see `docs/SOURCE_REVIEW.md`).
+- **Access:** downloads are at PO.DAAC (`archive.podaac.earthdata.nasa.gov`) behind Earthdata Login. If you work in a cloud session, ask the owner to add the token for that host and allow its redirect host. On a laptop, `EARTHDATA_TOKEN` works if the PO.DAAC app is approved in the owner's Earthdata profile.
+- Normalise DSWx classes to open water / not water / nodata using the product spec, crop to the study bbox and reproject to the coarser grid. Compare with the **total open water** per pass (NISAR water including permanent water, not the flood-only mask) using `processing/validation/metrics.compare_rasters`.
+- Report agreement, F1, IoU and confusion per pass, plus a **±1 dB threshold sensitivity** for NISAR. Write `docs/VALIDATION.md` honestly, including disagreements, and serve the result at `/api/v1/validation`.
+
+### R2.3 T7 README truth pass (about 60 min; must be done before 16:30)
+- Rewrite the README's top story to the v6 framing.
+- Put **Limitations first**: no visible street flooding, 05:30 passes, ground motion not available, provisional products.
+- Set each row of the challenge table to **real / real-but-limited / unavailable / cut**.
+- Fill `docs/DATA_MANIFEST.md` with the exact NISAR GCOV, GUNW and SME2 granules used (from the manifests in `backend/data/cache/nisar/`), plus IMERG, POWER, WorldPop, WorldCover, COD-AB, OSM, Open-Meteo and OPERA. Include product IDs, versions and retrieval dates.
+- Add a "Reproduce" section with the exact command sequence (scripts 19, 23, 20, 25, 31, then the API and frontend).
+
+### R2.4 After the freeze (not today)
+The T2 research path: get the GUNW phase sign from the RIFG/RUNW spec or ISCE3, confirm the ionosphere-screen sign, apply tropospheric correction, and wait for a longer record.
+
 ## 0. Who is working on what right now
 
 | Worker | Owns | Status |

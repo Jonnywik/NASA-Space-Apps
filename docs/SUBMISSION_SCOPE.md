@@ -1,10 +1,46 @@
-# Tanaw: submission scope v5
+# Tanaw: submission scope v5, with the v6 decision below
 
 Written at about 00:30 on 15 Nov (Manila). Coding freezes at 17:00 on 15 Nov. **Team:** one coordinator plus three AI agents; everyone is from Metro Manila. **Video:** 30 seconds. **A Filipino reviewer is available. There is no external expert.**
 
 This overrides sections 3, 11 and 16 of `Tanaw-final-development-plan.md`. Its honesty rules apply in full: no silent sample data, no relabelling Sentinel-1 as NISAR, and no number without a source.
 
 **Target:** close every gap a judge could name. No score is guaranteed.
+
+## v6 decision (15 Nov, about 13:15 Manila): real NISAR results, reframed story
+
+**This section overrides the story (section 1), the video (section 6) and the feature claims below wherever they conflict.** The owner chose to publish the real NISAR results and reframe the story around them (option 1). Real-run details are in `docs/NISAR_RUNBOOK.md` ("Real run results", "Ground motion (T2)", "Soil moisture").
+
+### What the real NISAR data shows (track 140 A / frame 9, 11 passes, 23 Jun – 2 Nov 2026)
+- **Open-water flooding outside permanent water is small:** 0.13–0.57 km² per pass. Flood rhythm: **0.37 km²** flooded on half or more of the passes, **0.99 km²** flooded at least once, in a 419 km² study window. The often-flooded area holds about **223 people** (WorldPop 2020) and **0 OSM buildings**. The flagged areas are north-west wetlands and fishponds and a strip of reclaimed coast, **not dense urban streets.**
+- **Why streets don't show:** flooded streets look *bright* to L-band (water–wall double-bounce), not dark. Many streets are narrower than the 10 m grid, buildings cast radar shadow and layover, and every pass is at about 05:30 Manila time, so afternoon floods that drain by morning are missed.
+- **Radar brightness tracks rain:** built-up and open land brighten after wet weeks (Spearman ρ = 0.80 against 7-day NASA POWER rain, n = 11). This is general wetness, not a flood map.
+- **Ground motion is not usable yet:** the 9 real interferograms are dominated by ionospheric noise (40–60 mm across the area), the phase sign isn't stated in the product spec, and 4 months is too short. **No ground-motion result is shown as a NISAR measurement.**
+- **NISAR soil moisture (SME2)** is retrievable for only 5–7 % of study cells (farmland at the edges), and doesn't track rain (ρ = −0.33, n = 9).
+
+### New story (use for the video, README and project page)
+> **"NISAR sees CAMANAVA every 12 days, through clouds and rain. Here is what its L-band radar shows about our flooding, and what it can't see yet."**
+
+1. **What it sees:** open water in the wetlands and fishponds at the edge of CAMANAVA, and the whole area getting "wetter" to the radar after rainy weeks.
+2. **What it can't see:** flooded city streets, which look bright rather than dark, and floods that come and go between 05:30 passes. NASA GPM IMERG half-hourly rain shows how long before each pass the rain fell.
+3. **What's next:** a longer NISAR record with ionosphere correction for ground motion, and brightening- or coherence-based urban flood detection. These are future work, never presented as results.
+
+This is honest and still NISAR-centred. Judges score Validity and Relevance higher for a real result explained well than for a synthetic map.
+
+### What changes in the app
+- Every NISAR layer is now real (`dataKind` "observed" or "derived"). Demo tags disappear automatically.
+- **No copy may say NISAR shows flooded streets.** Flood rhythm describes "open water on usually-dry land".
+- **Priority zones** stay unavailable, because they need ground motion.
+- **Ground motion** shows "not available yet" with the reason; published subsidence studies may appear as literature context, labelled as not NISAR.
+- **New:** IMERG rain timing per pass (`GET /api/v1/climate/imerg/passes`, see `docs/API_CONTRACT.md`).
+
+### Getting the real product on another machine
+The real product folder (`backend/data/output/camanava_2026/nisar/`, 376 MB) is gitignored. Regenerate it in about 5 minutes with an Earthdata token; the exact rule is committed:
+
+```
+cd backend
+python scripts/23_worldcover_water_mask.py --dilate-px 1
+python scripts/20_nisar_flood_rhythm.py --manifest data/cache/nisar/nisar_manifest_t140_A_f009_m4005.json --rule-file data/cache/nisar/water_rule_t140_A_f009.json --permanent-mask data/cache/places/worldcover_water_mask.tif --landcover data/cache/places/esa_worldcover_2021_clip.tif
+```
 
 ## 0. What changed in v5
 
