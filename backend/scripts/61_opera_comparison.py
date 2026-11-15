@@ -21,6 +21,7 @@ from processing.nisar_flood.geo import Grid, study_mask, pixel_area_km2
 from processing.nisar_flood.pipeline import raster_on_grid
 from processing.nisar_flood.water import WaterRule
 from processing.validation.metrics import sensitivity
+from app.product_binding import product_fingerprint
 COLLECTION = 'C2949811996-POCLOUD'
 MATCHES = [('20260915', 'G4361329706-POCLOUD'), ('20261009', 'G4361778874-POCLOUD'),
            ('20261102', 'G4408674689-POCLOUD')]
@@ -142,7 +143,8 @@ def main():
             'nisar': {'dataKind': 'derived', 'date': entry['date'], 'acquisitionTime': entry['acquisitionTime'],
                       'source': 'NISAR L2 GCOV threshold-derived total open water', 'url': entry['source']['url'],
                       'productId': entry['productId'], 'dbSha256': asset['sha256'], 'binarySha256': digest(normalized),
-                      'rule': rule, 'productManifestSha256': digest(manifest_path)},
+                      'rule': rule, 'productManifestSha256': digest(manifest_path),
+                      'productFingerprint': product_fingerprint(manifest)},
             'reference': {'dataKind': 'derived', 'date': ref['time_start'][:10], 'acquisitionTime': ref['time_start'],
                           'source': 'OPERA DSWx-S1 BWTR total water', 'url': f'https://cmr.earthdata.nasa.gov/search/concepts/{concept}.html',
                           'granuleId': concept, 'productId': ref['title'], 'sourceMd5': md5,

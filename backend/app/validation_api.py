@@ -3,6 +3,7 @@ import json
 import hashlib
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
+from app.product_binding import bound_to_product
 
 
 def make_router(output_root, read_public_events):
@@ -19,10 +20,8 @@ def make_router(output_root, read_public_events):
                 result = json.loads(path.read_text(encoding="utf-8"))
                 sources = result.get("source", {})
                 product = Path(output_root) / area / "nisar" / "manifest.json"
-                expected = sources.get("nisar", {}).get("productManifestSha256") if isinstance(sources, dict) else None
-                current = hashlib.sha256(product.read_bytes()).hexdigest() if product.is_file() else None
                 if (result.get("area") == area and result.get("dataKind") == "derived"
-                        and expected and expected == current
+                        and isinstance(sources, dict) and bound_to_product(sources.get("nisar"), product)
                         and result.get("status") == "partial" and isinstance(sources, dict)
                         and all(isinstance(sources.get(name), dict)
                                 and sources[name].get("dataKind") in ("observed", "derived")
@@ -43,9 +42,8 @@ def make_router(output_root, read_public_events):
         product = Path(output_root) / area / "nisar" / "manifest.json"
         try:
             result = json.loads(path.read_text(encoding="utf-8"))
-            current = hashlib.sha256(product.read_bytes()).hexdigest()
             if (result.get("area") == area and result.get("dataKind") == "derived"
-                    and result.get("productManifestSha256") == current
+                    and bound_to_product(result, product)
                     and isinstance(result.get("correlations"), list)):
                 return result
         except (ValueError, OSError, AttributeError, TypeError):
@@ -62,9 +60,8 @@ def make_router(output_root, read_public_events):
         product = Path(output_root) / area / "nisar" / "manifest.json"
         try:
             result = json.loads(path.read_text(encoding="utf-8"))
-            current = hashlib.sha256(product.read_bytes()).hexdigest()
             if (result.get("area") == area and result.get("dataKind") == "derived"
-                    and result.get("productManifestSha256") == current
+                    and bound_to_product(result, product)
                     and isinstance(result.get("geometryAgreement"), dict)):
                 return result
         except (ValueError, OSError, AttributeError, TypeError):

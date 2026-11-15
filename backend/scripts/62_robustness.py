@@ -29,6 +29,7 @@ from scipy.stats import rankdata
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from processing.nisar_flood import extras as ex  # noqa: E402
 from processing.nisar_flood.geo import Grid  # noqa: E402
+from app.product_binding import product_fingerprint  # noqa: E402
 
 BACKEND = Path(__file__).resolve().parent.parent
 PRODUCT = BACKEND / "data" / "output" / "camanava_2026" / "nisar" / "manifest.json"
@@ -106,6 +107,7 @@ def main():
     out = {"schemaVersion": "1.0", "area": "camanava_2026", "dataKind": "derived",
            "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "productManifestSha256": __import__("hashlib").sha256(PRODUCT.read_bytes()).hexdigest(),
+           "productFingerprint": product_fingerprint(product),
            "passDates": dates, "rain48hMm": rain48.tolist(), "correlations": []}
     out["correlations"].append(correlation_report(open_water, rain48, "Open water outside permanent water vs 48 h IMERG rain"))
 

@@ -10,6 +10,7 @@ from urllib.parse import quote
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from app.validation_api import make_router as validation_router
+from app.product_binding import bound_to_imerg, bound_to_product
 
 PREFIX = "/api/v1"
 AREA = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -96,8 +97,8 @@ def make_router(output_root, read_public_events):
             try:
                 gif = (cache / "nisar" / "timelapse.gif").read_bytes()
                 if (hashlib.sha256(gif).hexdigest() == sidecar.get("gifSha256")
-                        and hashlib.sha256(manifest_path.read_bytes()).hexdigest() == sidecar.get("productManifestSha256")
-                        and hashlib.sha256((cache / "climate" / "imerg_passes.json").read_bytes()).hexdigest() == sidecar.get("imergCacheSha256")):
+                        and bound_to_product(sidecar, manifest_path)
+                        and bound_to_imerg(sidecar, cache / "climate" / "imerg_passes.json")):
                     add("timelapse", "NISAR season timelapse", "GIF", "timelapse.gif", gif, "NASA–ISRO NISAR via ASF; NASA GPM IMERG via NASA GES DISC", "derived")
             except OSError:
                 pass

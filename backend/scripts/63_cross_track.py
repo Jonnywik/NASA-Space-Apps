@@ -32,6 +32,7 @@ from scipy.stats import rankdata
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
 from processing.nisar_flood.extras import LANDCOVER_NAMES  # noqa: E402
+from app.product_binding import product_fingerprint  # noqa: E402
 
 ASC = BACKEND / "data/output/camanava_2026/nisar"
 DESC = BACKEND / "data/output/camanava_2026/nisar_t032D"
@@ -168,6 +169,7 @@ def main():
     doc = {"schemaVersion": "1.0", "area": "camanava_2026", "dataKind": "derived",
            "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "productManifestSha256": sha(ASC / "manifest.json"),
+           "productFingerprint": product_fingerprint(asc),
            "descendingManifestSha256": sha(DESC / "manifest.json"),
            "title": "Independent check: NISAR track 32 descending (18:24 Manila)",
            "ascending": {"track": "140 A frame 9", "passes": asc["passCount"], "localTime": "05:30",

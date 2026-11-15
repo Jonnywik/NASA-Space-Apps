@@ -49,7 +49,8 @@
           "warnings": []
         }
       },
-      "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc"
+      "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc",
+      "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
     },
     "reference": {
       "dataKind": "derived",
@@ -162,7 +163,8 @@
               "warnings": []
             }
           },
-          "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc"
+          "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc",
+          "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
         },
         "reference": {
           "dataKind": "derived",
@@ -263,7 +265,8 @@
               "warnings": []
             }
           },
-          "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc"
+          "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc",
+          "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
         },
         "reference": {
           "dataKind": "derived",
@@ -363,7 +366,8 @@
               "warnings": []
             }
           },
-          "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc"
+          "productManifestSha256": "b947b54d84f77372536c6202c7e8ac4af2768be2b673a47d8a2ecef2819fedbc",
+          "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
         },
         "reference": {
           "dataKind": "derived",

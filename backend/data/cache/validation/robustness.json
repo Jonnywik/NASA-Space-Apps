@@ -155,5 +155,6 @@
    }
   ],
   "note": "Expected 24-day coherence = (median 12-day coherence)^2 (Markov decorrelation). This is an approximation; real decorrelation often levels off, so the corrected figure is a conservative lower bound."
- }
+ },
+ "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
 }

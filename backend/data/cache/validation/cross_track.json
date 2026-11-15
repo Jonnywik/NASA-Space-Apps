@@ -305,5 +305,6 @@
   "OPERA scenes are about 24 hours before each NISAR pass; water can change in a day.",
   "Total water includes permanent and coastal water, so these scores do not measure flood-only accuracy.",
   "Provisional NISAR products; the descending track uses its own Manila Bay calibration."
- ]
+ ],
+ "productFingerprint": "39bc24fb213deb77f4eebc3e4fd61de1b04c148b65e8cd643de7dda546d054ee"
 }

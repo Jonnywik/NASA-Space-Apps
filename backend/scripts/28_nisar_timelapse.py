@@ -12,6 +12,9 @@ PRODUCT = BACKEND / "data/output/camanava_2026/nisar"
 RAIN = BACKEND / "data/cache/climate/imerg_passes.json"
 OUTPUT = BACKEND / "data/cache/nisar/timelapse.gif"
 MANILA = timezone(timedelta(hours=8))
+import sys  # noqa: E402
+sys.path.insert(0, str(BACKEND))
+from app.product_binding import imerg_fingerprint, product_fingerprint  # noqa: E402
 
 
 def digest(path):
@@ -80,7 +83,9 @@ def build(product=PRODUCT, rain_path=RAIN, output=OUTPUT):
         output.parent.mkdir(parents=True, exist_ok=True)
         frames[0].save(output, save_all=True, append_images=frames[1:], duration=1200, loop=0, optimize=False, disposal=2)
         provenance = {"dataKind": "derived", "gifSha256": digest(output), "productManifestSha256": digest(manifest_path),
-                      "imergCacheSha256": digest(rain_path), "source": "NASA-ISRO NISAR L2 GCOV via ASF; NASA GPM IMERG via GES DISC"}
+                      "imergCacheSha256": digest(rain_path),
+                      "productFingerprint": product_fingerprint(json.loads(manifest_path.read_text())),
+                      "imergFingerprint": imerg_fingerprint(json.loads(rain_path.read_text())), "source": "NASA-ISRO NISAR L2 GCOV via ASF; NASA GPM IMERG via GES DISC"}
         output.with_suffix(".json").write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
     except (OSError, KeyError, ValueError, TypeError) as exc:
         raise ValueError(f"Cannot build timelapse: real NISAR product or IMERG cache missing/invalid: {exc}") from exc
