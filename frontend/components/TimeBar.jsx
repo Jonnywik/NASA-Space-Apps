@@ -96,7 +96,7 @@ export default function TimeBar({ mode, passes, idx, onIdx, playing, onPlaying, 
                   className={at.ok ? "font-medium text-[#1E5B3A]" : "text-[#7A847D] line-through"}
                   title={at.ok ? "" : t(`hist.atDate.${at.why}`, { when: at.when })}
                 >
-                  {at.ok ? "✓" : "✗"} {ds.label.split(" (")[0]}
+                  {at.ok ? "✓" : "✗"} {String(ds.label ?? ds.id ?? "").split(" (")[0]}
                 </li>
               );
             })}
@@ -199,7 +199,7 @@ export default function TimeBar({ mode, passes, idx, onIdx, playing, onPlaying, 
               {first && last ? `${formatShortDate(first)} → ${formatShortDate(last)}` : t("mode.motion")}
             </div>
             <div className="text-[11px] text-[#4A5850]">
-              {count} passes · {Math.max(0, count - 1)} interferogram pairs
+              {t("motion.passCounts", { n: count, m: Math.max(0, count - 1) })}
             </div>
           </div>
 

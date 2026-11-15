@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Caveats, Section, SourceLine, Stat, StateNote, fmt } from "./ui";
+import { Caveats, Section, SourceLine, Stat, StateNote, fmt, fmtPct } from "./ui";
 import { useLang } from "../utils/LangContext";
 import { landCoverName } from "../utils/reasons";
 
@@ -70,7 +70,7 @@ export function RainResponseCard({ tier, onSources }) {
       testId="rain-response-card"
       stats={[
         { label: t("rainResp.medianRho"), value: fmt(d?.stats?.medianRho, 3) },
-        { label: t("rainResp.shareAbove05"), value: `${Math.round((d?.stats?.shareAbove05 ?? 0) * 100)}%` },
+        { label: t("rainResp.shareAbove05"), value: fmtPct(d?.stats?.shareAbove05) },
       ]}
       medianCol={t("rainResp.medianCol")}
       medianValue={(r) => r.median ?? r.medianRho}

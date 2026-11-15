@@ -1,7 +1,10 @@
 "use client";
 
-import { Caveats, Section, StateNote, Stat, fmt } from "./ui";
+import { Caveats, Section, StateNote, Stat, fmt, fmtPct } from "./ui";
 import { useLang } from "../utils/LangContext";
+
+// For i18n strings that already carry the "%" sign: null (shown as a dash) when the value is missing.
+const pctNumber = (v) => (typeof v === "number" && Number.isFinite(v) ? Math.round(v * 100) : null);
 
 export default function ValidationPanel({ tier, robustness, crossTrack }) {
   const { t } = useLang();
@@ -17,13 +20,13 @@ export default function ValidationPanel({ tier, robustness, crossTrack }) {
         <>
           <div className="grid grid-cols-2 gap-2">
             <Stat compact isDemo={isDemo} label={t("validation.pixels")} value={fmt(data.agreement?.validPixels, 0)} />
-            <Stat compact isDemo={isDemo} label="Intersection over union" value={fmt(data.agreement?.iou, 3)} />
+            <Stat compact isDemo={isDemo} label={t("validation.iou")} value={fmt(data.agreement?.iou, 3)} />
             <Stat compact isDemo={isDemo} label="F1" value={fmt(data.agreement?.f1, 3)} />
             <Stat compact isDemo={isDemo} label={t("validation.accuracy")} value={fmt(data.agreement?.overallAgreement, 3)} />
           </div>
           {Object.entries(data.source ?? {}).map(([key, source]) => (
             <p key={key} className="mt-2 text-[11px] text-[#4A5850]">
-              {key}: <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-[#1E5B3A] underline">{source.source}</a> · {source.date}
+              {t(`validation.source.${key}`)}: <a href={source?.url} target="_blank" rel="noreferrer" className="font-medium text-[#1E5B3A] underline">{source?.source}</a> · {source?.date}
             </p>
           ))}
           <Caveats data={data} />
@@ -34,17 +37,17 @@ export default function ValidationPanel({ tier, robustness, crossTrack }) {
           <h4 className="m-0 text-[13px] font-semibold text-[#16231B]">{t("xtrack.title")}</h4>
           <p className="m-0 text-[12px] text-[#4A5850]">{t("xtrack.lead")}</p>
           <div className="grid grid-cols-2 gap-2">
-            <Stat compact label={t("xtrack.sameSpots")} value={`${Math.round((xt.geometryAgreement?.shareAscendingNearDescending ?? 0) * 100)}%`} />
-            <Stat compact label={t("xtrack.chance")} value={`${((xt.geometryAgreement?.chanceShareMean ?? 0) * 100).toFixed(2)}%`} />
-            <Stat compact label={t("xtrack.descRhythm")} value={`${fmt(xt.descending?.halfOrMoreKm2, 2)} km²`} />
-            <Stat compact label={t("xtrack.ascRhythm")} value={`${fmt(xt.ascending?.halfOrMoreKm2, 2)} km²`} />
+            <Stat compact label={t("xtrack.sameSpots")} value={fmtPct(xt.geometryAgreement?.shareAscendingNearDescending)} />
+            <Stat compact label={t("xtrack.chance")} value={fmtPct(xt.geometryAgreement?.chanceShareMean, 2)} />
+            <Stat compact label={t("xtrack.descRhythm")} value={`${fmt(xt.descending?.halfOrMoreKm2, 2) ?? "—"} km²`} />
+            <Stat compact label={t("xtrack.ascRhythm")} value={`${fmt(xt.ascending?.halfOrMoreKm2, 2) ?? "—"} km²`} />
           </div>
           {xt.operaSummary && (
             <>
               <p className="m-0 text-[12px] font-medium text-[#16231B]">{t("xtrack.operaTitle", { n: xt.operaSummary.n })}</p>
               <div className="grid grid-cols-2 gap-2">
-                <Stat compact label="F1 (median)" value={fmt(xt.operaSummary.medianF1, 2)} />
-                <Stat compact label="IoU (median)" value={fmt(xt.operaSummary.medianIoU, 2)} />
+                <Stat compact label={t("validation.f1Median")} value={fmt(xt.operaSummary.medianF1, 2)} />
+                <Stat compact label={t("validation.iouMedian")} value={fmt(xt.operaSummary.medianIoU, 2)} />
                 <Stat compact label={t("xtrack.precision")} value={fmt(xt.operaSummary.medianPrecision, 2)} />
                 <Stat compact label={t("xtrack.recall")} value={fmt(xt.operaSummary.medianRecall, 2)} />
               </div>
@@ -73,7 +76,7 @@ export default function ValidationPanel({ tier, robustness, crossTrack }) {
               <li key={c.label} className="rounded-xl border border-[#DCE3DB] bg-white px-3 py-2 text-[12px] text-[#16231B]">
                 <div className="font-medium">{c.label}</div>
                 <div className="tabular-nums text-[#4A5850]">
-                  ρ {fmt(c.rho, 2)} · p {c.pPermutation < 0.001 ? "< 0.001" : fmt(c.pPermutation, 3)} · {t("robust.ci")} {fmt(c.bootstrap95?.[0], 2)} {t("robust.to")} {fmt(c.bootstrap95?.[1], 2)} · {c.signHoldsWithoutAnyOnePass ? t("robust.looHolds") : t("robust.looFails")}
+                  ρ {fmt(c.rho, 2) ?? "—"} · p {c.pPermutation == null ? "—" : c.pPermutation < 0.001 ? "< 0.001" : fmt(c.pPermutation, 3)} · {t("robust.ci")} {fmt(c.bootstrap95?.[0], 2) ?? "—"} {t("robust.to")} {fmt(c.bootstrap95?.[1], 2) ?? "—"} · {c.signHoldsWithoutAnyOnePass ? t("robust.looHolds") : t("robust.looFails")}
                 </div>
               </li>
             ))}
@@ -81,10 +84,13 @@ export default function ValidationPanel({ tier, robustness, crossTrack }) {
               <li className="rounded-xl border border-[#DCE3DB] bg-white px-3 py-2 text-[12px] text-[#16231B]">
                 <div className="font-medium">{t("robust.fieldTitle")}</div>
                 <div className="tabular-nums text-[#4A5850]">
-                  {t("robust.fieldBody", {
-                    obs: Math.round((rob.rainResponseField.observedShareAbove05 ?? 0) * 100),
-                    chance: Math.round((rob.rainResponseField.nullShareAbove05_95 ?? 0) * 100),
-                  })}
+                  {/* the robust.fieldBody text has its own "%" signs, so a gap is shown as a bare dash */}
+                  {pctNumber(rob.rainResponseField.observedShareAbove05) == null || pctNumber(rob.rainResponseField.nullShareAbove05_95) == null
+                    ? "—"
+                    : t("robust.fieldBody", {
+                        obs: pctNumber(rob.rainResponseField.observedShareAbove05),
+                        chance: pctNumber(rob.rainResponseField.nullShareAbove05_95),
+                      })}
                 </div>
               </li>
             )}

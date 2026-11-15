@@ -129,6 +129,11 @@ export function fmt(n, d = 1) {
   return typeof n === "number" && Number.isFinite(n) ? n.toLocaleString(undefined, { maximumFractionDigits: d }) : null;
 }
 
+// Fraction (0..1) as a percentage string; null when the value is missing, so a gap never reads as 0%.
+export function fmtPct(v, d = 0) {
+  return typeof v === "number" && Number.isFinite(v) ? `${(v * 100).toFixed(d)}%` : null;
+}
+
 export function formatResolution(r) {
   if (r == null) return null;
   if (typeof r === "string" || typeof r === "number") return String(r);

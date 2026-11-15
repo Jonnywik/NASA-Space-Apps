@@ -13,7 +13,8 @@ const STATE_GLYPH = { water: "■", dry: "□", nodata: "▨" };
 
 function streamTier(tier, key, wrap, t) {
   const stream = tier.data?.streams?.[key];
-  if (!stream) return tier;
+  // A ready response without this stream must not pass the whole response on as the stream's data.
+  if (!stream) return tier.data ? { state: "unavailable", data: null, error: null } : tier;
   if (stream.value == null) return { state: "unavailable", data: null, error: { detail: { message: t ? reasonText(t, stream.reason) : stream.reason } } };
   return { state: "ready", data: { ...stream, ...(wrap ? wrap(stream.value) : stream.value) }, error: null };
 }
