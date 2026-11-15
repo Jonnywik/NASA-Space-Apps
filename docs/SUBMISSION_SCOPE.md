@@ -22,14 +22,15 @@ This overrides sections 3, 11 and 16 of `Tanaw-final-development-plan.md`. Its h
 - **A second NISAR track reproduces the result independently.** Track 32 descending (10 passes at 18:24 Manila; track 140 passes at 05:30) with its own Manila Bay calibration (HH < −13.0 dB vs −12.5) finds 0.10–0.86 km² per pass and 0.43 km² recurring (vs 0.37). **99 % of the 05:30 track's recurring water lies within 30 m of the 18:24 track's** (random shift: 0.04 %), **0 km² on built-up land.** Even the evening passes, after the afternoon thunderstorms, show no street water.
 - **Validation went from 3 near matches (> 48 h apart) to 13 matches; 10 are same-time-of-day Sentinel-1C OPERA DSWx-S1 maps 24 h before each descending pass:** median F1 0.74, IoU 0.58, agreement 0.87, **precision 0.97**, recall 0.60.
 - **Headline correlations survive bootstrap, leave-one-out and permutation tests:** open water vs rain ρ −0.77 (p 0.008, always negative without any one pass), brightening vs rain ρ +0.93 / +0.94 (p < 0.001). The rain-response map is far beyond chance (70 % of cells > 0.5 vs ≤ 26 % with shuffled rain).
+- **Not reproduced: the rain link.** On the 18:24 track, open water vs 48 h IMERG rain gives ρ −0.15 (p 0.68) and brightening +0.35 (p 0.33), n = 10, even though several passes came 0.4–1.4 h after afternoon storms. Present "brighter after rain / less open water after rain" as **seen on the morning track only, not reproduced on the evening track**. Don't make it a headline. Do use the evening track in the story: **even 1–2 hours after a thunderstorm, NISAR shows no water on CAMANAVA's streets.**
 - **Downgraded: storm coherence loss.** After allowing for its 24-day interval, only 0.04–0.09 km² of loss remains, so the storm's effect is not separable. Keep the layer exploratory and never use it in the video.
 - Pitch line for Validity: *"Two NISAR orbits, morning and evening, processed separately, find the same water to within 30 m. Sentinel-1 agrees 97 % of the time when NISAR says water."*
 
 ### New story (use for the video, README and project page)
 > **"NISAR sees CAMANAVA every 12 days, through clouds and rain. Here is what its L-band radar shows about our flooding, and what it can't see yet."**
 
-1. **What it sees:** open water in the wetlands and fishponds at the edge of CAMANAVA, and the whole area getting "wetter" to the radar after rainy weeks.
-2. **What it can't see:** flooded city streets, which look bright rather than dark, and floods that come and go between 05:30 passes. NASA GPM IMERG half-hourly rain shows how long before each pass the rain fell.
+1. **What it sees:** open water in the wetlands and fishponds at the edge of CAMANAVA, found in the same places by two separate NISAR orbits (morning and evening) and confirmed by Sentinel-1. On the morning orbit, the area also looks "wetter" to the radar after rain (not reproduced on the evening orbit, so exploratory).
+2. **What it can't see:** flooded city streets, which look bright rather than dark, even on evening passes 1–2 hours after afternoon thunderstorms. NASA GPM IMERG half-hourly rain shows how long before each pass the rain fell.
 3. **What's next:** a longer NISAR record with ionosphere correction for ground motion, and brightening- or coherence-based urban flood detection. These are future work, never presented as results.
 
 This is honest and still NISAR-centred. Judges score Validity and Relevance higher for a real result explained well than for a synthetic map.

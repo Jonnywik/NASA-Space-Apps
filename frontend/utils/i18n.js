@@ -397,7 +397,7 @@ export const en = {
   "radar.limits.p2":
     "In a flooded street, the radar bounces off the water and then a wall straight back to the satellite (double-bounce), so the street looks bright, not dark. Narrow streets, building shadows and layover also hide the street surface.",
   "radar.limits.p3":
-    "NISAR passes CAMANAVA at about 05:30 Manila time every 12 days, so floods that rise in the afternoon and drain overnight are missed. The radar does see the whole area get 'wetter' after rainy weeks: built-up and open land brighten together (Spearman ρ = 0.80 with 7-day rain, n = 11). This is general wetness, not a flood map.",
+    "This orbit passes CAMANAVA at about 05:30 Manila time every 12 days; a second orbit passes at 18:24, after the afternoon thunderstorms. Even 1–2 hours after a storm, neither shows water on the streets. On the morning orbit, built-up and open land brighten together after rain (Spearman ρ = 0.93 with 48-hour IMERG rain, n = 11), but the evening orbit does not reproduce this, so it is exploratory general wetness, not a flood map.",
   "radar.limits.tip": "NISAR maps open water outside the usual water and general surface wetness, not flooded city streets.",
 };
 
@@ -776,7 +776,7 @@ export const fil = {
   "radar.limits.p2":
     "Sa binahang kalye, tumatalbog ang radar sa tubig tapos sa pader pabalik sa satellite (double-bounce), kaya nagmumukhang maliwanag ang kalye, hindi madilim. Tinatakpan din ng makikitid na kalye, anino ng gusali, at layover ang ibabaw ng kalye.",
   "radar.limits.p3":
-    "Dumaraan ang NISAR sa CAMANAVA bandang ~05:30 oras sa Maynila tuwing 12 araw, kaya hindi naaabot ang biglaang pagbaha sa hapon na humuhupa bago mag-umaga. Nakikita ng radar ang pangkalahatang pagbasa ng lupa pagkatapos ng maulang linggo: sabay na umiilaw ang lungsod at bukirin (Spearman ρ = 0.80 sa 7-araw na ulan, n = 11). Pangkalahatang halumigmig ito, hindi mapa ng baha.",
+    "Dumaraan ang orbit na ito sa CAMANAVA bandang 05:30 oras sa Maynila tuwing 12 araw; may ikalawang orbit nang 18:24, pagkatapos ng mga bagyong-kidlat sa hapon. Kahit 1–2 oras matapos ang ulan, walang tubig sa kalye na nakikita ang alinman. Sa orbit sa umaga, sabay na umiilaw ang lungsod at bukirin pagkatapos ng ulan (Spearman ρ = 0.93 sa 48-oras na ulan ng IMERG, n = 11), pero hindi ito naulit sa orbit sa gabi, kaya pang-eksplorasyon itong pangkalahatang halumigmig, hindi mapa ng baha.",
   "radar.limits.tip": "ipinapakita ng NISAR ang bukas na tubig sa labas ng karaniwang tubig at pangkalahatang basa sa ibabaw, hindi ang mga binahang kalye.",
 };
 
@@ -983,7 +983,7 @@ Object.assign(en, {
   "rainResp.landCoverCol": "Land cover",
   "rainResp.cellsCol": "Cells",
   "rainResp.medianCol": "Median ρ",
-  "rainResp.caption": "Exploratory. Brighter after rain usually means wetter ground or vegetation; it is not a flood map.",
+  "rainResp.caption": "Exploratory, 05:30 orbit only: the 18:24 orbit does not reproduce this link. Brighter after rain usually means wetter ground or vegetation; it is not a flood map.",
 
   "xtrack.title": "Independent check: a second NISAR track",
   "xtrack.lead": "Track 32 descending sees the same area from the other side at 18:24 Manila time (track 140 passes at 05:30). It was processed separately, with its own Manila Bay calibration.",
@@ -994,7 +994,8 @@ Object.assign(en, {
   "xtrack.operaTitle": "{n} Sentinel-1 OPERA water maps from the same time of day, 24 hours earlier",
   "xtrack.precision": "When NISAR says water, OPERA agrees",
   "xtrack.recall": "Share of OPERA water NISAR also finds",
-  "xtrack.rain": "On this track too, open water goes down after rain: ρ = {rho} (p = {p}) against 48-hour IMERG rain.",
+  "xtrack.rain": "Rain link: on this track, open water vs 48-hour IMERG rain gives ρ = {rho} (p = {p}), and land brightening ρ = {bright} (p = {bp}). The rain link seen on the 05:30 track is not reproduced here, so treat it as exploratory.",
+  "xtrack.rainYes": "Rain link reproduced on this track: open water vs 48-hour IMERG rain ρ = {rho} (p = {p}).",
   "xtrack.builtUp": "Recurring water found by both tracks on built-up land: {km2} km². Both see fishponds, paddies and wetland, not streets.",
   "robust.title": "How solid are these findings?",
   "robust.lead": "Each result was re-tested: shuffling the rain dates (permutation p), resampling the passes (95% range), and dropping one pass at a time.",
@@ -1230,7 +1231,7 @@ Object.assign(fil, {
   "rainResp.landCoverCol": "Takip ng lupa",
   "rainResp.cellsCol": "Mga cell",
   "rainResp.medianCol": "Median ρ",
-  "rainResp.caption": "Pang-eksplorasyon. Ang mas maliwanag pagkatapos ng ulan ay karaniwang mas basang lupa o halaman; hindi ito mapa ng baha.",
+  "rainResp.caption": "Pang-eksplorasyon, orbit sa 05:30 lang: hindi ito naulit sa orbit sa 18:24. Ang mas maliwanag pagkatapos ng ulan ay karaniwang mas basang lupa o halaman; hindi ito mapa ng baha.",
 
   "xtrack.title": "Hiwalay na pagsusuri: ikalawang track ng NISAR",
   "xtrack.lead": "Ang track 32 pababa ay tumitingin sa parehong lugar mula sa kabilang panig nang 18:24 oras sa Maynila (ang track 140 ay 05:30). Hiwalay itong naproseso, may sariling kalibrasyon sa Manila Bay.",
@@ -1241,7 +1242,8 @@ Object.assign(fil, {
   "xtrack.operaTitle": "{n} mapa ng tubig mula sa Sentinel-1 OPERA sa parehong oras ng araw, 24 oras na mas maaga",
   "xtrack.precision": "Kapag tubig ang sabi ng NISAR, sang-ayon ang OPERA",
   "xtrack.recall": "Bahagi ng tubig ng OPERA na nakita rin ng NISAR",
-  "xtrack.rain": "Sa track na ito rin, bumababa ang bukas na tubig pagkatapos ng ulan: ρ = {rho} (p = {p}) laban sa 48-oras na ulan ng IMERG.",
+  "xtrack.rain": "Ugnayan sa ulan: sa track na ito, ang bukas na tubig laban sa 48-oras na ulan ng IMERG ay ρ = {rho} (p = {p}), at ang pagliwanag ng lupa ay ρ = {bright} (p = {bp}). Hindi naulit dito ang ugnayang nakita sa track 05:30, kaya ituring itong pang-eksplorasyon.",
+  "xtrack.rainYes": "Naulit sa track na ito ang ugnayan sa ulan: bukas na tubig laban sa 48-oras na ulan ng IMERG ρ = {rho} (p = {p}).",
   "xtrack.builtUp": "Paulit-ulit na tubig na nakita ng dalawang track sa lupang may gusali: {km2} km². Palaisdaan, palayan at latian ang nakikita, hindi kalye.",
   "robust.title": "Gaano katibay ang mga resultang ito?",
   "robust.lead": "Sinubok muli ang bawat resulta: pinaghalo ang petsa ng ulan (permutation p), inulit ang pagpili ng mga pass (95% saklaw), at inalis ang isang pass sa bawat pagkakataon.",

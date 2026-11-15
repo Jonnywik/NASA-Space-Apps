@@ -52,7 +52,12 @@ export default function ValidationPanel({ tier, robustness, crossTrack }) {
           )}
           {xt.descending?.rainCorrelation && (
             <p className="m-0 text-[12px] text-[#4A5850]">
-              {t("xtrack.rain", { rho: fmt(xt.descending.rainCorrelation.rho, 2), p: fmt(xt.descending.rainCorrelation.pPermutation, 3) })}
+              {t(xt.rainLinkReplicated ? "xtrack.rainYes" : "xtrack.rain", {
+                rho: fmt(xt.descending.rainCorrelation.rho, 2),
+                p: fmt(xt.descending.rainCorrelation.pPermutation, 2),
+                bright: fmt(xt.descending.brighteningCorrelations?.[0]?.rho, 2),
+                bp: fmt(xt.descending.brighteningCorrelations?.[0]?.pPermutation, 2),
+              })}
             </p>
           )}
           <p className="m-0 text-[12px] text-[#4A5850]">{t("xtrack.builtUp", { km2: fmt(xt.geometryAgreement?.builtUpOverlapKm2, 2) })}</p>

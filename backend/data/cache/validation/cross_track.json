@@ -2,7 +2,7 @@
  "schemaVersion": "1.0",
  "area": "camanava_2026",
  "dataKind": "derived",
- "generatedAt": "2026-11-15T08:02:51Z",
+ "generatedAt": "2026-11-15T08:28:07Z",
  "productManifestSha256": "49c00d050b9414f113b7c5311ee8fe2b32696a6623a073871400dfedf4fc990c",
  "descendingManifestSha256": "f17b1f5a2e989be493b4f1efe2787bf8571f7e03132b1daeb435f61253c29131",
  "title": "Independent check: NISAR track 32 descending (18:24 Manila)",
@@ -38,61 +38,91 @@
     "date": "2026-06-28",
     "acquisitionTimeManila": "2026-06-28T18:24:00+08:00",
     "openWaterKm2": 0.8573,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 0.57
    },
    {
     "date": "2026-07-10",
     "acquisitionTimeManila": "2026-07-10T18:24:00+08:00",
     "openWaterKm2": 0.7832,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 23.69
    },
    {
     "date": "2026-07-22",
     "acquisitionTimeManila": "2026-07-22T18:23:59+08:00",
     "openWaterKm2": 0.8084,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 20.08
    },
    {
     "date": "2026-08-15",
     "acquisitionTimeManila": "2026-08-15T18:23:58+08:00",
     "openWaterKm2": 0.5387,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 50.83
    },
    {
     "date": "2026-08-27",
     "acquisitionTimeManila": "2026-08-27T18:23:57+08:00",
     "openWaterKm2": 0.1003,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 14.38
    },
    {
     "date": "2026-09-08",
     "acquisitionTimeManila": "2026-09-08T18:23:57+08:00",
     "openWaterKm2": 0.3836,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 23.79
    },
    {
     "date": "2026-09-20",
     "acquisitionTimeManila": "2026-09-20T18:23:57+08:00",
     "openWaterKm2": 0.4436,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 14.24
    },
    {
     "date": "2026-10-02",
     "acquisitionTimeManila": "2026-10-02T18:23:57+08:00",
     "openWaterKm2": 0.495,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 13.19
    },
    {
     "date": "2026-10-14",
     "acquisitionTimeManila": "2026-10-14T18:23:58+08:00",
     "openWaterKm2": 0.1088,
-    "maturity": "provisional"
+    "maturity": "provisional",
+    "rain48hMm": 3.13
    },
    {
     "date": "2026-10-26",
     "acquisitionTimeManila": "2026-10-26T18:23:58+08:00",
     "openWaterKm2": 0.5892,
-    "maturity": "v1"
+    "maturity": "v1",
+    "rain48hMm": 2.07
+   }
+  ],
+  "rainCorrelation": {
+   "label": "Open water outside permanent water vs 48 h IMERG rain",
+   "n": 10,
+   "rho": -0.152,
+   "pPermutation": 0.6781
+  },
+  "brighteningCorrelations": [
+   {
+    "label": "Mean HH change over built-up land vs 48 h IMERG rain",
+    "n": 10,
+    "rho": 0.345,
+    "pPermutation": 0.3274
+   },
+   {
+    "label": "Mean HH change over other land vs 48 h IMERG rain",
+    "n": 10,
+    "rho": 0.345,
+    "pPermutation": 0.3248
    }
   ]
  },
@@ -134,6 +164,8 @@
   ],
   "builtUpOverlapKm2": 0.0
  },
+ "rainLinkReplicated": false,
+ "rainLinkNote": "The rain link (less open water and brighter land after rain) is seen on the 05:30 track but not reproduced on the 18:24 track; the location of recurring water is.",
  "operaMatches": [
   {
    "nisarDate": "2026-06-28",

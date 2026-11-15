@@ -193,6 +193,31 @@ def main():
             doc["descending"]["rainCorrelation"] = {"label": "Open water outside permanent water vs 48 h IMERG rain",
                                                     "n": len(pairs), "rho": round(rho, 3), "pPermutation": round(p, 4)}
             print("  descending rain rho", round(rho, 3), "p", round(p, 4))
+            # brightening after rain, as in script 62, on the descending track
+            s62_spec = importlib.util.spec_from_file_location("s62", BACKEND / "scripts/62_robustness.py")
+            s62 = importlib.util.module_from_spec(s62_spec)
+            s62_spec.loader.exec_module(s62)
+            from processing.nisar_flood.geo import Grid
+            dates = [p_["date"] for p_ in manifest["passes"]]
+            stack, g = s62.load_hh_stack(dates)
+            lc = s62.landcover_on(Grid(crs=g["crs"], transform=tuple(g["transform"][:6]), width=g["width"], height=g["height"]))
+            with np.errstate(invalid="ignore", divide="ignore"):
+                db = 10 * np.log10(stack)
+            anomaly = db - np.nanmedian(db, axis=0)
+            r48 = [rain.get(d) for d in dates]
+            bright = []
+            for name, mask in (("built-up land", lc == 50), ("other land", (lc != 50) & (lc != 80) & (lc > 0))):
+                series = [float(np.nanmean(a[mask])) for a in anomaly]
+                b_rho, b_p = perm_p(series, r48)
+                bright.append({"label": f"Mean HH change over {name} vs 48 h IMERG rain", "n": len(dates),
+                               "rho": round(b_rho, 3), "pPermutation": round(b_p, 4)})
+                print(" ", bright[-1])
+            doc["descending"]["brighteningCorrelations"] = bright
+            asc_rob = BACKEND / "data/cache/validation/robustness.json"
+            doc["rainLinkReplicated"] = bool(rho < 0 and p < 0.05 and all(b["rho"] > 0 and b["pPermutation"] < 0.05 for b in bright))
+            doc["rainLinkNote"] = ("The rain link (less open water and brighter land after rain) is seen on the 05:30 track "
+                                   "but not reproduced on the 18:24 track" if not doc["rainLinkReplicated"] else
+                                   "The rain link is reproduced on both tracks") + "; the location of recurring water is."
     print("OPERA DSWx-S1 matches ...")
     doc["operaMatches"] = opera_matches(manifest)
     if doc["operaMatches"]:
