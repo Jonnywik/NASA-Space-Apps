@@ -1,6 +1,6 @@
 # Tanaw documentation
 
-Start with the [project README](../README.md) for what Tanaw is and how to run it.
+Start with the [project README](../README.md) for what Tanaw is, what it found and how to run it. Developers: see [DEVELOPERS.md](DEVELOPERS.md).
 
 ## Core references
 | Document | What it covers |
