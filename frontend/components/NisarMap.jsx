@@ -115,8 +115,9 @@ function MapLegend({ mode, passCount, showVeg, losScale, hasPoint, isDemo, extra
   }
 
   if (mode === "motion") {
-    const minVal = losScale ? `−${Math.round(losScale.maxAbs)}` : "−30";
-    const maxVal = losScale ? `+${Math.round(losScale.maxAbs)}` : "+30";
+    // Scale numbers come from the loaded LOS layer only; with no data they are shown as "—", never as a made-up range.
+    const minVal = losScale ? `−${Math.round(losScale.maxAbs)}` : "—";
+    const maxVal = losScale ? `+${Math.round(losScale.maxAbs)}` : "—";
     const unit = losScale?.unit ?? "mm";
     return (
       <div
@@ -136,7 +137,7 @@ function MapLegend({ mode, passCount, showVeg, losScale, hasPoint, isDemo, extra
         <div className="flex justify-between text-[#4A5850]">
           <span>{`${t("motion.v2.legendAway")} ${maxVal}`}</span>
           <span>{t("motion.v2.legendStable")}</span>
-          <span>{`${minVal} ${unit}`}</span>
+          <span>{losScale ? `${minVal} ${unit}` : minVal}</span>
         </div>
         <div className="mt-0.5 flex items-center gap-1.5 border-t border-[#DCE3DB] pt-1.5 text-[#16231B]">
           <span aria-hidden="true" className="inline-block h-3 w-3 rounded-[2px] border-[1.5px] border-[#16231B] bg-white" />
@@ -175,7 +176,8 @@ function MapLegend({ mode, passCount, showVeg, losScale, hasPoint, isDemo, extra
   }
 
   // Flood rhythm (default)
-  const maxPasses = passCount || 11;
+  // passCount is 0 until the NISAR pass list loads; show a dash rather than a made-up pass count.
+  const maxPasses = passCount > 0 ? passCount : "—";
   return (
     <div
       className="pointer-events-auto absolute bottom-6 right-3 z-[950] flex flex-col gap-1.5 rounded-xl border border-[#DCE3DB] bg-white px-3 py-2.5 text-[11px] text-[#16231B] shadow-[0_1px_4px_rgba(20,30,40,0.10)] md:bottom-7 md:right-4"
@@ -216,7 +218,7 @@ export default function NisarMap({
   layers = {},
   boundariesGeojson = null,
   mode = "rhythm",
-  passCount = 11,
+  passCount = 0,
   showVeg = true,
   losScale = null,
   isDemoOverlay = false,

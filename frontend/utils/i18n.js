@@ -1330,6 +1330,22 @@ Object.assign(fil, {
   "downloads.lead": "Mga naprosesong patong at buod ng CAMANAVA para sa offline na GIS o beripikasyon.",
   "downloads.action": "I-download",
 });
+// Filipino for keys that were English-only in the FIL view. Same placeholders as EN. PENDING NATIVE REVIEW like the rest of fil.
+Object.assign(fil, {
+  "rhythm.countable": "Lawak na mabibilang",
+  "rhythm.countable.note": "kailangan ng hindi bababa sa {n} wastong pass",
+  "rhythm.byValid": "Lawak ayon sa bilang ng wastong pass:",
+  "exposure.mask": "Maskara",
+  "future.flood.gaps": "{n} sa {of} buwan ang walang tantiya.",
+  "future.outlook.requested": "hindi binanggit sa tugon (hiniling: {model})",
+  "future.outlook.days": "Mga araw ng pagtataya",
+  "future.outlook.full": "{n} buong buwan",
+  "future.outlook.anomaly": "Batayan ng anomalya",
+  "future.outlook.partial": "bahagyang buwan, {days} araw",
+  "future.outlook.anom": "anomalya ng modelo {mm} mm",
+  "future.outlook.star": "* = bahagyang buwan: ilan lamang sa mga araw nito ang nasa pagtataya.",
+  "hist.trend.auto": "Epektibong laki ng sample {eff}; lag-1 autocorrelation {r}.",
+});
 
 export const DICT = { en, fil };
 

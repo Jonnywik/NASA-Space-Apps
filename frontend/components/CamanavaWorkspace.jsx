@@ -347,6 +347,8 @@ function Workspace({ onRegional }) {
     const s = STORY_STEPS[tour.step];
     setMode(s.mode);
     setBare(Boolean(s.bare));
+    setExtraOverlay(null);
+    setShowSmOverlay(false);
     setCompareOn(false);
     setPolView("flood");
     setRhythmUnder(Boolean(s.rhythmUnder));
