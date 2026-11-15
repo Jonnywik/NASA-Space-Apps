@@ -12,7 +12,7 @@ short_description: NISAR radar and CAMANAVA flooding, Metro Manila
 
 # Tanaw: what NISAR sees of CAMANAVA's floods
 
-Hosted demo of [Tanaw](https://github.com/Jonnywik/NASA-SA-Final) (NASA Space Apps 2026, "Dancing with the SARs").
+Hosted demo of [Tanaw](https://github.com/Jonnywik/tanaw-nasa-space-apps-2026) (NASA Space Apps 2026, "Dancing with the SARs").
 It shows real NASA-ISRO NISAR L-band radar results for Caloocan, Malabon, Navotas, Valenzuela and the Bulacan coast,
 with NASA GPM IMERG rain timing and Sentinel-1 OPERA validation.
 

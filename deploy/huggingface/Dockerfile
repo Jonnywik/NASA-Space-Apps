@@ -3,7 +3,7 @@
 
 # ---- 1. frontend: static export (the full node image already includes git) ------------------------
 FROM node:20 AS web
-ARG TANAW_REPO=https://github.com/Jonnywik/NASA-SA-Final.git
+ARG TANAW_REPO=https://github.com/Jonnywik/tanaw-nasa-space-apps-2026.git
 ARG TANAW_REF=main
 RUN git clone --depth 1 --branch "$TANAW_REF" "$TANAW_REPO" /src
 WORKDIR /src/frontend

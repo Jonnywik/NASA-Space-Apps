@@ -57,23 +57,23 @@ More screenshots: [docs/screenshots/current/](docs/screenshots/current/).
 
 There is no public live demo, because free hosting cannot hold the radar data. The app runs on any laptop. **No NASA login is needed.** You need [Git](https://git-scm.com/downloads), [Python 3.12+](https://www.python.org/downloads/) and [Node.js 20](https://nodejs.org/), plus internet access for the downloads and map tiles.
 
-**Step 1. Download the NISAR data package** (392 MB, in four parts, no sign-in): [part00](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00) · [part01](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01) · [part02](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02) · [part03](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03). Put the four files in one folder and open a terminal there.
+**Step 1. Download the NISAR data package** (392 MB, in four parts, no sign-in): [part00](https://raw.githubusercontent.com/Jonnywik/tanaw-nasa-space-apps-2026/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00) · [part01](https://raw.githubusercontent.com/Jonnywik/tanaw-nasa-space-apps-2026/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01) · [part02](https://raw.githubusercontent.com/Jonnywik/tanaw-nasa-space-apps-2026/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02) · [part03](https://raw.githubusercontent.com/Jonnywik/tanaw-nasa-space-apps-2026/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03). Put the four files in one folder and open a terminal there.
 
 **Step 2. Join the parts, get the code, and unpack the data**
 
 Windows (PowerShell):
 ```powershell
 cmd /c copy /b tanaw-data-camanava_2026-v1.zip.part00+tanaw-data-camanava_2026-v1.zip.part01+tanaw-data-camanava_2026-v1.zip.part02+tanaw-data-camanava_2026-v1.zip.part03 tanaw-data-camanava_2026-v1.zip
-git clone https://github.com/Jonnywik/NASA-SA-Final.git
-cd NASA-SA-Final
+git clone https://github.com/Jonnywik/tanaw-nasa-space-apps-2026.git
+cd tanaw-nasa-space-apps-2026
 Expand-Archive -Path ..\tanaw-data-camanava_2026-v1.zip -DestinationPath .
 ```
 
 macOS / Linux:
 ```bash
 cat tanaw-data-camanava_2026-v1.zip.part0{0,1,2,3} > tanaw-data-camanava_2026-v1.zip
-git clone https://github.com/Jonnywik/NASA-SA-Final.git
-cd NASA-SA-Final
+git clone https://github.com/Jonnywik/tanaw-nasa-space-apps-2026.git
+cd tanaw-nasa-space-apps-2026
 unzip ../tanaw-data-camanava_2026-v1.zip
 ```
 
@@ -95,7 +95,7 @@ python3 -m venv .venv
 cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000
 ```
 
-**Step 4. Start the app** in a second terminal, from the `NASA-SA-Final` folder:
+**Step 4. Start the app** in a second terminal, from the `tanaw-nasa-space-apps-2026` folder:
 ```bash
 cd frontend
 npm ci
@@ -105,7 +105,7 @@ npm run dev
 **Step 5. Open http://localhost:3000.** Try searching "Malabon", stepping through the passes, switching to Filipino in the settings (⚙), and opening **How radar sees**.
 
 If something looks wrong:
-- **"Not available yet" on the map:** the data package was not unzipped inside the `NASA-SA-Final` folder.
+- **"Not available yet" on the map:** the data package was not unzipped inside the `tanaw-nasa-space-apps-2026` folder.
 - **"Cannot reach the backend":** the Step 3 terminal is not running.
 
 These steps were tested on a fresh machine from a clean GitHub clone ([record](docs/data/DATA_PACKAGE.md)).
