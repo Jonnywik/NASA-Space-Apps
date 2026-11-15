@@ -2,7 +2,7 @@
 
 The repository's `.gitignore` excludes `backend/data/output/camanava_2026/`, so a fresh clone does not contain the derived NISAR product that the app reads. This package supplies that folder, unchanged. It matches repository commit `ce42105` (main of Jonnywik/NASA-SA-Final).
 
-Download: `<PACKAGE_URL>` (to be added by the owner; anonymous access not yet verified).
+Download: [`data-package-v1` branch](https://github.com/Jonnywik/NASA-SA-Final/tree/data-package-v1), four parts ([part00](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00), [part01](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01), [part02](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02), [part03](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03)). Verified 15 Nov 2026: all four parts downloaded from raw.githubusercontent.com without credentials, joined, and matched SHA-256 `3290a66b2fc115bd666c1f199c17c7e5d0c6f978132264eb28335219110a2cfa`. Please also confirm once in a signed-out browser.
 
 ## Files
 

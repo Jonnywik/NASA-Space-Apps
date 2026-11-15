@@ -42,7 +42,7 @@ Changing both thresholds by -1, 0 and +1 dB yields half-or-more areas of 0.0230,
 
 A fresh clone does not include the derived NISAR product (`backend/data/output/camanava_2026/nisar/`, 376 MB). Download it separately as **tanaw-data-camanava_2026-v1**, which matches commit `ce42105`.
 
-- Download: `<PACKAGE_URL>`. It is one zip, or four `.part00`–`.part03` files to join first. See [docs/DATA_PACKAGE.md](docs/DATA_PACKAGE.md).
+- Download: the [`data-package-v1` branch](https://github.com/Jonnywik/NASA-SA-Final/tree/data-package-v1) holds the zip as four parts ([part00](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part00), [part01](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part01), [part02](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part02), [part03](https://raw.githubusercontent.com/Jonnywik/NASA-SA-Final/data-package-v1/tanaw-data-camanava_2026-v1.zip.part03); no sign-in needed). Join them into `tanaw-data-camanava_2026-v1.zip` (commands on that branch's README) and check the SHA-256. See [docs/DATA_PACKAGE.md](docs/DATA_PACKAGE.md).
 - Size: 392,437,688 bytes.
 - SHA-256: `3290a66b2fc115bd666c1f199c17c7e5d0c6f978132264eb28335219110a2cfa`
 
