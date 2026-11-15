@@ -38,10 +38,6 @@ For NISAR passes on 15 September, 9 October and 2 November, agreement with OPERA
 
 Changing both thresholds by -1, 0 and +1 dB yields half-or-more areas of 0.0230, 0.3721 and 0.3588 km². Permanent water is recalculated for each threshold, so the results are not necessarily monotonic and are not a confidence interval.
 
-## Live demo
-
-A hosted version runs on Hugging Face Spaces (link added once the Space is live). How it is built: [docs/HOSTING.md](docs/HOSTING.md).
-
 ## Run it yourself
 
 A fresh clone does not include the derived NISAR product (`backend/data/output/camanava_2026/nisar/`, 376 MB). Download it separately as **tanaw-data-camanava_2026-v1** (data unchanged since it was packaged; verified with the current `main`).
@@ -160,7 +156,7 @@ npm run build
 │   ├── tests/            unit tests
 │   └── data/cache/       small committed inputs and results (the NISAR product is in the data package)
 ├── frontend/             Next.js app (components/, utils/, app/, public/, tests/)
-├── deploy/               hosted demo: one-process server and the Hugging Face Space files
+├── deploy/               optional hosting: one-process server and a tested Docker image (docs/HOSTING.md)
 ├── docs/                 documentation, see docs/README.md
 │   ├── science/  data/  design/  submission/  screenshots/  project-log/
 │   └── API_CONTRACT.md, NISAR_RUNBOOK.md, SUBMISSION_SCOPE.md

@@ -1,6 +1,8 @@
-# Hosting the demo
+# Hosting (optional)
 
-The public demo runs on a free Hugging Face Space (Docker SDK). One container serves everything:
+**Status (15 Nov 2026): no public live demo.** The submission is the repository plus the video; anyone can run the app locally with the data package (see the README). Hosting was prepared and tested but not published: Hugging Face now requires a PRO subscription for Docker Spaces on the free CPU, the free Docker hosts we checked (Render, Koyeb) cap memory at 512 MB while the app peaks at about 571 MB, and Vercel's serverless Python functions cannot hold the geospatial libraries or the 376 MB product. The files below run unchanged on any Docker host with about 1 GB of memory.
+
+The Docker image targets a Hugging Face Space (Docker SDK). One container serves everything:
 `deploy/serve.py` runs the FastAPI backend and serves the frontend's static export from the same port, so the
 browser talks to one origin.
 
@@ -9,7 +11,7 @@ browser talks to one origin.
   data parts from the `data-package-v1` branch, checks SHA-256 `3290a66b…a2cfa`, and unzips the product.
 - `deploy/huggingface/README.md` is the Space's configuration header (Docker SDK, port 7860).
 
-## Create the Space (owner, about 10 minutes)
+## Create the Space (if a PRO or paid plan is available; about 10 minutes)
 1. Sign up or sign in at https://huggingface.co (free).
 2. New Space: https://huggingface.co/new-space. Name `tanaw`, licence MIT, SDK **Docker** (Blank template),
    hardware **CPU basic (free)**, visibility **Public**. Create.
