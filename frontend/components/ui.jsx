@@ -3,26 +3,24 @@
 import React from "react";
 import { useLang } from "../utils/LangContext";
 
-// Shared bits of the CAMANAVA workspace. Colours follow the Okabe-Ito colour-blind-safe palette and
-// no status is shown by colour alone: every badge has a text label, a glyph and a border style.
-
+// Shared Mangrove UI primitives for the CAMANAVA workspace.
 export const PALETTE = {
-  blue: "#0072B2",
-  sky: "#56B4E9",
+  blue: "#2171B5",
+  sky: "#6BAED6",
   orange: "#E69F00",
-  vermillion: "#D55E00",
-  green: "#009E73",
-  yellow: "#F0E442",
-  purple: "#CC79A7",
+  vermillion: "#7B3294",
+  green: "#1E5B3A",
+  yellow: "#FFF6DE",
+  purple: "#6B5A9E",
 };
 
 const SENSORS = {
-  nisar_l: { label: "L-band · NISAR", cls: "border-sky-400/50 text-sky-200" },
-  s1_c: { label: "C-band · Sentinel-1", cls: "border-slate-400/60 text-slate-200" },
-  insar: { label: "InSAR LOS · NISAR", cls: "border-orange-300/60 text-orange-200" },
-  power: { label: "NASA POWER", cls: "border-emerald-300/50 text-emerald-200" },
-  outlook: { label: "Outlook model", cls: "border-amber-300/60 text-amber-200" },
-  places: { label: "Places · gazetteer", cls: "border-slate-400/60 text-slate-200" },
+  nisar_l: { label: "L-band · NISAR", cls: "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]" },
+  s1_c: { label: "C-band · Sentinel-1", cls: "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]" },
+  insar: { label: "InSAR LOS · NISAR", cls: "border-[#C2A5CF] bg-[#F6F1F9] text-[#5B2370]" },
+  power: { label: "NASA POWER", cls: "border-[#DCE3DB] bg-[#E3EFE7] text-[#123B25]" },
+  outlook: { label: "Outlook model", cls: "border-[#2171B5]/40 bg-[#EEF5FA] text-[#0B4F79]" },
+  places: { label: "Places · gazetteer", cls: "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]" },
 };
 
 export function SensorBadge({ sensor }) {
@@ -30,7 +28,7 @@ export function SensorBadge({ sensor }) {
   if (!s) return null;
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded border bg-slate-950/60 px-1.5 py-0.5 text-[11px] font-medium ${s.cls}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5 text-[11px] font-medium ${s.cls}`}
       data-testid={`sensor-${sensor}`}
     >
       {s.label}
@@ -39,24 +37,39 @@ export function SensorBadge({ sensor }) {
 }
 
 const KINDS = {
-  observed: { glyph: "●", cls: "border-solid border-sky-300/70 bg-sky-500/10 text-sky-100" },
-  derived: { glyph: "◆", cls: "border-solid border-teal-300/70 bg-teal-500/10 text-teal-100" },
-  outlook: { glyph: "▲", cls: "border-dashed border-amber-300/80 bg-amber-500/10 text-amber-100" },
-  scenario: { glyph: "◇", cls: "border-dotted border-fuchsia-300/80 bg-fuchsia-500/10 text-fuchsia-100" },
+  observed: { glyph: "●", cls: "border-[#2171B5]/50 bg-[#EEF5FA] text-[#0B4F79]" },
+  derived: { glyph: "◆", cls: "border-[#1E5B3A]/40 bg-[#E3EFE7] text-[#123B25]" },
+  outlook: { glyph: "▲", cls: "border-dashed border-[#2171B5] bg-[#EEF5FA] text-[#0B4F79]" },
+  scenario: { glyph: "◇", cls: "border-dotted border-[#6B5A9E] bg-[#ECE8F4] text-[#4E3F80]" },
   synthetic: {
     glyph: "▨",
-    cls: "border-solid border-yellow-300 bg-yellow-400/20 text-yellow-100 font-bold uppercase tracking-wide",
+    cls: "border-dashed border-[#7A5B00] bg-[#FFF6DE] text-[#7A5B00] font-semibold",
   },
 };
 
-// kind = dataKind from the API. "synthetic" always wins and is loud.
-export function KindBadge({ kind, label }) {
+export function DemoTag({ isNumber = false, compact = false, className = "" }) {
+  const { t } = useLang();
+  return (
+    <span
+      className={`inline-flex items-center whitespace-nowrap rounded border border-dashed border-[#7A5B00] bg-[#FFF6DE] text-[11px] font-semibold leading-tight text-[#7A5B00] ${compact ? "px-1.5 py-0" : "px-1.5 py-0.5"} ${className}`}
+      data-testid="kind-synthetic"
+      title={t("demo.title")}
+      aria-label={t("demo.title")}
+    >
+      {isNumber ? t("demo.number") : t("demo.tag")}
+    </span>
+  );
+}
+
+// kind = dataKind from the API. "synthetic" renders the quiet dashed amber DemoTag.
+export function KindBadge({ kind, label, isNumber = false }) {
   const { t } = useLang();
   const k = KINDS[kind] ? kind : null;
   if (!k) return null;
+  if (k === "synthetic" && !label) return <DemoTag isNumber={isNumber} />;
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded border-2 px-1.5 py-0.5 text-[11px] font-semibold ${KINDS[k].cls}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 text-[11px] font-semibold ${KINDS[k].cls}`}
       data-testid={`kind-${k}`}
       title={t(`kind.${k}.hint`)}
     >
@@ -74,19 +87,18 @@ export function HelpButton({ card, onOpen, label }) {
       onClick={() => onOpen(card)}
       aria-label={label ?? t("help.open")}
       title={label ?? t("help.open")}
-      className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-500 bg-slate-800 text-xs font-bold text-slate-100 hover:bg-slate-700"
+      className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#DCE3DB] bg-[#F2F5F1] text-xs font-bold text-[#1E5B3A] hover:bg-[#E3EFE7]"
     >
       ?
     </button>
   );
 }
 
-// A titled block of the findings panel: title, sensor badge, data-kind badge, "?" for the radar cards.
 export function Section({ title, sensor, kind, helpCard, onHelp, children, testId, className = "" }) {
   return (
     <section className={`mb-4 ${className}`} aria-label={title} data-testid={testId}>
-      <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-        <h3 className="mr-auto text-sm font-bold text-slate-100">{title}</h3>
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        <h3 className="mr-auto font-serif text-[16px] font-semibold leading-snug text-[#16231B]">{title}</h3>
         {sensor && <SensorBadge sensor={sensor} />}
         {kind && <KindBadge kind={kind} />}
         {helpCard && onHelp && <HelpButton card={helpCard} onOpen={onHelp} />}
@@ -96,15 +108,18 @@ export function Section({ title, sensor, kind, helpCard, onHelp, children, testI
   );
 }
 
-export function Stat({ label, value, unit, note, tone = "text-slate-100" }) {
+export function Stat({ label, value, unit, note, tone = "text-[#16231B]", isDemo = false, compact = false }) {
   return (
-    <div className="rounded-lg border border-slate-700/60 bg-slate-800/70 p-2">
-      <div className="text-[11px] text-slate-400">{label}</div>
-      <div className={`text-lg font-bold leading-tight ${tone}`}>
-        {value ?? "—"}
-        {unit && value != null && <span className="ml-1 text-xs font-normal text-slate-300">{unit}</span>}
+    <div className={`flex flex-col gap-0.5 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] ${compact ? "p-2.5" : "p-3"}`}>
+      <div className="flex items-start justify-between gap-1 text-[12px] leading-snug text-[#4A5850]">
+        <span>{label}</span>
+        {isDemo && <DemoTag compact />}
       </div>
-      {note && <div className="text-[11px] text-slate-400">{note}</div>}
+      <div className={`font-bold leading-tight tabular-nums ${compact ? "text-[20px]" : "text-[22px]"} ${tone}`}>
+        {value ?? "—"}
+        {unit && value != null && <span className="ml-1 text-[12px] font-medium text-[#4A5850]">{unit}</span>}
+      </div>
+      {note && <div className="text-[11px] leading-snug text-[#4A5850]">{note}</div>}
     </div>
   );
 }
@@ -120,7 +135,7 @@ export function formatResolution(r) {
   return null;
 }
 
-export function SourceLine({ data, className = "" }) {
+export function SourceLine({ data, className = "", onSources }) {
   const { t } = useLang();
   if (!data) return null;
   const src = data.source;
@@ -129,10 +144,10 @@ export function SourceLine({ data, className = "" }) {
   const url = typeof src === "object" ? src?.url : null;
   const version = typeof src === "object" ? src?.version : null;
   return (
-    <p className={`text-[11px] leading-snug text-slate-400 ${className}`} data-testid="source-line">
-      {t("src.label")}:{" "}
+    <p className={`text-[11px] leading-relaxed text-[#4A5850] ${className}`} data-testid="source-line">
+      <span>{t("src.label")}: </span>
       {url ? (
-        <a href={url} target="_blank" rel="noreferrer" className="text-sky-300 underline">
+        <a href={url} target="_blank" rel="noreferrer" className="font-medium text-[#1E5B3A] underline">
           {name ?? url}
         </a>
       ) : (
@@ -141,27 +156,34 @@ export function SourceLine({ data, className = "" }) {
       {version ? ` (${version})` : ""}
       {when ? ` · ${String(when).slice(0, 10)}` : ""}
       {formatResolution(data.nativeResolution) ? ` · ${t("src.resolution")} ${formatResolution(data.nativeResolution)}` : ""}
+      {onSources && (
+        <>
+          {" · "}
+          <button type="button" onClick={onSources} className="font-semibold text-[#1E5B3A] underline hover:text-[#123B25]">
+            {t("header.sources")}
+          </button>
+        </>
+      )}
     </p>
   );
 }
 
-// Inline warnings plus a collapsed list of limitations for the response a panel shows.
 export function Caveats({ data }) {
   const { t } = useLang();
   const w = Array.isArray(data?.warnings) ? data.warnings : [];
   const l = Array.isArray(data?.limitations) ? data.limitations : [];
   if (!w.length && !l.length) return null;
   return (
-    <div className="mt-2 text-[11px] text-slate-300">
+    <div className="mt-2 text-[11px] text-[#4A5850]">
       {w.map((x) => (
-        <p key={x} className="mb-1 rounded border border-amber-400/40 bg-amber-500/10 px-2 py-1 text-amber-100">
-          ⚠ {x}
+        <p key={x} className="mb-1 rounded-lg border border-dashed border-[#7A5B00]/50 bg-[#FFF6DE] px-2.5 py-1.5 text-[#5A4300]">
+          {x}
         </p>
       ))}
       {l.length > 0 && (
-        <details>
-          <summary className="cursor-pointer text-slate-300">{t("limits.inline", { n: l.length })}</summary>
-          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-slate-400">
+        <details className="rounded-lg border border-[#DCE3DB] bg-[#F2F5F1]/60 px-2.5 py-1.5">
+          <summary className="cursor-pointer font-medium text-[#16231B]">{t("limits.inline", { n: l.length })}</summary>
+          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[#4A5850]">
             {l.map((x) => (
               <li key={x}>{x}</li>
             ))}
@@ -172,27 +194,26 @@ export function Caveats({ data }) {
   );
 }
 
-// What a panel shows while data is not there. "No data" is a normal state. Every message says why.
 export function StateNote({ tier, label }) {
   const { t } = useLang();
   const { state, error } = tier;
   if (state === "ready" || state === "idle" || !state) return null;
   const detail = error?.detail && typeof error.detail === "object" ? error.detail : null;
   const msg = detail?.message;
-  const tone = state === "loading" ? "text-slate-300" : state === "outside" || state === "unavailable" ? "text-slate-100" : "text-amber-200";
+  const isWarn = state !== "loading" && state !== "outside" && state !== "unavailable";
   return (
     <div
-      className="rounded-lg border border-slate-600 bg-slate-800/70 p-2.5 text-xs"
+      className={`rounded-xl border p-3 text-xs ${isWarn ? "border-dashed border-[#7A5B00]/60 bg-[#FFF6DE] text-[#5A4300]" : "border-[#DCE3DB] bg-[#F2F5F1] text-[#16231B]"}`}
       role={state === "loading" ? "status" : "alert"}
       data-testid={`state-${state}`}
     >
-      <div className={`font-semibold ${tone}`}>
+      <div className="font-semibold">
         {label ? `${label}: ` : ""}
         {t(`state.${state}.title`)}
       </div>
-      <p className="mt-0.5 text-slate-400">{t(`state.${state}.body`)}</p>
-      {msg && state !== "loading" && <p className="mt-0.5 text-slate-400">{msg}</p>}
-      {state === "upstream" && detail?.cachedAt && <p className="mt-0.5 text-slate-400">{t("state.cachedAt", { when: detail.cachedAt })}</p>}
+      <p className="mt-0.5 text-[#4A5850]">{t(`state.${state}.body`)}</p>
+      {msg && state !== "loading" && <p className="mt-0.5 text-[#4A5850]">{msg}</p>}
+      {state === "upstream" && detail?.cachedAt && <p className="mt-0.5 text-[#4A5850]">{t("state.cachedAt", { when: detail.cachedAt })}</p>}
     </div>
   );
 }

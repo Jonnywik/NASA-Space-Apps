@@ -1,7 +1,6 @@
-// Colour scale for the NISAR line-of-sight layer. The orange/purple diverging pair stays readable with
-// the common kinds of colour-blindness, and every class also has a printed range in the legend.
-// Positive = away from the satellite (which includes sinking); negative = toward the satellite.
-export const LOS_COLORS = ["#5e3c99", "#b2abd2", "#eeeeee", "#fdb863", "#e66101"];
+// Mangrove v2 ground motion LOS ramp (6 steps: toward -> stable -> away).
+// Positive = away from satellite (which can include vertical sinking); negative = toward satellite.
+export const LOS_COLORS = ["#1B7837", "#A6DBA0", "#F2F0F2", "#C2A5CF", "#9970AB", "#7B3294"];
 
 export function pickLosProperty(geojson) {
   const f = geojson?.features?.find((x) => x?.properties);
@@ -17,7 +16,7 @@ export function makeLosScale(geojson) {
   const vals = geojson.features.map((f) => f.properties?.[p.prop]).filter((v) => typeof v === "number");
   if (!vals.length) return null;
   const maxAbs = Math.max(1, Math.ceil(Math.max(...vals.map(Math.abs))));
-  const edges = [-maxAbs, -0.6 * maxAbs, -0.2 * maxAbs, 0.2 * maxAbs, 0.6 * maxAbs, maxAbs];
+  const edges = [-maxAbs, -0.55 * maxAbs, -0.15 * maxAbs, 0.15 * maxAbs, 0.45 * maxAbs, 0.75 * maxAbs, maxAbs];
   const bins = LOS_COLORS.map((color, i) => ({ lo: edges[i], hi: edges[i + 1], color }));
   const color = (v) => {
     if (typeof v !== "number") return "#94a3b8";

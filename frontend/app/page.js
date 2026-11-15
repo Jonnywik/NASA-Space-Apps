@@ -26,7 +26,7 @@ export default function Page() {
 
   return (
     <LangProvider>
-      <main className="h-screen w-screen overflow-hidden bg-slate-950">
+      <main className="h-screen w-screen overflow-hidden bg-ground text-ink">
         {view === "regional" ? <RegionalWorkspace onBack={toCamanava} /> : <CamanavaWorkspace onRegional={toRegional} />}
       </main>
     </LangProvider>

@@ -2,14 +2,12 @@
 
 import React from "react";
 import { Area, Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
-import { Caveats, PALETTE, Section, SourceLine, StateNote, fmt } from "./ui";
+import { Caveats, DemoTag, HelpButton, PALETTE, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
 
 const ym = (r) => `${r.year}-${String(r.month).padStart(2, "0")}`;
 
-// A labelled band that shows where observations end, where the outlook runs and where conditional
-// scenarios begin. The three segments differ in pattern as well as colour.
-export function PhaseBand({ months, startMonth }) {
+function PhaseBand({ months, startMonth }) {
   const { t } = useLang();
   const nOut = months.filter((m) => m.status === "outlook").length;
   const nScn = months.filter((m) => m.status === "scenario").length;
@@ -17,26 +15,28 @@ export function PhaseBand({ months, startMonth }) {
   return (
     <div className="mb-2" data-testid="phase-band" role="group" aria-label={t("future.phase.aria")}>
       <div className="flex text-[11px] font-semibold">
-        <div className="flex w-20 shrink-0 items-center justify-center rounded-l border-2 border-solid border-sky-300 bg-sky-500/20 px-1 text-sky-100">
+        <div className="flex w-20 shrink-0 items-center justify-center rounded-l-md border border-[#1E5B3A] bg-[#E3EFE7] px-1.5 py-1 text-[#123B25]">
           ● {t("future.phase.obs")}
         </div>
         <div
-          className="flex items-center justify-center border-2 border-dashed border-amber-300 bg-amber-500/15 px-1 text-amber-100"
+          className="flex items-center justify-center border border-dashed border-[#2171B5] bg-[#EEF5FA] px-1.5 py-1 text-[#0B4F79]"
           style={{ flex: nOut / total }}
         >
           ▲ {t("future.phase.outlook", { n: nOut })}
         </div>
         <div
-          className="flex items-center justify-center rounded-r border-2 border-dotted border-fuchsia-300 bg-fuchsia-500/15 px-1 text-fuchsia-100"
-          style={{ flex: nScn / total, backgroundImage: "repeating-linear-gradient(45deg, rgba(240,171,252,.18) 0 4px, transparent 4px 8px)" }}
+          className="flex items-center justify-center rounded-r-md border border-dotted border-[#6B5A9E] bg-[#ECE8F4] px-1.5 py-1 text-[#4E3F80]"
+          style={{ flex: nScn / total }}
         >
           ◇ {t("future.phase.scenario", { n: nScn })}
         </div>
       </div>
-      <p className="mt-0.5 text-[11px] text-slate-400">{t("future.phase.note", { month: startMonth ?? "" })}</p>
+      <p className="mt-1 text-[11px] text-[#4A5850]">{t("future.phase.note", { month: startMonth ?? "" })}</p>
     </div>
   );
 }
+
+export { PhaseBand };
 
 function OutlookChart({ d }) {
   const { t } = useLang();
@@ -51,20 +51,20 @@ function OutlookChart({ d }) {
     <div className="h-44 w-full" role="img" aria-label={t("future.outlook.aria", { n: rows.length })} data-testid="outlook-chart">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-          <XAxis dataKey="label" tick={{ fill: "#cbd5e1", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" mm" />
+          <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
-            labelStyle={{ color: "#e2e8f0" }}
+            contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
+            labelStyle={{ color: "#16231B", fontWeight: 600 }}
             formatter={(v, name, p) =>
               name === "spread"
                 ? [`${v[0]} … ${v[1]} mm`, t("future.outlook.spread")]
                 : [`${v} mm${p?.payload?.partial ? ` (${t("future.outlook.partial", { days: p.payload.partial })})` : ""}${p?.payload?.anomaly != null ? ` · ${t("future.outlook.anom", { mm: p.payload.anomaly })}` : ""}`, t("future.outlook.mean")]
             }
           />
-          <Bar dataKey="spread" name="spread" fill="#fbbf24" fillOpacity={0.3} stroke="#fcd34d" strokeDasharray="4 3" isAnimationActive={false} />
-          <Line dataKey="mean" name="mean" stroke="#fde68a" strokeWidth={0} dot={{ r: 5, fill: "#fde68a", stroke: "#0f172a", strokeWidth: 1 }} isAnimationActive={false} />
+          <Bar dataKey="spread" name="spread" fill="#6BAED6" fillOpacity={0.35} stroke="#2171B5" strokeDasharray="4 3" isAnimationActive={false} />
+          <Line dataKey="mean" name="mean" stroke="#0B4F6C" strokeWidth={0} dot={{ r: 4, fill: "#0B4F6C", stroke: "#FFFFFF", strokeWidth: 1.5 }} isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
@@ -80,30 +80,30 @@ function ScenarioRainChart({ sc }) {
     <div className="h-44 w-full" role="img" aria-label={t("future.scenario.aria", { label: sc.label })} data-testid="scenario-chart">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={rows} margin={{ top: 14, right: 4, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-          <XAxis dataKey="label" tick={{ fill: "#cbd5e1", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" mm" />
+          <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
-            labelStyle={{ color: "#e2e8f0" }}
+            contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
+            labelStyle={{ color: "#16231B", fontWeight: 600 }}
             formatter={(v, name, p) =>
               name === "outlookMean" ? [`${v} mm`, t("future.outlook.mean")] : [`${v} mm`, p?.payload?.status === "outlook" ? t("future.status.outlook") : t("future.status.scenario")]
             }
           />
-          {firstScn && <ReferenceLine x={firstScn.label} stroke="#f0abfc" strokeWidth={2} strokeDasharray="2 3" label={{ value: t("future.boundary"), fill: "#f0abfc", fontSize: 10, position: "insideTopRight" }} />}
-          <Bar dataKey="mm" isAnimationActive={false}>
+          {firstScn && <ReferenceLine x={firstScn.label} stroke="#6B5A9E" strokeWidth={1.5} strokeDasharray="3 3" label={{ value: t("future.boundary"), fill: "#4E3F80", fontSize: 10, position: "insideTopRight" }} />}
+          <Bar dataKey="mm" isAnimationActive={false} radius={[3, 3, 0, 0]}>
             {rows.map((r) => (
               <Cell
                 key={r.label}
-                fill={r.status === "outlook" ? "#fbbf24" : "#e879f9"}
-                fillOpacity={r.status === "outlook" ? 0.4 : 0.55}
-                stroke={r.status === "outlook" ? "#fcd34d" : "#f0abfc"}
-                strokeWidth={2}
-                strokeDasharray={r.status === "outlook" ? "5 3" : "1 3"}
+                fill={r.status === "outlook" ? "#6BAED6" : "#6B5A9E"}
+                fillOpacity={r.status === "outlook" ? 0.85 : 0.8}
+                stroke={r.status === "outlook" ? "#2171B5" : "#4E3F80"}
+                strokeWidth={1}
+                strokeDasharray={r.status === "outlook" ? "4 2" : undefined}
               />
             ))}
           </Bar>
-          {hasOutlook && <Line dataKey="outlookMean" name="outlookMean" strokeWidth={0} dot={{ r: 4, fill: "#fde68a", stroke: "#0f172a", strokeWidth: 1 }} isAnimationActive={false} />}
+          {hasOutlook && <Line dataKey="outlookMean" name="outlookMean" strokeWidth={0} dot={{ r: 4, fill: "#123B25", stroke: "#FFFFFF", strokeWidth: 1.5 }} isAnimationActive={false} />}
         </ComposedChart>
       </ResponsiveContainer>
     </div>
@@ -123,17 +123,17 @@ function FloodScenarioChart({ d }) {
     <div className="h-44 w-full" role="img" aria-label={t("future.flood.aria")} data-testid="flood-scenario-chart">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={rows} margin={{ top: 14, right: 4, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-          <XAxis dataKey="label" tick={{ fill: "#cbd5e1", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" km²" />
+          <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(2)} stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" km²" stroke="#DCE3DB" />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
-            labelStyle={{ color: "#e2e8f0" }}
+            contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
+            labelStyle={{ color: "#16231B", fontWeight: 600 }}
             formatter={(v, name) => (name === "band" ? [`${v?.[0]} … ${v?.[1]} km²`, t("future.flood.band")] : [`${v} km²`, t("future.flood.base")])}
           />
-          {firstScn && <ReferenceLine x={firstScn.label} stroke="#f0abfc" strokeWidth={2} strokeDasharray="2 3" />}
-          <Area dataKey="band" name="band" stroke="#c4b5fd" strokeDasharray="4 3" fill="#a78bfa" fillOpacity={0.3} isAnimationActive={false} />
-          <Line dataKey="base" name="base" stroke="#f5f3ff" strokeWidth={2} strokeDasharray="6 3" dot={{ r: 3, fill: "#0f172a", stroke: "#f5f3ff" }} isAnimationActive={false} />
+          {firstScn && <ReferenceLine x={firstScn.label} stroke="#6B5A9E" strokeWidth={1.5} strokeDasharray="3 3" />}
+          <Area dataKey="band" name="band" stroke="#6B5A9E" strokeDasharray="4 3" fill="#6B5A9E" fillOpacity={0.22} isAnimationActive={false} />
+          <Line dataKey="base" name="base" stroke="#4E3F80" strokeWidth={2} strokeDasharray="5 3" dot={{ r: 3, fill: "#FFFFFF", stroke: "#4E3F80", strokeWidth: 1.5 }} isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
@@ -146,153 +146,254 @@ function RelationshipChart({ rel }) {
     <div className="h-32 w-full" role="img" aria-label={t("future.rel.aria", { n: rel.n })}>
       <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 6, right: 8, bottom: 14, left: 0 }}>
-          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-          <XAxis type="number" dataKey="prior7DayMm" tick={{ fill: "#cbd5e1", fontSize: 10 }} label={{ value: t("future.rel.x"), position: "insideBottom", offset: -8, fill: "#cbd5e1", fontSize: 10 }} />
-          <YAxis type="number" dataKey="floodedKm2" tick={{ fill: "#cbd5e1", fontSize: 10 }} width={36} />
-          <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }} />
-          <Scatter data={rel.points} fill={PALETTE.vermillion} isAnimationActive={false} />
+          <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" />
+          <XAxis type="number" dataKey="prior7DayMm" tick={{ fill: "#4A5850", fontSize: 10 }} stroke="#DCE3DB" label={{ value: t("future.rel.x"), position: "insideBottom", offset: -8, fill: "#4A5850", fontSize: 10 }} />
+          <YAxis type="number" dataKey="floodedKm2" tick={{ fill: "#4A5850", fontSize: 10 }} width={36} stroke="#DCE3DB" />
+          <Tooltip contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }} />
+          <Scatter data={rel.points} fill={PALETTE.purple} isAnimationActive={false} />
         </ScatterChart>
       </ResponsiveContainer>
     </div>
   );
 }
 
-const kindOf = (d, fallback) => (d?.dataKind === "synthetic" ? "synthetic" : fallback);
-
-export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, onScenario, floodTier, projectionNode, onHelp }) {
+export default function FuturePanel({ outlookTier, scenariosTier, scenarioId, onScenario, floodTier, projectionNode, onHelp, onSources, activeMonthIdx = null }) {
   const { t } = useLang();
   const o = outlookTier.data;
   const sd = scenariosTier.data;
   const chosen = sd?.scenarios?.find((s) => s.id === scenarioId) ?? sd?.scenarios?.[0];
   const f = floodTier.data;
-  return (
-    <>
-      <Section title={t("future.outlook.title")} sensor="outlook" kind={kindOf(o, "outlook")} testId="future-panel">
-        <p className="mb-2 text-xs text-slate-300">{t("future.outlook.lead")}</p>
-        <StateNote tier={outlookTier} label={t("future.outlook.title")} />
-        {o && (
-          <>
-            <OutlookChart d={o} />
-            <dl className="mt-1 grid grid-cols-[auto,1fr] gap-x-3 text-[11px]">
-              <dt className="text-slate-400">{t("future.outlook.model")}</dt>
-              <dd className="text-slate-100" data-testid="outlook-model">
-                {o.model ?? (o.modelRequested ? t("future.outlook.requested", { model: o.modelRequested }) : t("missing.notReported"))}
-                {!o.model && o.modelNote && <span className="block text-slate-400">{o.modelNote}</span>}
-              </dd>
-              <dt className="text-slate-400">{t("future.outlook.run")}</dt>
-              <dd className="text-slate-100" data-testid="outlook-run">
-                {o.runDate ?? t("missing.notReported")}
-                {!o.runDate && o.runDateReason && <span className="block text-slate-400">{o.runDateReason}</span>}
-              </dd>
-              {o.firstForecastDate && (
-                <>
-                  <dt className="text-slate-400">{t("future.outlook.days")}</dt>
-                  <dd className="text-slate-100">
-                    {o.firstForecastDate} … {o.lastForecastDate ?? "—"}
-                  </dd>
-                </>
-              )}
-              <dt className="text-slate-400">{t("future.outlook.horizon")}</dt>
-              <dd className="text-slate-100">
-                {o.horizonMonths ?? o.months?.length} {t("future.months")}
-                {o.fullMonths != null ? ` (${t("future.outlook.full", { n: o.fullMonths })})` : ""}
-              </dd>
-              <dt className="text-slate-400">{t("future.outlook.res")}</dt>
-              <dd className="text-slate-100">{o.nativeResolution ?? t("missing.notReported")}</dd>
-              <dt className="text-slate-400">{t("future.outlook.members")}</dt>
-              <dd className="text-slate-100">{o.ensembleMembers ?? o.months?.[0]?.members ?? t("missing.notReported")}</dd>
-              {o.anomaly && (
-                <>
-                  <dt className="text-slate-400">{t("future.outlook.anomaly")}</dt>
-                  <dd className="text-slate-100">{o.anomaly.available ? o.anomaly.basis : o.anomaly.reason ?? t("missing.notReported")}</dd>
-                </>
-              )}
-            </dl>
-            <p className="mt-1 text-[11px] text-slate-300">
-              {t("future.outlook.note")}
-              {o.months?.some((m) => m.fullMonth === false) ? ` ${t("future.outlook.star")}` : ""}
-            </p>
-            <SourceLine data={o} className="mt-1" />
-            <Caveats data={o} />
-          </>
-        )}
-      </Section>
+  const isDemo = [o, sd, f].some((x) => x?.dataKind === "synthetic");
 
-      <Section title={t("future.scenario.title")} sensor="power" kind={kindOf(sd, "scenario")}>
-        <p className="mb-2 text-xs font-semibold text-fuchsia-100">{t("future.scenario.lead")}</p>
-        <StateNote tier={scenariosTier} label={t("future.scenario.title")} />
-        {sd && chosen && (
-          <>
-            <div role="radiogroup" aria-label={t("future.scenario.pick")} className="mb-2 grid gap-1" data-testid="scenario-picker">
-              {sd.scenarios.map((s) => (
+  const firstMonth = o?.months?.[0];
+  const anomVal = firstMonth?.anomalyVsModelClimatologyMm;
+  const activeFloodMonth =
+    (activeMonthIdx != null && f?.months?.[activeMonthIdx]?.expectedFloodedKm2 ? f.months[activeMonthIdx] : null) ??
+    f?.months?.find((m) => m.status === "scenario" && m.expectedFloodedKm2) ??
+    f?.months?.find((m) => m.expectedFloodedKm2) ??
+    null;
+
+  return (
+    <div className="flex flex-1 flex-col gap-4 text-[#16231B]" data-testid="future-panel">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6B5A9E]">{t("future.v2.eyebrow")}</span>
+        {onHelp && <HelpButton card="insar" onOpen={onHelp} />}
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <h1 className="m-0 font-serif text-[22px] font-semibold leading-[1.22] tracking-[-0.015em] text-[#16231B]">
+          {t("future.v2.headline")}
+        </h1>
+        {isDemo && (
+          <div className="flex">
+            <DemoTag isNumber />
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <Stat
+          compact
+          isDemo={o?.dataKind === "synthetic"}
+          label={t("future.v2.stat.covers")}
+          value={o ? `${o.horizonMonths ?? o.months?.length ?? "—"}` : null}
+          unit={o ? t("future.months") : undefined}
+          note={
+            o
+              ? t("future.v2.stat.members", {
+                  n: o.ensembleMembers ?? o.months?.[0]?.members ?? "—",
+                  res: o.nativeResolution ?? "—",
+                })
+              : undefined
+          }
+        />
+        <Stat
+          compact
+          isDemo={o?.dataKind === "synthetic"}
+          label={t("future.v2.stat.anom")}
+          value={anomVal != null ? `${anomVal > 0 ? "+" : ""}${fmt(anomVal, 0)}` : firstMonth?.meanMm != null ? fmt(firstMonth.meanMm, 0) : null}
+          unit={anomVal != null || firstMonth?.meanMm != null ? "mm" : undefined}
+          note={
+            o && (
+              <>
+                <span data-testid="outlook-model">{o.model ?? (o.modelRequested ? t("future.outlook.requested", { model: o.modelRequested }) : t("missing.notReported"))}</span>
+                {" · "}
+                <span data-testid="outlook-run">{o.runDate ?? t("missing.notReported")}</span>
+              </>
+            )
+          }
+        />
+        <Stat
+          compact
+          isDemo={f?.dataKind === "synthetic"}
+          label={t("future.v2.stat.flood", { month: activeFloodMonth ? ym(activeFloodMonth) : "—" })}
+          value={activeFloodMonth?.expectedFloodedKm2?.base != null ? fmt(activeFloodMonth.expectedFloodedKm2.base) : t("future.v2.stat.exploratory")}
+          unit={activeFloodMonth?.expectedFloodedKm2?.base != null ? "km²" : undefined}
+          note={<span data-testid="exploratory">{t("future.exploratory")}</span>}
+        />
+      </div>
+
+      <StateNote tier={scenariosTier} label={t("future.scenario.title")} />
+
+      {sd && chosen && (
+        <div className="flex flex-col gap-3 rounded-xl border border-[#DCE3DB] bg-white p-3.5">
+          <div>
+            <h2 className="m-0 font-serif text-[15px] font-semibold text-[#16231B]">{t("future.v2.pickLabel")}</h2>
+            <p className="mt-0.5 text-[12px] text-[#4A5850]">{t("future.scenario.lead")}</p>
+          </div>
+
+          <div role="radiogroup" aria-label={t("future.scenario.pick")} className="grid grid-cols-1 gap-2 sm:grid-cols-2" data-testid="scenario-picker">
+            {sd.scenarios.map((s) => {
+              const active = s.id === chosen.id;
+              return (
                 <button
                   key={s.id}
                   type="button"
                   role="radio"
-                  aria-checked={s.id === chosen.id}
+                  aria-checked={active}
                   onClick={() => onScenario(s.id)}
-                  className={`rounded-md border px-2 py-1.5 text-left text-xs ${s.id === chosen.id ? "border-fuchsia-300 bg-fuchsia-600/25 text-white" : "border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700"}`}
+                  className={`flex items-start gap-2 rounded-[10px] border px-3 py-2 text-left text-[12px] transition-colors ${
+                    active ? "border-2 border-[#6B5A9E] bg-[#ECE8F4] text-[#4E3F80]" : "border-[#DCE3DB] bg-white text-[#16231B] hover:bg-[#F2F5F1]"
+                  }`}
                 >
-                  {s.id === chosen.id ? "● " : "○ "}
-                  {s.label}
-                  {s.basis && <span className="block text-[11px] text-slate-400">{s.basis}</span>}
+                  <span
+                    className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                      active ? "border-[#6B5A9E] bg-[#6B5A9E]" : "border-[#C9D1C7]"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {active && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                  </span>
+                  <span>
+                    <span className="block font-semibold">{s.label}</span>
+                    {s.basis && <span className="block text-[11px] text-[#4A5850]">{s.basis}</span>}
+                  </span>
                 </button>
-              ))}
-            </div>
-            <PhaseBand months={chosen.months} startMonth={sd.startMonth} />
-            <ScenarioRainChart sc={chosen} />
-            <p className="text-[11px] text-slate-300">{t("future.scenario.bars")}</p>
-            {chosen.isEnvelope && <p className="text-[11px] text-amber-200">{t("future.scenario.envelope")}</p>}
-            <p className="mt-1 rounded border border-amber-400/60 bg-amber-950/40 p-2 text-[11px] text-amber-100" data-testid="power-caveat">
-              <span aria-hidden="true">⚠ </span>{t("future.scenario.powerCaveat")}
-            </p>
-            <SourceLine data={sd} className="mt-1" />
-            <Caveats data={sd} />
-          </>
-        )}
-      </Section>
-
-      <Section title={t("future.flood.title")} sensor="nisar_l" kind={kindOf(f, "scenario")}>
-        <p className="mb-1 inline-block rounded border-2 border-dashed border-violet-300 bg-violet-500/20 px-2 py-0.5 text-xs font-black uppercase tracking-wider text-violet-100" data-testid="exploratory">
-          {t("future.exploratory")}
-        </p>
-        <StateNote tier={floodTier} label={t("future.flood.title")} />
-        {f && (
-          <>
-            <FloodScenarioChart d={f} />
-            <p className="text-[11px] text-slate-300">{t("future.flood.legend")}</p>
-            {(() => {
-              const gaps = f.months.filter((m) => !m.expectedFloodedKm2);
-              if (!gaps.length) return null;
-              return (
-                <p className="mt-1 text-[11px] text-amber-200" data-testid="flood-gaps">
-                  {t("future.flood.gaps", { n: gaps.length, of: f.months.length })} {gaps[0].reason ?? ""}
-                </p>
               );
-            })()}
-            {f.assumptions?.length > 0 && (
-              <ul className="mt-1 list-disc pl-4 text-[11px] text-slate-400">
-                {f.assumptions.map((a) => (
-                  <li key={a}>{a}</li>
-                ))}
-              </ul>
-            )}
-            {f.relationship && (
-              <details className="mt-2 text-[11px] text-slate-300">
-                <summary className="cursor-pointer">{t("future.rel.title", { n: f.relationship.n })}</summary>
-                <p className="mt-1 text-slate-400">{f.relationship.method}</p>
-                <RelationshipChart rel={f.relationship} />
-              </details>
-            )}
-            <SourceLine data={f} className="mt-1" />
-            <Caveats data={f} />
-          </>
-        )}
-      </Section>
+            })}
+          </div>
 
-      <Section title={t("future.motion.title")} sensor="insar" kind="scenario" helpCard="insar" onHelp={onHelp}>
-        {projectionNode}
-      </Section>
-    </>
+          <ScenarioRainChart sc={chosen} />
+
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#4A5850]">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border border-[#2171B5] bg-[#6BAED6]" aria-hidden="true" />
+              {t("future.v2.outlookMonths")}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border border-[#4E3F80] bg-[#6B5A9E]" aria-hidden="true" />
+              {t("future.v2.scenarioMonths")}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#123B25]" aria-hidden="true" />
+              {t("future.v2.outlookMean")}
+            </span>
+          </div>
+
+          {chosen.isEnvelope && <p className="m-0 text-[11px] text-[#4A5850]">{t("future.scenario.envelope")}</p>}
+        </div>
+      )}
+
+      {/* NASA POWER dry-season caveat always sits directly beneath the 12-month chart */}
+      <p className="m-0 rounded-[10px] border border-dashed border-[#7A5B00]/50 bg-[#FFF6DE] px-3 py-2.5 text-[12px] leading-[1.5] text-[#5A4300]" data-testid="power-caveat">
+        <span aria-hidden="true">⚠ </span>
+        {t("future.scenario.powerCaveat")}
+      </p>
+
+      <details className="rounded-xl border border-[#DCE3DB] bg-white px-3.5 py-2.5">
+        <summary className="cursor-pointer text-[13px] font-semibold text-[#1E5B3A]">
+          {t("future.outlook.title")} · {t("future.flood.title")} · {t("future.motion.title")}
+        </summary>
+        <div className="mt-3 flex flex-col gap-4 border-t border-[#DCE3DB] pt-3">
+          <div>
+            <h3 className="mb-1.5 text-[13px] font-semibold text-[#16231B]">{t("future.outlook.title")}</h3>
+            <StateNote tier={outlookTier} label={t("future.outlook.title")} />
+            {o && (
+              <>
+                {chosen && <PhaseBand months={chosen.months} startMonth={sd?.startMonth} />}
+                <OutlookChart d={o} />
+                <dl className="mt-2 grid grid-cols-[auto,1fr] gap-x-3 gap-y-0.5 text-[11px]">
+                  <dt className="text-[#4A5850]">{t("future.outlook.horizon")}</dt>
+                  <dd className="text-[#16231B]">
+                    {o.horizonMonths ?? o.months?.length} {t("future.months")}
+                    {o.fullMonths != null ? ` (${t("future.outlook.full", { n: o.fullMonths })})` : ""}
+                  </dd>
+                  <dt className="text-[#4A5850]">{t("future.outlook.res")}</dt>
+                  <dd className="text-[#16231B]">{o.nativeResolution ?? t("missing.notReported")}</dd>
+                  <dt className="text-[#4A5850]">{t("future.outlook.members")}</dt>
+                  <dd className="text-[#16231B]">{o.ensembleMembers ?? o.months?.[0]?.members ?? t("missing.notReported")}</dd>
+                  {o.firstForecastDate && (
+                    <>
+                      <dt className="text-[#4A5850]">{t("future.outlook.days")}</dt>
+                      <dd className="text-[#16231B]">
+                        {o.firstForecastDate} … {o.lastForecastDate ?? "—"}
+                      </dd>
+                    </>
+                  )}
+                  {o.anomaly && (
+                    <>
+                      <dt className="text-[#4A5850]">{t("future.outlook.anomaly")}</dt>
+                      <dd className="text-[#16231B]">{o.anomaly.available ? o.anomaly.basis : o.anomaly.reason ?? t("missing.notReported")}</dd>
+                    </>
+                  )}
+                </dl>
+                <p className="mt-1.5 text-[11px] text-[#4A5850]">
+                  {t("future.outlook.note")}
+                  {o.months?.some((m) => m.fullMonth === false) ? ` ${t("future.outlook.star")}` : ""}
+                </p>
+                <Caveats data={o} />
+              </>
+            )}
+          </div>
+
+          <div>
+            <h3 className="mb-1.5 text-[13px] font-semibold text-[#16231B]">{t("future.flood.title")}</h3>
+            <StateNote tier={floodTier} label={t("future.flood.title")} />
+            {f && (
+              <>
+                <FloodScenarioChart d={f} />
+                <p className="mt-1 text-[11px] text-[#4A5850]">{t("future.flood.legend")}</p>
+                {(() => {
+                  const gaps = f.months.filter((m) => !m.expectedFloodedKm2);
+                  if (!gaps.length) return null;
+                  return (
+                    <p className="mt-1 rounded-md bg-[#FFF6DE] px-2 py-1 text-[11px] text-[#5A4300]" data-testid="flood-gaps">
+                      {t("future.flood.gaps", { n: gaps.length, of: f.months.length })} {gaps[0].reason ?? ""}
+                    </p>
+                  );
+                })()}
+                {f.assumptions?.length > 0 && (
+                  <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-[11px] text-[#4A5850]">
+                    {f.assumptions.map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                )}
+                {f.relationship && (
+                  <div className="mt-2">
+                    <div className="text-[11px] font-semibold text-[#16231B]">{t("future.rel.title", { n: f.relationship.n })}</div>
+                    <p className="mt-0.5 text-[11px] text-[#4A5850]">{f.relationship.method}</p>
+                    <RelationshipChart rel={f.relationship} />
+                  </div>
+                )}
+                <Caveats data={f} />
+              </>
+            )}
+          </div>
+
+          <div>
+            <h3 className="mb-1.5 text-[13px] font-semibold text-[#16231B]">{t("future.motion.title")}</h3>
+            {projectionNode}
+          </div>
+        </div>
+      </details>
+
+      {(sd ?? o ?? f) && (
+        <div className="mt-auto border-t border-[#DCE3DB] pt-3">
+          <SourceLine data={sd ?? o ?? f} onSources={onSources} />
+          <Caveats data={sd} />
+        </div>
+      )}
+    </div>
   );
 }

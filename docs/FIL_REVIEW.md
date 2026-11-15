@@ -458,3 +458,147 @@ These are separate from the UI dictionary. Correct the wording and retain placeh
 - Backend templates: 13 Filipino entries, all included.
 - English/Filipino placeholder mismatches: UI 0, hypotheses 0, backend 0. Proposed corrections preserve their current placeholders.
 - Check is mechanical; it does not verify meaning, source facts, naturalness, or native-speaker approval.
+
+## Mangrove v2 UI strings (pending native review)
+
+All v2 shell, Map tools, Spot card, findings summaries and timeline strings added for `DESIGN_SPEC_V2.md` are **pending native review**.
+
+| Key | English | Current Filipino (pending native review) | Corrected Filipino (draft / reviewer) |
+| --- | --- | --- | --- |
+| `header.area.season` | CAMANAVA · 2026 wet season | CAMANAVA · Panahon ng tag-ulan 2026 |  |
+| `header.area.history` | CAMANAVA · 2000 – 2026 | CAMANAVA · 2000 – 2026 |  |
+| `header.area.future` | CAMANAVA · Dec 2026 – Nov 2027 | CAMANAVA · Dis 2026 – Nob 2027 |  |
+| `header.tour` | Take the tour | Sumama sa tour |  |
+| `header.sources` | Sources and limits | Pinagmulan at limitasyon |  |
+| `header.settings` | Settings: language, base map, units | Settings: wika, batayang mapa, mga yunit |  |
+| `header.settings.mobile` | Settings: language, base map, tour, sources | Settings: wika, batayang mapa, tour, mga pinagmulan |  |
+| `header.preview` | Pipeline preview (synthetic) | Pipeline preview (synthetic) |  |
+| `header.regional` | Regional context (Sentinel-1 2022–2025) | Rehiyonal na konteksto (Sentinel-1 2022–2025) |  |
+| `rail.layers` | Layers | Mga layer |  |
+| `rail.rhythm.short` | Rhythm | Ritmo |  |
+| `rail.motion.short` | Motion | Galaw |  |
+| `demo.tag` | Demo | Demo |  |
+| `demo.number` | Demo number | Halimbawang numero |  |
+| `demo.title` | Synthetic demo data, not a NISAR observation | Gawa-gawang demo datos, hindi obserbasyon ng NISAR |  |
+| `map.zoomIn` | Zoom in | Palakihin |  |
+| `map.zoomOut` | Zoom out | Paliitin |  |
+| `map.attribution` | © OpenStreetMap contributors · NISAR: NASA/ISRO via ASF | © OpenStreetMap contributors · NISAR: NASA/ISRO via ASF |  |
+| `map.tools` | Map tools | Mga gamit sa mapa |  |
+| `map.tools.open` | Map tools: map mode, overlay, layers | Mga gamit sa mapa: uri ng mapa, overlay, mga layer |  |
+| `map.tools.mode` | Map mode | Uri ng mapa |  |
+| `map.tools.mode.streets` | Streets | Mga kalsada |  |
+| `map.tools.mode.minimal` | Minimal | Minimal |  |
+| `map.tools.overlay` | Overlay | Overlay |  |
+| `map.tools.overlay.one` | One at a time | Isa bawat pagkakataon |  |
+| `map.tools.overlay.rhythm` | Flood rhythm (all passes) | Ritmo ng baha (lahat ng pass) |  |
+| `map.tools.overlay.pass` | Single radar pass | Isang radar pass |  |
+| `map.tools.overlay.motion` | Ground motion (InSAR) | Galaw ng lupa (InSAR) |  |
+| `map.tools.overlay.scenario` | Flood scenario | Senaryo ng baha |  |
+| `map.tools.showVeg` | Show possible flooded vegetation | Ipakita ang posibleng binahang halaman |  |
+| `map.tools.layers` | Layers | Mga layer |  |
+| `map.tools.layer.bgy` | Barangay boundaries | Mga hangganan ng barangay |  |
+| `map.tools.layer.labels` | Place names | Pangalan ng lugar |  |
+| `map.tools.layer.roads` | Major roads | Pangunahing kalsada |  |
+| `map.tools.layer.rivers` | Rivers and coast | Mga ilog at baybayin |  |
+| `map.tools.layer.study` | Study area outline | Balangkas ng lugar ng pag-aaral |  |
+| `map.tools.layer.buildings` | Estimated buildings in flood zone | Tinatayang gusali sa binahang sona |  |
+| `map.tools.layersCount` | {n} layers | {n} layer |  |
+| `map.tools.reset` | Reset map | I-reset ang mapa |  |
+| `map.tools.done` | Done | Tapos na |  |
+| `map.swipe.handle` | Drag to compare Before and After | I-drag upang ihambing ang Bago at Pagkatapos |  |
+| `search.v2.placeholder` | Find my barangay or city | Hanapin ang barangay o lungsod |  |
+| `spot.selected.eyebrow` | SELECTED PLACE | NAPILING LUGAR |  |
+| `spot.clear` | Clear spot selection | Alisin ang napiling lugar |  |
+| `spot.briefing` | Briefing | Buod |  |
+| `spot.csv` | CSV | CSV |  |
+| `spot.fullDetails` | Full details | Buong detalye |  |
+| `spot.backToFindings` | Back to area findings | Bumalik sa mga natuklasan |  |
+| `spot.card.waterPasses` | Water on NISAR passes | Tubig sa mga pass ng NISAR |  |
+| `spot.card.waterCount` | {k} of {n} | {k} sa {n} |  |
+| `spot.card.losLabel` | Ground motion (LOS) | Galaw ng lupa (LOS) |  |
+| `spot.card.losPeriod` | Total, {from} → {to} | Kabuuan, {from} → {to} |  |
+| `spot.card.standingWater` | Standing water | Nakatayong tubig |  |
+| `spot.card.veg` | Possible flooded vegetation | Posibleng binahang halaman |  |
+| `spot.card.lastPass` | Last pass | Huling pass |  |
+| `spot.card.exposureNote` | Residents & buildings inside the flooded zone (exposure, not damage). | Mga residente at gusali sa loob ng binahang sona (exposure, hindi pinsala). |  |
+| `rhythm.v2.eyebrow` | FLOOD RHYTHM · 2026 WET SEASON | RITMO NG BAHA · TAG-ULAN 2026 |  |
+| `rhythm.v2.headline` | {km2} km² under water on half or more of the season's passes | {km2} km² ang nasa ilalim ng tubig sa kalahati o higit pang pass |  |
+| `rhythm.v2.headlineMissing` | How often each street went under water this wet season | Gaano kadalas nabaha ang bawat kalye ngayong tag-ulan |  |
+| `rhythm.v2.stat.passes` | NISAR passes | Mga pass ng NISAR |  |
+| `rhythm.v2.stat.period` | {from} – {to} | {from} – {to} |  |
+| `rhythm.v2.stat.people` | People living there | Mga taong nakatira roon |  |
+| `rhythm.v2.stat.buildingsNote` | exposure, not damage | exposure, hindi pinsala |  |
+| `rhythm.v2.plainTitle` | In plain words | Sa simpleng salita |  |
+| `rhythm.v2.plainBody` | NISAR passed over CAMANAVA {n} times between {from} and {to}, through clouds and rain. Light blue shows places that flooded once or twice; darker blue shows streets that flooded again and again. | Dumaan ang NISAR sa CAMANAVA nang {n} ulit mula {from} hanggang {to}, kahit may ulap at ulan. Ang mapusyaw na asul ay minsang nabaha; ang matingkad na asul ay paulit-ulit na nabaha. |  |
+| `rhythm.v2.readMore` | Read more | Magbasa pa |  |
+| `rhythm.v2.readLess` | Show less | Itago ang iba |  |
+| `rhythm.v2.legendTitle` | Passes with water | Mga pass na may tubig |  |
+| `rhythm.v2.legendMin` | 1–2 | 1–2 |  |
+| `rhythm.v2.legendMax` | {n} | {n} |  |
+| `rhythm.v2.legendPerm` | Permanent water | Permanenteng tubig |  |
+| `season.v2.eyebrow` | SEASON · SINGLE RADAR PASS | PANAHON · ISANG RADAR PASS |  |
+| `season.v2.headline` | {km2} km² of standing water on this pass | {km2} km² na nakatayong tubig sa pass na ito |  |
+| `season.v2.headlineMissing` | Pass coverage on {date} | Saklaw ng pass noong {date} |  |
+| `season.v2.changeSince` | Change since {date} | Pagbabago mula {date} |  |
+| `season.v2.rainWindow` | Rain, {window} | Ulan, {window} |  |
+| `season.v2.vegLabel` | Possible flooded vegetation | Posibleng binahang halaman |  |
+| `season.v2.vegSub` | shown in amber; counted apart | nakakulay kahel; hiwalay ang bilang |  |
+| `season.v2.validLabel` | Valid coverage | Wastong saklaw |  |
+| `season.v2.validSub` | of study area | ng lugar ng pag-aaral |  |
+| `season.v2.plainBody` | After {rain} mm of rain in the preceding week, radar mapped {km2} km² of open water on {date}. L-band radar can also bounce twice off flooded trees and crops, shown separately in amber. | Matapos ang {rain} mm ng ulan sa nakaraang linggo, naitala ng radar ang {km2} km² ng bukas na tubig noong {date}. Nakakakita rin ang L-band ng doble-talbog sa binahang puno at pananim, hiwalay sa kulay kahel. |  |
+| `season.v2.plainNoRain` | On {date}, L-band radar mapped {km2} km² of open standing water across the usable scene. Possible flooded vegetation is tracked separately in amber. | Noong {date}, naitala ng L-band radar ang {km2} km² ng bukas na tubig. Hiwalay na minamarkahan sa kahel ang posibleng binahang halaman. |  |
+| `season.v2.manilaLine` | {utc} UTC ({manila} Manila) · L-band HH/HV | {utc} UTC ({manila} Maynila) · L-band HH/HV |  |
+| `season.v2.compareToggle` | Compare two passes (Before / After swipe) | Ihambing ang dalawang pass (Swipe Bago / Pagkatapos) |  |
+| `season.v2.layerLabel` | Radar view | Tanaw ng radar |  |
+| `motion.v2.eyebrow` | GROUND MOTION · LINE OF SIGHT | GALAW NG LUPA · LINE OF SIGHT |  |
+| `motion.v2.headline` | Parts of CAMANAVA moved along the satellite's view between June and October | May mga bahaging gumalaw sa paningin ng satellite mula Hunyo hanggang Oktubre |  |
+| `motion.v2.stat.pairs` | Interferogram pairs | Mga pares ng interferogram |  |
+| `motion.v2.stat.period` | Period | Panahon |  |
+| `motion.v2.stat.away` | Area moving away | Lawak na lumalayo |  |
+| `motion.v2.stat.awaySub` | more than {mm} mm LOS | higit sa {mm} mm LOS |  |
+| `motion.v2.stat.overlap` | Also often flooded | Madalas ding bahain |  |
+| `motion.v2.stat.overlapSub` | overlapping exposure zones | magkasabay na sonang may exposure |  |
+| `motion.v2.plainBody` | NISAR compares the phase of consecutive radar waves. Movement is measured along the satellite's slanted line of sight relative to a reference area on firmer ground, so moving away can include vertical sinking or sideways shift. | Inihahambing ng NISAR ang phase ng magkasunod na radar wave. Sinusukat ang galaw sa pahilis na line of sight ng satellite kumpara sa mas matatag na lupa, kaya maaaring may kasamang paglubog o pahalang na galaw. |  |
+| `motion.v2.legendTitle` | Ground motion, LOS | Galaw ng lupa, LOS |  |
+| `motion.v2.legendSub` | Positive = moving away from satellite | Positibo = lumalayo sa satellite |  |
+| `motion.v2.legendAway` | Away (+mm) | Lumalayo (+mm) |  |
+| `motion.v2.legendStable` | 0 | 0 |  |
+| `motion.v2.legendToward` | Toward (−mm) | Palapit (−mm) |  |
+| `motion.v2.refArea` | Reference area | Reference area |  |
+| `hist.v2.eyebrow` | HISTORY · WET-SEASON RAIN SINCE 2000 | KASAYSAYAN · ULAN SA TAG-ULAN MULA 2000 |  |
+| `hist.v2.headlineRank` | {year} ranks {rank} of {of} wet seasons since 2000 | Pang-{rank} ang {year} sa {of} na tag-ulan mula 2000 |  |
+| `hist.v2.headline` | Wet-season rainfall in CAMANAVA since 2000 | Ulan sa tag-ulan sa CAMANAVA mula 2000 |  |
+| `hist.v2.stat.sofar` | {year} so far | {year} sa ngayon |  |
+| `hist.v2.stat.peak` | Wettest year | Pinakamaulang taon |  |
+| `hist.v2.stat.trend` | Trend since 2000 | Trend mula 2000 |  |
+| `hist.v2.chartTitle` | Wet-season rain (Jun–Nov), 2000–{year} | Ulan sa tag-ulan (Hun–Nob), 2000–{year} |  |
+| `hist.v2.fullSeason` | Full season | Buong panahon |  |
+| `hist.v2.wettestLegend` | Wettest: {year}, {mm} mm | Pinakamaulan: {year}, {mm} mm |  |
+| `hist.v2.incompleteLegend` | {year} to {date} (incomplete) | {year} hanggang {date} (hindi pa tapos) |  |
+| `hist.v2.plainBody` | Every year from 2000 is compared using the same calendar window. NASA POWER is one ~50 km reanalysis grid cell covering the whole study area, never street-level gauges, and any multi-year trend says nothing about its cause. | Bawat taon mula 2000 ay inihahambing gamit ang parehong saklaw ng kalendaryo. Ang NASA POWER ay iisang ~50 km grid cell sa buong lugar, hindi sukatan sa kalye, at walang sinasabi ang trend tungkol sa sanhi nito. |  |
+| `hist.v2.mapCellTitle` | One NASA POWER grid cell (about 50 km) | Isang NASA POWER grid cell (mga 50 km) |  |
+| `hist.v2.mapCellSub` | Every rainfall number here is one value for this whole cell, not street-level rain. | Bawat numero ng ulan ay iisang halaga para sa buong cell na ito, hindi ulan sa bawat kalye. |  |
+| `hist.v2.mapStudy` | Study area | Lugar ng pag-aaral |  |
+| `hist.v2.footerTitle` | What data exists when | Anong datos ang mayroon at kailan |  |
+| `hist.v2.footerSub` | Pick a year to see what's available | Pumili ng taon upang makita ang available |  |
+| `future.v2.eyebrow` | FUTURE · OUTLOOK AND CONDITIONAL SCENARIOS | HINAHARAP · OUTLOOK AT KONDISYONAL NA SENARYO |  |
+| `future.v2.headline` | Seasonal rainfall outlook and conditional what-if scenarios | Pana-panahong outlook sa ulan at mga kondisyonal na senaryo |  |
+| `future.v2.stat.covers` | Outlook covers | Saklaw ng outlook |  |
+| `future.v2.stat.members` | {n} model runs, {res} grid | {n} model runs, {res} grid |  |
+| `future.v2.stat.anom` | First month vs model normal | Unang buwan kumpara sa normal |  |
+| `future.v2.stat.flood` | Flood scenario, {month} | Senaryo ng baha, {month} |  |
+| `future.v2.stat.exploratory` | Exploratory | Eksploratoryo |  |
+| `future.v2.pickLabel` | Choose a 12-month rainfall scenario | Pumili ng 12-buwang senaryo ng ulan |  |
+| `future.v2.outlookMonths` | Outlook months | Mga buwan ng outlook |  |
+| `future.v2.scenarioMonths` | Scenario months | Mga buwan ng senaryo |  |
+| `future.v2.outlookMean` | Outlook model mean | Outlook model mean |  |
+| `future.v2.mapLegendTitle` | Exploratory flood scenario | Eksploratoryong senaryo ng baha |  |
+| `future.v2.mapLegendSub` | Where water appeared on NISAR passes after similar rain. A what-if, not a forecast of next year's floods. | Kung saan nakitang may tubig ang NISAR matapos ang katulad na ulan. Isang what-if, hindi hula ng baha sa susunod na taon. |  |
+| `future.v2.footerObs` | Observed to {date} | Naobserbahan hanggang {date} |  |
+| `future.v2.footerOutlook` | Outlook · {range} | Outlook · {range} |  |
+| `future.v2.footerScenario` | Conditional scenario · {range} | Kondisyonal na senaryo · {range} |  |
+| `time.v2.dailyRain` | Daily rain (NASA POWER) | Arawang ulan (NASA POWER) |  |
+| `time.v2.nisarPass` | NISAR pass | NISAR pass |  |
+| `time.v2.rain7d` | 7-day rain window | 7-araw na ulan |  |
+| `time.v2.prevMonth` | Previous month | Nakaraang buwan |  |
+| `time.v2.nextMonth` | Next month | Susunod na buwan |  |

@@ -7,7 +7,7 @@ import { useLimits } from "../utils/LimitsContext";
 
 const STANDING = [1, 2, 3, 4, 5, 6, 7];
 
-// U8 Limits drawer: standing caveats plus every limitation / warning string the APIs in view returned.
+// U8 Limits drawer: standing caveats plus every limitation / warning string returned by APIs in view.
 export default function LimitsDrawer({ open, onClose }) {
   const { t } = useLang();
   const { entries } = useLimits();
@@ -29,24 +29,37 @@ export default function LimitsDrawer({ open, onClose }) {
   if (!open) return null;
   const list = Object.entries(entries).filter(([, e]) => e.limitations.length || e.warnings.length);
   return (
-    <div className="fixed inset-0 z-[3000] bg-black/50" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <aside role="dialog" aria-modal="true" aria-labelledby="limits-title" className="absolute inset-y-0 right-0 w-full max-w-md overflow-auto border-l border-slate-500 bg-slate-900 p-4 text-white shadow-2xl" data-testid="limits-drawer">
-        <div className="flex items-center justify-between">
-          <h2 id="limits-title" className="text-lg font-bold">
+    <div className="fixed inset-0 z-[3000] bg-black/35 backdrop-blur-[1px]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="limits-title"
+        className="absolute inset-y-0 right-0 w-full max-w-md overflow-auto border-l border-[#DCE3DB] bg-white p-5 text-[#16231B] shadow-2xl"
+        data-testid="limits-drawer"
+      >
+        <div className="flex items-center justify-between border-b border-[#DCE3DB] pb-3">
+          <h2 id="limits-title" className="font-serif text-[20px] font-semibold text-[#16231B]">
             {t("limits.title")}
           </h2>
-          <button type="button" ref={closeRef} onClick={onClose} className="rounded-md border border-slate-400 px-2.5 py-1 text-sm hover:bg-slate-700">
+          <button
+            type="button"
+            ref={closeRef}
+            onClick={onClose}
+            className="h-9 rounded-lg border border-[#DCE3DB] bg-[#F2F5F1] px-3 text-[13px] font-medium text-[#16231B] hover:bg-[#E3EFE7]"
+          >
             {t("radar.close")}
           </button>
         </div>
-        <h3 className="mt-3 text-sm font-semibold text-yellow-100">{t("limits.standing")}</h3>
-        <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-slate-200">
+
+        <h3 className="mt-4 font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("limits.standing")}</h3>
+        <ul className="mt-1.5 list-disc space-y-1.5 pl-5 text-[13px] leading-relaxed text-[#16231B]">
           {STANDING.map((i) => (
             <li key={i}>{t(`limits.standing.${i}`)}</li>
           ))}
         </ul>
-        <h3 className="mt-4 text-sm font-semibold text-yellow-100">{t("sources.title")}</h3>
-        <ul className="mt-1 list-disc space-y-1 pl-5 text-xs text-slate-200" data-testid="data-credits">
+
+        <h3 className="mt-5 font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("sources.title")}</h3>
+        <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[12px] text-[#4A5850]" data-testid="data-credits">
           {[
             ["NASA–ISRO NISAR · ASF", "https://asf.alaska.edu/datasets/daac/nisar/"],
             ["NASA POWER", "https://power.larc.nasa.gov/"],
@@ -55,20 +68,27 @@ export default function LimitsDrawer({ open, onClose }) {
             ["ESA WorldCover · CC BY 4.0", "https://esa-worldcover.org/en/data-access"],
             ["HDX Philippines COD-AB", "https://data.humdata.org/dataset/cod-ab-phl"],
             ["Open-Meteo / ECMWF", "https://open-meteo.com/en/docs/seasonal-forecast-api"],
-          ].map(([label, url]) => <li key={url}><a href={url} target="_blank" rel="noreferrer" className="text-sky-300 underline">{label}</a></li>)}
+          ].map(([label, url]) => (
+            <li key={url}>
+              <a href={url} target="_blank" rel="noreferrer" className="font-medium text-[#1E5B3A] underline hover:text-[#123B25]">
+                {label}
+              </a>
+            </li>
+          ))}
         </ul>
-        <h3 className="mt-4 text-sm font-semibold text-yellow-100">{t("limits.fromApi")}</h3>
-        {list.length === 0 && <p className="mt-1 text-sm text-slate-300">{t("limits.none")}</p>}
+
+        <h3 className="mt-5 font-serif text-[15px] font-semibold text-[#1E5B3A]">{t("limits.fromApi")}</h3>
+        {list.length === 0 && <p className="mt-1 text-[13px] text-[#4A5850]">{t("limits.none")}</p>}
         {list.map(([key, e]) => (
-          <div key={key} className="mt-3 rounded-lg border border-slate-700 bg-slate-800/60 p-2.5" data-testid="limits-entry">
+          <div key={key} className="mt-3 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3" data-testid="limits-entry">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold">{e.label}</span>
+              <span className="text-[13px] font-semibold text-[#16231B]">{e.label}</span>
               {e.dataKind && <KindBadge kind={e.dataKind} />}
             </div>
-            {e.sourceName && <p className="text-[11px] text-slate-400">{e.sourceName}</p>}
-            <ul className="mt-1 list-disc space-y-1 pl-5 text-xs text-slate-200">
+            {e.sourceName && <p className="mt-0.5 text-[11px] text-[#4A5850]">{e.sourceName}</p>}
+            <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[12px] leading-relaxed text-[#16231B]">
               {e.warnings.map((w) => (
-                <li key={`w-${w}`} className="text-amber-100">
+                <li key={`w-${w}`} className="font-medium text-[#7A5B00]">
                   ⚠ {w}
                 </li>
               ))}

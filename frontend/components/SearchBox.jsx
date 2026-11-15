@@ -77,44 +77,53 @@ export default function SearchBox({ onSelect, inputRef, highlight = false }) {
   const showList = open && q.trim().length >= 2;
   const detail = res.error?.detail && typeof res.error.detail === "object" ? res.error.detail.message : null;
   return (
-    <div className="relative w-full md:w-72">
-      <label htmlFor={`${uid}-in`} className="sr-only">
-        {t("search.label")}
+    <div className="relative w-full">
+      <label
+        htmlFor={`${uid}-in`}
+        className={`flex h-[46px] w-full items-center gap-2.5 rounded-xl border bg-white px-3.5 shadow-[0_2px_8px_rgba(20,30,40,0.12)] ${
+          highlight ? "border-[#1E5B3A] ring-2 ring-[#1E5B3A]/30" : "border-[#DCE3DB]"
+        }`}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" strokeWidth="2.2" aria-hidden="true" className="shrink-0">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
+        <span className="sr-only">{t("search.label")}</span>
+        <input
+          id={`${uid}-in`}
+          ref={inputRef}
+          type="search"
+          role="combobox"
+          aria-expanded={showList}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          aria-activedescendant={showList && active >= 0 ? `${uid}-opt-${active}` : undefined}
+          autoComplete="off"
+          value={q}
+          placeholder={t("search.v2.placeholder")}
+          onChange={(e) => {
+            setQ(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 120)}
+          onKeyDown={onKeyDown}
+          className="min-w-0 flex-1 border-0 bg-transparent text-[14px] text-[#16231B] placeholder:text-[#4A5850] focus:outline-none"
+          data-testid="search-input"
+        />
       </label>
-      <input
-        id={`${uid}-in`}
-        ref={inputRef}
-        type="search"
-        role="combobox"
-        aria-expanded={showList}
-        aria-controls={listId}
-        aria-autocomplete="list"
-        aria-activedescendant={showList && active >= 0 ? `${uid}-opt-${active}` : undefined}
-        autoComplete="off"
-        value={q}
-        placeholder={t("search.placeholder")}
-        onChange={(e) => {
-          setQ(e.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 120)}
-        onKeyDown={onKeyDown}
-        className={`w-full rounded-md border bg-slate-800 px-3 py-1.5 text-sm text-white placeholder:text-slate-400 ${highlight ? "border-yellow-300 ring-2 ring-yellow-300" : "border-slate-500"}`}
-        data-testid="search-input"
-      />
       {showList && (
         <ul
           id={listId}
           role="listbox"
           aria-label={t("search.results")}
-          className="absolute left-0 right-0 top-full z-[1500] mt-1 max-h-72 overflow-auto rounded-md border border-slate-500 bg-slate-900 text-sm shadow-xl"
+          className="absolute left-0 right-0 top-full z-[1500] mt-1.5 max-h-72 overflow-auto rounded-xl border border-[#DCE3DB] bg-white text-sm text-[#16231B] shadow-[0_6px_24px_rgba(20,30,40,0.14)]"
           data-testid="search-results"
         >
-          {res.state === "loading" && <li className="px-3 py-2 text-xs text-slate-300">{t("state.loading.title")}</li>}
-          {res.state === "ready" && res.items.length === 0 && <li className="px-3 py-2 text-xs text-slate-300">{t("search.none")}</li>}
+          {res.state === "loading" && <li className="px-3.5 py-2.5 text-xs text-[#4A5850]">{t("state.loading.title")}</li>}
+          {res.state === "ready" && res.items.length === 0 && <li className="px-3.5 py-2.5 text-xs text-[#4A5850]">{t("search.none")}</li>}
           {["offline", "error", "upstream", "unavailable", "invalid"].includes(res.state) && (
-            <li className="px-3 py-2 text-xs text-amber-200">
+            <li className="px-3.5 py-2.5 text-xs text-[#7A5B00]">
               {t(`state.${res.state}.title`)}. {detail ?? t(`state.${res.state}.body`)}
             </li>
           )}
@@ -129,10 +138,10 @@ export default function SearchBox({ onSelect, inputRef, highlight = false }) {
                 pick(r);
               }}
               onMouseEnter={() => setActive(i)}
-              className={`cursor-pointer px-3 py-1.5 ${i === active ? "bg-sky-700 text-white" : "text-slate-100"}`}
+              className={`cursor-pointer px-3.5 py-2 text-[13px] ${i === active ? "bg-[#E3EFE7] text-[#123B25]" : "text-[#16231B] hover:bg-[#F2F5F1]"}`}
             >
-              <span className="font-medium">{r.name}</span>
-              <span className="ml-2 text-xs text-slate-300">
+              <span className="font-semibold">{r.name}</span>
+              <span className="ml-2 text-xs text-[#4A5850]">
                 {t(`search.level.${r.level}`)}
                 {r.city && r.city !== r.name ? ` · ${r.city}` : ""}
                 {r.province ? ` · ${r.province}` : ""}

@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Caveats, PALETTE, Section, SourceLine, Stat, StateNote, fmt } from "./ui";
+import { Caveats, DemoTag, HelpButton, PALETTE, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
 
 export const HISTORY_START = "2000-01-01";
@@ -20,7 +20,7 @@ function pct(date, t0, t1) {
   return Math.min(100, Math.max(0, ((Date.parse(date) - t0) / (t1 - t0)) * 100));
 }
 
-// F1: which dataset exists when, back to 2000. Catalogue-only datasets are hatched and say so.
+// Which dataset exists when back to 2000. Catalogue-only datasets use diagonal hatching.
 export function AvailabilityStrip({ tier, date }) {
   const { t } = useLang();
   const d = tier.data;
@@ -30,14 +30,14 @@ export function AvailabilityStrip({ tier, date }) {
   const years = [2000, 2005, 2010, 2015, 2020, 2025];
   return (
     <div data-testid="availability">
-      <div className="relative ml-0 h-4 text-[10px] text-slate-400" aria-hidden="true">
+      <div className="relative mb-1 h-4 text-[10px] font-medium text-[#4A5850] tabular-nums" aria-hidden="true">
         {years.map((y) => (
           <span key={y} className="absolute -translate-x-1/2" style={{ left: `${pct(`${y}-01-01`, t0, t1)}%` }}>
             {y}
           </span>
         ))}
       </div>
-      <ul className="space-y-2">
+      <ul className="space-y-2.5">
         {d.datasets.map((ds) => {
           const left = pct(ds.start, t0, t1);
           const right = pct(ds.end ?? NOW_ISO(), t0, t1);
@@ -45,37 +45,44 @@ export function AvailabilityStrip({ tier, date }) {
           const at = date ? datasetAt(ds, date) : null;
           return (
             <li key={ds.id}>
-              <div className="flex items-baseline justify-between gap-2 text-[11px]">
-                <span className="font-semibold text-slate-100">{ds.label}</span>
-                <span className="shrink-0 text-slate-400">
+              <div className="flex items-baseline justify-between gap-2 text-[12px]">
+                <span className="font-semibold text-[#16231B]">{ds.label}</span>
+                <span className="shrink-0 text-[11px] text-[#4A5850] tabular-nums">
                   {t(KIND_LABEL[ds.kind] ?? "kind.other")} · {ds.start.slice(0, 4)}–{ds.end ? ds.end.slice(0, 4) : t("hist.now")}
                 </span>
               </div>
-              <div className="relative h-4 rounded bg-slate-800" role="img" aria-label={`${ds.label}: ${ds.start} to ${ds.end ?? t("hist.now")}, ${cat ? t("hist.catalogueOnly") : t("hist.integrated")}`}>
+              <div
+                className="relative mt-0.5 h-4 rounded-md border border-[#DCE3DB] bg-[#EEF2EC]"
+                role="img"
+                aria-label={`${ds.label}: ${ds.start} to ${ds.end ?? t("hist.now")}, ${cat ? t("hist.catalogueOnly") : t("hist.integrated")}`}
+              >
                 <div
-                  className={`absolute inset-y-0.5 rounded-sm border ${cat ? "border-dashed border-slate-300" : "border-solid border-sky-200 bg-sky-500"}`}
+                  className={`absolute inset-y-0.5 rounded-sm border ${cat ? "border-dashed border-[#6B5A9E]" : "border-solid border-[#1E5B3A] bg-[#1E5B3A]"}`}
                   style={{
                     left: `${left}%`,
                     width: `${Math.max(1.5, right - left)}%`,
-                    backgroundImage: cat ? "repeating-linear-gradient(45deg, rgba(203,213,225,.55) 0 3px, transparent 3px 6px)" : undefined,
+                    backgroundImage: cat ? "repeating-linear-gradient(45deg, rgba(107,90,158,.32) 0 3px, transparent 3px 6px)" : undefined,
                   }}
                 />
-                {date && <div className="absolute inset-y-[-2px] w-0.5 bg-yellow-300" style={{ left: `${pct(date, t0, t1)}%` }} />}
+                {date && <div className="absolute inset-y-[-2px] w-0.5 bg-[#16231B]" style={{ left: `${pct(date, t0, t1)}%` }} />}
               </div>
-              <div className="flex flex-wrap justify-between gap-x-2 text-[11px] text-slate-400">
+              <div className="mt-0.5 flex flex-wrap justify-between gap-x-2 text-[11px] text-[#4A5850]">
                 <span>
                   {cat ? "▨ " : "■ "}
                   {cat ? t("hist.catalogueOnly") : t("hist.integrated")} · {ds.cadence}
                   {ds.note ? ` · ${ds.note}` : ""}
                 </span>
-                {at && <span className={at.ok ? "text-emerald-200" : "text-amber-200"}>{at.ok ? `✓ ${t("hist.atDate.yes")}` : `✗ ${t(`hist.atDate.${at.why}`, { when: at.when })}`}</span>}
+                {at && (
+                  <span className={at.ok ? "font-medium text-[#1E5B3A]" : "font-medium text-[#7A5B00]"}>
+                    {at.ok ? `✓ ${t("hist.atDate.yes")}` : `✗ ${t(`hist.atDate.${at.why}`, { when: at.when })}`}
+                  </span>
+                )}
               </div>
             </li>
           );
         })}
       </ul>
-      <p className="mt-2 text-[11px] text-slate-300">{t("hist.nosplice")}</p>
-      <SourceLine data={d} className="mt-1" />
+      <p className="mt-2 text-[11px] leading-relaxed text-[#4A5850]">{t("hist.nosplice")}</p>
       <Caveats data={d} />
     </div>
   );
@@ -91,18 +98,18 @@ function AnomalyChart({ series }) {
     <div className="h-44 w-full" role="img" aria-label={t("hist.anomaly.aria", { from: rows[0]?.label, to: rows[rows.length - 1]?.label })} data-testid="anomaly-chart">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }} barCategoryGap={0}>
-          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-          <XAxis dataKey="label" tick={{ fill: "#cbd5e1", fontSize: 10 }} tickFormatter={(l) => l.slice(0, 4)} interval={59} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" mm" />
+          <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="label" tick={{ fill: "#4A5850", fontSize: 10 }} tickFormatter={(l) => l.slice(0, 4)} interval={59} stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
-            labelStyle={{ color: "#e2e8f0" }}
+            contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
+            labelStyle={{ color: "#16231B", fontWeight: 600 }}
             formatter={(v, _n, p) => [v == null ? t("chart.missing") : `${v} mm${p?.payload?.missing ? ` (${t("hist.missingDays", { n: p.payload.missing })})` : ""}`, t("hist.anomaly")]}
           />
-          <ReferenceLine y={0} stroke="#e2e8f0" />
+          <ReferenceLine y={0} stroke="#4A5850" />
           <Bar dataKey="anomaly" isAnimationActive={false}>
             {rows.map((r) => (
-              <Cell key={r.label} fill={r.anomaly >= 0 ? PALETTE.sky : PALETTE.orange} />
+              <Cell key={r.label} fill={r.anomaly >= 0 ? PALETTE.blue : PALETTE.orange} />
             ))}
           </Bar>
         </BarChart>
@@ -111,7 +118,7 @@ function AnomalyChart({ series }) {
   );
 }
 
-function RankChart({ d }) {
+function RankChart({ d, peakYear }) {
   const { t } = useLang();
   const toDate = d.rankBasis === "to_date_same_window";
   const rows = (d.seasons ?? []).map((s) => ({ ...s, value: toDate ? s.toDateMm : s.totalMm }));
@@ -119,24 +126,28 @@ function RankChart({ d }) {
     <div className="h-40 w-full" role="img" aria-label={t("hist.rank.aria", { year: d.year, rank: d.rank, of: d.of })} data-testid="rank-chart">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={rows} margin={{ top: 6, right: 4, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-          <XAxis dataKey="year" tick={{ fill: "#cbd5e1", fontSize: 10 }} interval={4} />
-          <YAxis tick={{ fill: "#cbd5e1", fontSize: 10 }} width={54} unit=" mm" />
+          <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="year" tick={{ fill: "#4A5850", fontSize: 10 }} interval={4} stroke="#DCE3DB" />
+          <YAxis tick={{ fill: "#4A5850", fontSize: 10 }} width={48} unit=" mm" stroke="#DCE3DB" />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #475569", fontSize: 12 }}
-            labelStyle={{ color: "#e2e8f0" }}
+            contentStyle={{ background: "#FFFFFF", border: "1px solid #DCE3DB", borderRadius: 10, fontSize: 12, color: "#16231B" }}
+            labelStyle={{ color: "#16231B", fontWeight: 600 }}
             formatter={(v) => [`${v} mm`, toDate ? t("hist.rank.todate") : t("hist.rank.total")]}
           />
-          <Bar dataKey="value" isAnimationActive={false}>
-            {rows.map((r) => (
-              <Cell
-                key={r.year}
-                fill={r.year === d.year ? PALETTE.vermillion : PALETTE.sky}
-                fillOpacity={0.95}
-                stroke={r.year === d.year ? "#fff" : "none"}
-                strokeWidth={r.year === d.year ? 2 : 0}
-              />
-            ))}
+          <Bar dataKey="value" isAnimationActive={false} radius={[3, 3, 0, 0]}>
+            {rows.map((r) => {
+              const isCur = r.year === d.year;
+              const isPeak = r.year === peakYear && !isCur;
+              return (
+                <Cell
+                  key={r.year}
+                  fill={isCur ? "#1E5B3A" : isPeak ? "#0B4F6C" : "#6BAED6"}
+                  stroke={isCur ? "#123B25" : "none"}
+                  strokeDasharray={isCur && !d.complete ? "3 2" : undefined}
+                  strokeWidth={isCur ? 1.5 : 0}
+                />
+              );
+            })}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -144,79 +155,174 @@ function RankChart({ d }) {
   );
 }
 
-export default function HistoryPanel({ availabilityTier, monthlyTier, rankTier, trendTier, date, onHelp }) {
+export default function HistoryPanel({ availabilityTier, monthlyTier, rankTier, trendTier, date, onHelp, onSources }) {
   const { t } = useLang();
   const m = monthlyTier.data;
   const r = rankTier.data;
   const tr = trendTier.data;
+  const isDemo = [availabilityTier.data, m, r, tr].some((x) => x?.dataKind === "synthetic");
+
+  const toDate = r?.rankBasis === "to_date_same_window";
+  const wettest = useMemo(() => {
+    if (!r?.seasons?.length) return null;
+    return r.seasons.reduce((best, s) => {
+      const v = (toDate ? s.toDateMm : s.totalMm) ?? -Infinity;
+      const bv = (toDate ? best.toDateMm : best.totalMm) ?? -Infinity;
+      return v > bv ? s : best;
+    }, r.seasons[0]);
+  }, [r, toDate]);
+
+  const sofarMm = r ? (toDate ? r.toDateMm : r.totalMm) : null;
+  const peakMm = wettest ? (toDate ? wettest.toDateMm : wettest.totalMm) : null;
+  const srcObj = r ?? m ?? tr ?? availabilityTier.data;
+
   return (
-    <>
-      <Section title={t("hist.avail.title")} kind={availabilityTier.data?.dataKind} testId="history-panel">
-        <p className="mb-2 text-xs text-slate-300">{t("hist.avail.lead")}</p>
-        <AvailabilityStrip tier={availabilityTier} date={date} />
-      </Section>
+    <div className="flex flex-1 flex-col gap-4 text-[#16231B]" data-testid="history-panel">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#1E5B3A]">{t("hist.v2.eyebrow")}</span>
+        {onHelp && <HelpButton card="bands" onOpen={onHelp} />}
+      </div>
 
-      <Section title={t("hist.monthly.title")} sensor="power" kind={m?.dataKind}>
-        <StateNote tier={monthlyTier} label={t("hist.monthly.title")} />
-        {m && (
-          <>
-            <p className="mb-1 text-[11px] text-slate-300">{t("hist.monthly.lead", { period: m.baseline?.period ?? "1991-2020" })}</p>
-            <AnomalyChart series={m.series ?? []} />
-            <p className="text-[11px] text-slate-400">{t("hist.monthly.missing")}</p>
-            <SourceLine data={m} className="mt-1" />
-            <Caveats data={m} />
-          </>
+      <div className="flex flex-col gap-1.5">
+        <h1 className="m-0 font-serif text-[22px] font-semibold leading-[1.22] tracking-[-0.015em] text-[#16231B]">
+          {r ? t("hist.v2.headlineRank", { year: r.year, rank: r.rank, of: r.of }) : t("hist.v2.headline")}
+        </h1>
+        {isDemo && (
+          <div className="flex">
+            <DemoTag isNumber />
+          </div>
         )}
-      </Section>
+      </div>
 
-      <Section title={t("hist.rank.title")} sensor="power" kind={r?.dataKind}>
-        <StateNote tier={rankTier} label={t("hist.rank.title")} />
-        {r && (
-          <>
-            <div className="mb-2 grid grid-cols-2 gap-1.5">
-              <Stat label={t("hist.rank.year", { year: r.year })} value={`${r.rank} / ${r.of}`} note={r.complete ? t("hist.rank.complete") : t("hist.rank.incomplete")} />
-              <Stat
-                label={r.rankBasis === "to_date_same_window" ? t("hist.rank.todate") : t("hist.rank.total")}
-                value={fmt(r.rankBasis === "to_date_same_window" ? r.toDateMm : r.totalMm, 0)}
-                unit="mm"
-                note={r.rankBasis === "to_date_same_window" && r.observedThrough ? t("hist.rank.window", { date: r.observedThrough }) : r.season}
-              />
-            </div>
-            <p className="mb-1 text-[11px] text-slate-300">
-              {t("hist.rank.meaning", { year: r.year, rank: r.rank, of: r.of })}
-              {r.rankBasis === "to_date_same_window" && r.observedThrough ? ` ${t("hist.rank.partial", { date: r.observedThrough })}` : ""}
-            </p>
-            <RankChart d={r} />
-            <p className="text-[11px] text-slate-400">■ {t("hist.rank.highlight", { year: r.year })}</p>
-            <SourceLine data={r} className="mt-1" />
-            <Caveats data={r} />
-          </>
-        )}
-      </Section>
+      <StateNote tier={rankTier} label={t("hist.rank.title")} />
 
-      <Section title={t("hist.trend.title")} sensor="power" kind={tr?.dataKind}>
-        <StateNote tier={trendTier} label={t("hist.trend.title")} />
-        {tr && (
-          <>
-            <div className="grid grid-cols-2 gap-1.5">
-              <Stat label={t("hist.trend.slope")} value={fmt(tr.slopeMmPerDecade)} unit="mm/10 yr" note={tr.ci95 ? `95% CI ${fmt(tr.ci95[0])} … ${fmt(tr.ci95[1])}` : null} />
-              <Stat label={t("hist.trend.n")} value={tr.n} note={tr.period} />
-            </div>
-            <p className="mt-1.5 text-xs font-semibold text-slate-100" data-testid="trend-significance">
-              {tr.significant ? t("hist.trend.sig") : t("hist.trend.notsig")}
-            </p>
-            <p className="mt-1 text-[11px] text-slate-400">{tr.method}</p>
-            {(tr.effectiveN != null || tr.lag1Autocorrelation != null) && (
-              <p className="mt-1 text-[11px] text-slate-400">
-                {t("hist.trend.auto", { eff: fmt(tr.effectiveN, 0) ?? "—", r: fmt(tr.lag1Autocorrelation, 2) ?? "—" })}
-              </p>
+      <div className="grid grid-cols-3 gap-2">
+        <Stat
+          compact
+          isDemo={r?.dataKind === "synthetic"}
+          label={t("hist.v2.stat.sofar", { year: r?.year ?? 2026 })}
+          value={sofarMm != null ? fmt(sofarMm, 0) : null}
+          unit="mm"
+          note={toDate && r?.observedThrough ? r.observedThrough : r?.season}
+        />
+        <Stat
+          compact
+          isDemo={r?.dataKind === "synthetic"}
+          label={t("hist.v2.stat.peak")}
+          value={wettest ? String(wettest.year) : null}
+          note={peakMm != null ? `${fmt(peakMm, 0)} mm` : undefined}
+        />
+        <Stat
+          compact
+          isDemo={tr?.dataKind === "synthetic"}
+          label={t("hist.v2.stat.trend")}
+          value={tr?.slopeMmPerDecade != null ? `${tr.slopeMmPerDecade > 0 ? "+" : ""}${fmt(tr.slopeMmPerDecade, 0)}` : null}
+          unit={tr?.slopeMmPerDecade != null ? "mm/10y" : undefined}
+          note={
+            tr ? (
+              <span data-testid="trend-significance">{tr.significant ? t("hist.trend.sig") : t("hist.trend.notsig")}</span>
+            ) : undefined
+          }
+        />
+      </div>
+
+      {r && (
+        <div className="flex flex-col gap-2.5 rounded-xl border border-[#DCE3DB] bg-white p-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="m-0 font-serif text-[15px] font-semibold text-[#16231B]">{t("hist.v2.chartTitle", { year: r.year })}</h2>
+            <span className="text-[11px] font-medium text-[#4A5850]">
+              {r.rank} / {r.of} · {r.complete ? t("hist.rank.complete") : t("hist.rank.incomplete")}
+            </span>
+          </div>
+          <RankChart d={r} peakYear={wettest?.year} />
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#4A5850]">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm bg-[#6BAED6]" aria-hidden="true" />
+              {t("hist.v2.fullSeason")}
+            </span>
+            {wettest && (
+              <span className="inline-flex items-center gap-1.5 font-medium text-[#0B4F6C]">
+                <span className="h-2.5 w-2.5 rounded-sm bg-[#0B4F6C]" aria-hidden="true" />
+                {t("hist.v2.wettestLegend", { year: wettest.year, mm: fmt(peakMm, 0) ?? "—" })}
+              </span>
             )}
-            <p className="mt-1 text-[11px] text-slate-300">{t("hist.trend.nocause")}</p>
-            <SourceLine data={tr} className="mt-1" />
-            <Caveats data={tr} />
-          </>
-        )}
-      </Section>
-    </>
+            <span className="inline-flex items-center gap-1.5 font-medium text-[#1E5B3A]">
+              <span className="h-2.5 w-2.5 rounded-sm bg-[#1E5B3A]" aria-hidden="true" />
+              {toDate && r.observedThrough ? t("hist.v2.incompleteLegend", { year: r.year, date: r.observedThrough }) : r.year}
+            </span>
+          </div>
+          <p className="m-0 text-[11px] leading-relaxed text-[#4A5850]">
+            {t("hist.rank.meaning", { year: r.year, rank: r.rank, of: r.of })}
+            {toDate && r.observedThrough ? ` ${t("hist.rank.partial", { date: r.observedThrough })}` : ""}
+          </p>
+        </div>
+      )}
+
+      <div className="rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3.5">
+        <h2 className="m-0 font-serif text-[15px] font-semibold text-[#16231B]">{t("rhythm.v2.plainTitle")}</h2>
+        <p className="mt-1 text-[13px] leading-[1.6] text-[#16231B]">{t("hist.v2.plainBody")}</p>
+      </div>
+
+      <details className="rounded-xl border border-[#DCE3DB] bg-white px-3.5 py-2.5">
+        <summary className="cursor-pointer text-[13px] font-semibold text-[#1E5B3A]">
+          {t("hist.monthly.title")} · {t("hist.avail.title")} · {t("hist.trend.title")}
+        </summary>
+        <div className="mt-3 flex flex-col gap-4 border-t border-[#DCE3DB] pt-3">
+          <div>
+            <h3 className="mb-1 text-[13px] font-semibold text-[#16231B]">{t("hist.monthly.title")}</h3>
+            <StateNote tier={monthlyTier} label={t("hist.monthly.title")} />
+            {m && (
+              <>
+                <p className="mb-1.5 text-[11px] text-[#4A5850]">{t("hist.monthly.lead", { period: m.baseline?.period ?? "1991-2020" })}</p>
+                <AnomalyChart series={m.series ?? []} />
+                <p className="mt-1 text-[11px] text-[#4A5850]">{t("hist.monthly.missing")}</p>
+                <Caveats data={m} />
+              </>
+            )}
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-[13px] font-semibold text-[#16231B]">{t("hist.avail.title")}</h3>
+            <p className="mb-2 text-[12px] text-[#4A5850]">{t("hist.avail.lead")}</p>
+            <AvailabilityStrip tier={availabilityTier} date={date} />
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-[13px] font-semibold text-[#16231B]">{t("hist.trend.title")}</h3>
+            <StateNote tier={trendTier} label={t("hist.trend.title")} />
+            {tr && (
+              <div className="space-y-1.5 text-[12px] text-[#4A5850]">
+                <div className="grid grid-cols-2 gap-2">
+                  <Stat
+                    compact
+                    isDemo={tr.dataKind === "synthetic"}
+                    label={t("hist.trend.slope")}
+                    value={fmt(tr.slopeMmPerDecade)}
+                    unit="mm/10 yr"
+                    note={tr.ci95 ? `95% CI ${fmt(tr.ci95[0])} … ${fmt(tr.ci95[1])}` : null}
+                  />
+                  <Stat compact isDemo={tr.dataKind === "synthetic"} label={t("hist.trend.n")} value={tr.n} note={tr.period} />
+                </div>
+                <p className="m-0 text-[11px]">{tr.method}</p>
+                {(tr.effectiveN != null || tr.lag1Autocorrelation != null) && (
+                  <p className="m-0 text-[11px]">
+                    {t("hist.trend.auto", { eff: fmt(tr.effectiveN, 0) ?? "—", r: fmt(tr.lag1Autocorrelation, 2) ?? "—" })}
+                  </p>
+                )}
+                <p className="m-0 text-[11px] font-medium text-[#16231B]">{t("hist.trend.nocause")}</p>
+                <Caveats data={tr} />
+              </div>
+            )}
+          </div>
+        </div>
+      </details>
+
+      {srcObj && (
+        <div className="mt-auto border-t border-[#DCE3DB] pt-3">
+          <SourceLine data={srcObj} onSources={onSources} />
+          <Caveats data={r} />
+        </div>
+      )}
+    </div>
   );
 }

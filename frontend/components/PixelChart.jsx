@@ -11,14 +11,12 @@ const NO_DATA_TEXT = {
 const MIN_EPOCHS = 6;
 const MIN_SPAN_DAYS = 90;
 
-// Time series for one clicked point. `point` is the `point` object from /ground-motion/point.
-// cumulative: the product is a short cumulative series (NISAR season): label the per-year figure as an extrapolation
 export default function PixelChart({ point, cumulative = false }) {
   if (!point) return null;
 
   if (point.status !== 'ok') {
     return (
-      <p className="rounded-lg border border-slate-700 bg-slate-800/60 p-3 text-xs text-slate-300">
+      <p className="rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3 text-xs text-[#4A5850]">
         {NO_DATA_TEXT[point.reason] ?? 'No usable measurement at this spot.'}
       </p>
     );
@@ -33,40 +31,40 @@ export default function PixelChart({ point, cumulative = false }) {
       <div className="h-40 w-full" data-testid="pixel-chart">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={rows} margin={{ top: 6, right: 8, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-            <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 9 }} tickFormatter={(d) => d.slice(5)} />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} unit=" mm" width={48} />
+            <CartesianGrid stroke="#DCE3DB" strokeDasharray="3 3" />
+            <XAxis dataKey="date" tick={{ fill: '#4A5850', fontSize: 10 }} tickFormatter={(d) => d.slice(5)} />
+            <YAxis tick={{ fill: '#4A5850', fontSize: 10 }} unit=" mm" width={48} />
             <Tooltip
-              contentStyle={{ background: '#0f172a', border: '1px solid #334155', fontSize: 12 }}
-              labelStyle={{ color: '#e2e8f0' }}
+              contentStyle={{ background: '#FFFFFF', border: '1px solid #DCE3DB', borderRadius: '8px', fontSize: 12, color: '#16231B' }}
+              labelStyle={{ color: '#16231B', fontWeight: 600 }}
               formatter={(v) => [`${Number(v).toFixed(1)} mm`, 'Movement']}
             />
-            <Line type="monotone" dataKey="mm" stroke="#06b6d4" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+            <Line type="monotone" dataKey="mm" stroke="#7B3294" strokeWidth={2.2} dot={{ r: 3, fill: '#7B3294' }} connectNulls isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-3">
-        <div className="text-xs font-medium uppercase tracking-wider text-cyan-300">
+      <div className="mt-2 rounded-xl border border-[#C2A5CF] bg-[#F6F1F9] p-3">
+        <div className="text-[11px] font-bold uppercase tracking-wider text-[#7B3294]">
           {cumulative ? 'Extrapolated rate along line of sight (not measured over a year)' : 'Rate along line of sight'}
         </div>
         {hasRate ? (
-          <div className="text-xl font-black text-cyan-300">
+          <div className="text-xl font-bold text-[#16231B]">
             {point.rateMmPerYear.toFixed(1)}
-            {typeof se === 'number' && <span className="text-sm font-normal text-slate-300"> ± {se.toFixed(1)}</span>}
-            <span className="text-sm font-normal text-slate-300"> mm/yr</span>
+            {typeof se === 'number' && <span className="text-sm font-normal text-[#4A5850]"> ± {se.toFixed(1)}</span>}
+            <span className="text-sm font-normal text-[#4A5850]"> mm/yr</span>
           </div>
         ) : (
-          <div className="text-sm text-slate-200">
+          <div className="text-sm text-[#16231B]">
             Not computed: a rate needs at least {MIN_EPOCHS} dates over at least {MIN_SPAN_DAYS} days.
           </div>
         )}
-        <div className="mt-1 text-[11px] text-slate-400">
+        <div className="mt-1 text-[11px] text-[#4A5850]">
           {point.validEpochCount ?? '—'} dates over {point.spanDays ?? '—'} days
         </div>
       </div>
 
-      <p className="mt-2 text-[11px] italic text-slate-500">
+      <p className="mt-2 text-[11px] text-[#4A5850]">
         Movement is measured along the satellite&apos;s line of sight, relative to the first date. It is not
         straight-down sinking, and it is not a prediction.
         {cumulative && ' The per-year figure extends a short record and is shown only as an extrapolation.'}

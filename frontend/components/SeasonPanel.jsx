@@ -2,195 +2,238 @@
 
 import React from "react";
 import SeasonChart from "./SeasonChart";
-import { Caveats, Section, SourceLine, Stat, StateNote, fmt } from "./ui";
+import { Caveats, DemoTag, HelpButton, SourceLine, Stat, StateNote, fmt } from "./ui";
 import { useLang } from "../utils/LangContext";
 
 export const DEFAULT_PASS_LEGEND = [
-  { id: "water", label: "Open water on this pass", color: "#0072B2", shape: "square" },
+  { id: "water", label: "Open water on this pass", color: "#2171B5", shape: "square" },
   { id: "vegetation", label: "Possible flooded vegetation (L-band)", color: "#E69F00", shape: "diamond" },
 ];
 
-function utcTime(iso) {
-  if (!iso) return null;
-  return String(iso).replace("T", " ").replace(/\.\d+/, "").replace("Z", " UTC");
+function shortDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
-export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx, playing, onPlaying, polView, onPolView, compare, opacity, onOpacity, onHelp }) {
+function shortMonthDay(iso) {
+  if (!iso) return "—";
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+}
+
+function passClockLine(cur) {
+  const utcRaw = cur?.acquisitionTime;
+  const manilaRaw = cur?.acquisitionTimeManila;
+  if (!utcRaw) return null;
+  const ms = Date.parse(utcRaw);
+  const utcHHMM = String(utcRaw).includes("T") ? String(utcRaw).split("T")[1].slice(0, 5) : null;
+  let manilaHHMM = manilaRaw && String(manilaRaw).includes("T") ? String(manilaRaw).split("T")[1].slice(0, 5) : null;
+  if (!manilaHHMM && Number.isFinite(ms)) {
+    const mDate = new Date(ms + 8 * 3600000);
+    manilaHHMM = `${String(mDate.getUTCHours()).padStart(2, "0")}:${String(mDate.getUTCMinutes()).padStart(2, "0")}`;
+  }
+  return { utcHHMM, manilaHHMM };
+}
+
+function rainWindow7d(days, targetIso) {
+  if (!Array.isArray(days) || !targetIso) return null;
+  const endMs = Date.parse(`${targetIso}T00:00:00Z`);
+  if (!Number.isFinite(endMs)) return null;
+  const startMs = endMs - 6 * 86400000;
+  const inWin = days.filter((r) => {
+    const t = Date.parse(`${r.date}T00:00:00Z`);
+    return t >= startMs && t <= endMs;
+  });
+  if (!inWin.length || inWin.some((r) => r.mm == null)) return null;
+  const sum = inWin.reduce((acc, r) => acc + r.mm, 0);
+  const startIso = new Date(startMs).toISOString().slice(0, 10);
+  return { sum, from: shortMonthDay(startIso), to: shortMonthDay(targetIso) };
+}
+
+export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx, polView, onPolView, compare, onHelp, onSources }) {
   const { t } = useLang();
   const d = passesTier.data;
   const passes = d?.passes ?? [];
   const cur = passes[idx];
+  const prev = idx > 0 ? passes[idx - 1] : null;
+  const isDemo = d?.dataKind === "synthetic";
+  const clock = passClockLine(cur);
+  const rain7 = rainWindow7d(rainTier.data?.days, cur?.date);
 
-  function onKey(e) {
-    if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      onIdx(Math.max(0, idx - 1));
-    } else if (e.key === "ArrowRight") {
-      e.preventDefault();
-      onIdx(Math.min(passes.length - 1, idx + 1));
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      onIdx(0);
-    } else if (e.key === "End") {
-      e.preventDefault();
-      onIdx(passes.length - 1);
-    } else if ((e.key === " " || e.key === "Enter") && e.target === e.currentTarget) {
-      e.preventDefault();
-      onPlaying(!playing);
-    }
-  }
-
-  const legend = d?.legend ?? DEFAULT_PASS_LEGEND;
-  const btn = "rounded-md border border-slate-500 bg-slate-800 px-2.5 py-1.5 text-sm font-semibold text-slate-100 hover:bg-slate-700 disabled:opacity-40";
+  const deltaKm2 =
+    cur?.floodedKm2 != null && prev?.floodedKm2 != null ? cur.floodedKm2 - prev.floodedKm2 : null;
+  const deltaStr =
+    deltaKm2 == null ? (idx === 0 ? "First pass" : "—") : `${deltaKm2 >= 0 ? "+" : "−"}${fmt(Math.abs(deltaKm2))}`;
 
   return (
-    <>
-      <Section title={t("season.title")} sensor="nisar_l" kind={d?.dataKind} helpCard="water" onHelp={onHelp} testId="season-panel">
-        <p className="mb-2 text-xs text-slate-300">{t("season.lead")}</p>
-        <StateNote tier={passesTier} label={t("season.title")} />
-        {d && (
-          <>
-            <div
-              tabIndex={0}
-              role="group"
-              aria-label={t("season.player.aria")}
-              onKeyDown={onKey}
-              className="rounded-lg border border-slate-600 bg-slate-800/70 p-2.5"
-              data-testid="season-player"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-base font-bold text-slate-100" data-testid="pass-date">
-                    {cur?.date ?? "—"}
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    {t("season.acquired")}: {utcTime(cur?.acquisitionTime) ?? t("missing.noTime")} · {cur?.maturity ?? "—"}
-                  </div>
-                  {cur?.acquisitionTimeManila && (
-                    <div className="text-[11px] text-slate-400">
-                      {t("season.manila")}: {String(cur.acquisitionTimeManila).replace("T", " ").slice(0, 16)}
-                    </div>
-                  )}
-                  <div className="text-[11px] text-slate-400">
-                    {t("season.passOf", { i: idx + 1, n: passes.length })}
-                  </div>
-                </div>
-                <div className="flex gap-1.5">
-                  <button type="button" className={btn} onClick={() => onIdx(Math.max(0, idx - 1))} disabled={idx <= 0} aria-label={t("season.prev")}>
-                    ◀
-                  </button>
-                  <button type="button" className={btn} onClick={() => onPlaying(!playing)} aria-pressed={playing} aria-label={playing ? t("season.pause") : t("season.play")} data-testid="play">
-                    {playing ? "❚❚" : "▶"}
-                  </button>
-                  <button type="button" className={btn} onClick={() => onIdx(Math.min(passes.length - 1, idx + 1))} disabled={idx >= passes.length - 1} aria-label={t("season.next")}>
-                    ▶|
-                  </button>
-                </div>
-              </div>
-              <p className="mt-1.5 text-[11px] text-slate-400">{t("season.keys")}</p>
-            </div>
+    <div className="flex flex-1 flex-col gap-4 text-[#16231B]" data-testid="season-panel">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#1E5B3A]">{t("season.v2.eyebrow")}</span>
+        {onHelp && <HelpButton card="water" onOpen={onHelp} />}
+      </div>
 
-            <div className="mt-2 grid grid-cols-3 gap-1.5">
-              <Stat label={t("season.flooded")} value={fmt(cur?.floodedKm2)} unit="km²" />
-              <Stat label={t("season.vegetation")} value={fmt(cur?.floodedVegetationKm2)} unit="km²" note={t("season.vegetation.note")} />
-              <Stat label={t("season.valid")} value={cur?.validFraction != null ? `${Math.round(cur.validFraction * 100)}%` : null} note={t("season.valid.note")} />
-            </div>
-            {cur?.floodedKm2 == null && cur?.missingReason && <p className="mt-1 text-[11px] text-amber-200">{cur.missingReason}</p>}
-            {cur?.permanentWaterKm2 != null && <p className="mt-1 text-[11px] text-slate-400">{t("season.permanent", { km2: fmt(cur.permanentWaterKm2) })}</p>}
-          </>
-        )}
-      </Section>
+      <StateNote tier={passesTier} label={t("season.title")} />
 
-      {d && (
+      {d && cur && (
         <>
-          <Section title={t("season.layers")} sensor="nisar_l">
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h1 className="m-0 font-serif text-[25px] font-semibold leading-[1.2] text-[#16231B]" data-testid="pass-date">
+                {shortDate(cur.date)}
+              </h1>
+              {isDemo && <DemoTag />}
+            </div>
+            <span className="text-[12px] text-[#4A5850]">
+              {clock
+                ? t("season.v2.manilaLine", { utc: clock.utcHHMM, manila: clock.manilaHHMM })
+                : `${t("missing.noTime")} · L-band HH/HV`}
+              {d.track != null ? ` · Track ${d.track}` : ""}
+              {d.direction ? `, ${d.direction}` : ""}
+              {` · ${t("season.passOf", { i: idx + 1, n: passes.length })}`}
+            </span>
+            <p className="mt-1 font-serif text-[19px] font-medium leading-[1.28] text-[#16231B]">
+              {cur.floodedKm2 != null
+                ? t("season.v2.headline", { km2: fmt(cur.floodedKm2) })
+                : t("season.v2.headlineMissing", { date: cur.date })}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5">
+            <Stat
+              compact
+              isDemo={isDemo}
+              label={prev ? t("season.v2.changeSince", { date: shortMonthDay(prev.date) }) : t("season.passOf", { i: 1, n: passes.length })}
+              value={deltaStr}
+              unit={deltaKm2 != null ? "km²" : undefined}
+              note={prev && cur.floodedKm2 != null && prev.floodedKm2 != null ? `${fmt(prev.floodedKm2)} → ${fmt(cur.floodedKm2)} km²` : cur?.missingReason ?? undefined}
+            />
+            <Stat
+              compact
+              label={rain7 ? t("season.v2.rainWindow", { window: `${rain7.from} – ${rain7.to}` }) : t("season.rain")}
+              value={rain7 ? fmt(rain7.sum, 0) : null}
+              unit={rain7 ? "mm" : undefined}
+              note="NASA POWER grid cell"
+            />
+            <Stat
+              compact
+              isDemo={isDemo}
+              label={t("season.v2.vegLabel")}
+              value={fmt(cur.floodedVegetationKm2)}
+              unit="km²"
+              note={t("season.v2.vegSub")}
+            />
+            <Stat
+              compact
+              label={t("season.v2.validLabel")}
+              value={cur.validFraction != null ? `${Math.round(cur.validFraction * 100)}%` : null}
+              note={t("season.v2.validSub")}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5 border-t border-[#DCE3DB] pt-3">
+            <h2 className="m-0 font-serif text-[16px] font-semibold text-[#16231B]">{t("rhythm.v2.plainTitle")}</h2>
+            <p className="m-0 text-[13px] leading-[1.6] text-[#16231B]">
+              {cur.floodedKm2 != null && rain7
+                ? t("season.v2.plainBody", { rain: fmt(rain7.sum, 0), km2: fmt(cur.floodedKm2), date: shortDate(cur.date) })
+                : t("season.v2.plainNoRain", { date: shortDate(cur.date), km2: fmt(cur.floodedKm2) ?? "—" })}
+            </p>
+          </div>
+
+          {/* Radar layer toggle + Before/After Swipe */}
+          <div className="flex flex-col gap-2 rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[12px] font-semibold text-[#16231B]">{t("season.v2.layerLabel")}</span>
+              <span className="text-[11px] text-[#4A5850]">{cur?.maturity ?? "—"}</span>
+            </div>
             <div role="radiogroup" aria-label={t("season.layers")} className="grid grid-cols-3 gap-1.5 text-xs">
               {[
                 ["flood", t("season.layer.flood")],
                 ["hh", t("season.layer.hh")],
                 ["rgb", t("season.layer.rgb")],
-              ].map(([k, label]) => (
-                <button
-                  key={k}
-                  type="button"
-                  role="radio"
-                  aria-checked={polView === k}
-                  disabled={k === "rgb" && compare.on}
-                  onClick={() => onPolView(k)}
-                  className={`rounded-md border px-2 py-1.5 text-left ${polView === k ? "border-sky-300 bg-sky-600/30 text-white" : "border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700"} disabled:opacity-40`}
-                >
-                  {polView === k ? "● " : "○ "}
-                  {label}
-                </button>
-              ))}
+              ].map(([k, label]) => {
+                const active = polView === k;
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    disabled={k === "rgb" && compare.on}
+                    onClick={() => onPolView(k)}
+                    className={`rounded-lg border px-2 py-1.5 text-left text-[11px] disabled:opacity-40 ${
+                      active
+                        ? "border-2 border-[#1E5B3A] bg-[#E3EFE7] font-bold text-[#123B25]"
+                        : "border-[#DCE3DB] bg-white font-medium text-[#16231B] hover:bg-[#F2F5F1]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
-            {polView === "flood" && (
-              <ul className="mt-2 space-y-0.5 text-[11px] text-slate-300" aria-label={t("season.legend")}>
-                {legend.map((l) => (
-                  <li key={l.id ?? l.label} className="flex items-center gap-2">
-                    <span aria-hidden="true" className={`inline-block h-3 w-3 border border-white/60 ${(l.shape === "diamond" || String(l.id).includes("veg")) ? "rotate-45" : ""}`} style={{ background: l.color }} />
-                    {l.label}
-                  </li>
-                ))}
-                <li className="text-slate-400">{t("season.legend.rest")}</li>
-              </ul>
-            )}
-            {polView === "hh" && <p className="mt-2 text-[11px] text-slate-300">{t("season.hh.note")}</p>}
+            {polView === "hh" && <p className="m-0 text-[11px] text-[#4A5850]">{t("season.hh.note")}</p>}
             {polView === "rgb" && (
-              <div className="mt-2" data-testid="pol-explainer">
+              <div className="mt-1" data-testid="pol-explainer">
                 <StateNote tier={polTier} label={t("season.layer.rgb")} />
                 {polTier.state === "ready" && (
-                  <>
-                    <p className="text-[11px] text-slate-200">
+                  <div className="text-[11px] text-[#16231B]">
+                    <p className="m-0">
                       <b>R</b> = {polTier.data.channels?.r} · <b>G</b> = {polTier.data.channels?.g} · <b>B</b> = {polTier.data.channels?.b}
                     </p>
-                    <ol className="mt-1 list-decimal space-y-1 pl-4 text-[11px] text-slate-200">
+                    <ol className="mt-1 list-decimal space-y-0.5 pl-4 text-[#4A5850]">
                       {(polTier.data.explanation ?? []).slice(0, 3).map((x) => (
                         <li key={x}>{x}</li>
                       ))}
                     </ol>
-                    <SourceLine data={polTier.data} className="mt-1" />
-                  </>
+                  </div>
                 )}
               </div>
             )}
-            <label className="mt-2 flex items-center gap-2 text-[11px] text-slate-300">
-              {t("map.opacity")}
-              <input type="range" min={0.2} max={1} step={0.05} value={opacity} onChange={(e) => onOpacity(Number(e.target.value))} className="flex-1 accent-sky-400" />
-            </label>
-          </Section>
 
-          <Section title={t("swipe.title")} sensor="nisar_l">
-            <label className="flex items-center gap-2 text-xs text-slate-200">
-              <input type="checkbox" checked={compare.on} onChange={(e) => compare.onToggle(e.target.checked)} className="h-4 w-4 accent-sky-400" data-testid="compare-toggle" />
-              {t("swipe.enable")}
+            <label className="mt-1 flex cursor-pointer items-center gap-2 text-[12px] font-medium text-[#16231B]">
+              <input
+                type="checkbox"
+                checked={compare.on}
+                onChange={(e) => compare.onToggle(e.target.checked)}
+                className="h-4 w-4 accent-[#1E5B3A]"
+                data-testid="compare-toggle"
+              />
+              {t("season.v2.compareToggle")}
             </label>
             {compare.on && (
-              <div className="mt-2 space-y-1.5 text-xs">
-                <div className="grid grid-cols-2 gap-2">
-                  <label className="text-slate-300">
-                    {t("swipe.before")}
-                    <select value={compare.before} onChange={(e) => compare.onBefore(Number(e.target.value))} className="mt-0.5 w-full rounded border border-slate-600 bg-slate-800 px-1.5 py-1 text-slate-100">
-                      {passes.map((p, i) => (
-                        <option key={p.id} value={i}>
-                          {p.date}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="text-slate-300">
-                    {t("swipe.after")}
-                    <select value={compare.after} onChange={(e) => compare.onAfter(Number(e.target.value))} className="mt-0.5 w-full rounded border border-slate-600 bg-slate-800 px-1.5 py-1 text-slate-100">
-                      {passes.map((p, i) => (
-                        <option key={p.id} value={i}>
-                          {p.date}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                <label className="block text-slate-300">
+              <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
+                <label className="text-[#4A5850]">
+                  {t("swipe.before")}
+                  <select
+                    value={compare.before}
+                    onChange={(e) => compare.onBefore(Number(e.target.value))}
+                    className="mt-0.5 w-full rounded-lg border border-[#DCE3DB] bg-white px-2 py-1 text-[#16231B]"
+                  >
+                    {passes.map((p, i) => (
+                      <option key={p.id} value={i}>
+                        {p.date}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="text-[#4A5850]">
+                  {t("swipe.after")}
+                  <select
+                    value={compare.after}
+                    onChange={(e) => compare.onAfter(Number(e.target.value))}
+                    className="mt-0.5 w-full rounded-lg border border-[#DCE3DB] bg-white px-2 py-1 text-[#16231B]"
+                  >
+                    {passes.map((p, i) => (
+                      <option key={p.id} value={i}>
+                        {p.date}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="col-span-2 block text-[#4A5850]">
                   {t("swipe.position")}
                   <input
                     type="range"
@@ -198,27 +241,24 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
                     max={98}
                     value={Math.round(compare.split * 100)}
                     onChange={(e) => compare.onSplit(Number(e.target.value) / 100)}
-                    className="w-full accent-sky-400"
+                    className="w-full accent-[#1E5B3A]"
                     aria-valuetext={`${Math.round(compare.split * 100)}%`}
                     data-testid="swipe-range"
                   />
                 </label>
-                <p className="text-[11px] text-slate-400">{t("swipe.keys")}</p>
               </div>
             )}
-          </Section>
+          </div>
 
-          <Section title={t("season.chart.title")} sensor="nisar_l">
-            {rainTier.state !== "ready" && <StateNote tier={rainTier} label={t("season.rain")} />}
-            <SeasonChart passes={passes} days={rainTier.data?.days} selectedDate={cur?.date} onSelectDate={(date) => onIdx(Math.max(0, passes.findIndex((p) => p.date === date)))} />
-            <SourceLine data={rainTier.data} className="mt-1" />
-            <Caveats data={rainTier.data} />
-            <details className="mt-2 text-[11px] text-slate-300">
-              <summary className="cursor-pointer">{t("season.table")}</summary>
-              <table className="mt-1 w-full border-collapse text-left">
+          <details className="rounded-xl border border-[#DCE3DB] bg-white p-3">
+            <summary className="cursor-pointer text-[13px] font-semibold text-[#16231B]">{t("season.chart.title")} &amp; {t("season.table")}</summary>
+            <div className="mt-2 space-y-2">
+              {rainTier.state !== "ready" && <StateNote tier={rainTier} label={t("season.rain")} />}
+              <SeasonChart passes={passes} days={rainTier.data?.days} selectedDate={cur?.date} onSelectDate={(date) => onIdx(Math.max(0, passes.findIndex((p) => p.date === date)))} />
+              <table className="w-full border-collapse text-left text-[11px]">
                 <thead>
-                  <tr className="text-slate-400">
-                    <th className="py-0.5 pr-2 font-medium">{t("col.date")}</th>
+                  <tr className="border-b border-[#DCE3DB] text-[#4A5850]">
+                    <th className="py-1 pr-2 font-medium">{t("col.date")}</th>
                     <th className="pr-2 font-medium">km²</th>
                     <th className="pr-2 font-medium">{t("season.valid")}</th>
                     <th className="font-medium">{t("season.maturity")}</th>
@@ -226,52 +266,29 @@ export default function SeasonPanel({ passesTier, rainTier, polTier, idx, onIdx,
                 </thead>
                 <tbody>
                   {passes.map((p, i) => (
-                    <tr key={p.id} className={i === idx ? "bg-slate-700/60" : ""}>
-                      <td className="py-0.5 pr-2">{p.date}</td>
-                      <td className="pr-2">{fmt(p.floodedKm2) ?? "—"}</td>
-                      <td className="pr-2">{p.validFraction != null ? `${Math.round(p.validFraction * 100)}%` : "—"}</td>
+                    <tr key={p.id} className={`border-b border-[#DCE3DB]/50 ${i === idx ? "bg-[#E3EFE7] font-semibold" : ""}`}>
+                      <td className="py-1 pr-2">{p.date}</td>
+                      <td className="pr-2 tabular-nums">{fmt(p.floodedKm2) ?? "—"}</td>
+                      <td className="pr-2 tabular-nums">{p.validFraction != null ? `${Math.round(p.validFraction * 100)}%` : "—"}</td>
                       <td>{p.maturity ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </details>
-          </Section>
+              {d.rule && (
+                <div className="border-t border-[#DCE3DB] pt-2 text-[11px] text-[#4A5850]">
+                  <div className="font-semibold text-[#16231B]">{t("season.rule")}</div>
+                  <p className="mt-0.5">{d.rule.description}</p>
+                  <p className="mt-0.5">HH {d.rule.hhThresholdDb ?? "—"} dB · HV {d.rule.hvThresholdDb ?? "—"} dB</p>
+                </div>
+              )}
+              <Caveats data={d} />
+            </div>
+          </details>
 
-          {d.rule && (
-            <details className="mb-4 text-[11px] text-slate-300">
-              <summary className="cursor-pointer font-semibold">{t("season.rule")}</summary>
-              <p className="mt-1">{d.rule.description}</p>
-              <p className="mt-1">
-                HH {d.rule.hhThresholdDb ?? "—"} dB · HV {d.rule.hvThresholdDb ?? "—"} dB
-              </p>
-              {d.rule.calibration && (
-                <p className="mt-1">
-                  {typeof d.rule.calibration === "string"
-                    ? d.rule.calibration
-                    : [d.rule.calibration.status && `${t("season.calibration")}: ${d.rule.calibration.status}`, d.rule.calibration.method, d.rule.calibration.knownWater]
-                        .filter(Boolean)
-                        .join(" · ")}
-                </p>
-              )}
-              {d.permanentWater?.fraction != null && (
-                <p className="mt-1">{t("season.permRule", { pct: Math.round(d.permanentWater.fraction * 100), n: d.permanentWater.minValidPasses ?? "—" })}</p>
-              )}
-              {d.possibleFloodedVegetation?.marginDb != null && (
-                <p className="mt-1">{t("season.vegRule", { db: d.possibleFloodedVegetation.marginDb })}</p>
-              )}
-              {d.verification?.layout && <p className="mt-1 text-slate-400">{t("season.layout", { v: d.verification.layout })}</p>}
-              <p className="mt-1 text-slate-400">
-                {d.sensor ? `${d.sensor} · ` : ""}
-                {d.product} · track {d.track} {d.direction} · frame {d.frame}
-                {d.mode ? ` · mode ${d.mode}` : ""} · {(d.polarizations ?? []).join("+")}
-              </p>
-            </details>
-          )}
-          <SourceLine data={d} />
-          <Caveats data={d} />
+          <SourceLine data={d} className="mt-auto pt-2" onSources={onSources} />
         </>
       )}
-    </>
+    </div>
   );
 }

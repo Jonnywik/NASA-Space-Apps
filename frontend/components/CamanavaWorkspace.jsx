@@ -5,6 +5,7 @@ import FuturePanel from "./FuturePanel";
 import HistoryPanel from "./HistoryPanel";
 import HypothesesPanel from "./HypothesesPanel";
 import LimitsDrawer from "./LimitsDrawer";
+import MapTools, { DEFAULT_LAYERS, MODE_FOR_OVERLAY, OVERLAY_FOR_MODE } from "./MapTools";
 import MotionPanel from "./MotionPanel";
 import NisarMap from "./NisarMap";
 import ProjectionPanel from "./ProjectionPanel";
@@ -12,7 +13,7 @@ import RadarCards from "./RadarCards";
 import RhythmPanel from "./RhythmPanel";
 import SearchBox from "./SearchBox";
 import SeasonPanel from "./SeasonPanel";
-import SpotCheck from "./SpotCheck";
+import SpotCheck, { SpotCard, useSpotData } from "./SpotCheck";
 import StoryTour from "./StoryTour";
 import TimeBar from "./TimeBar";
 import ValidationPanel from "./ValidationPanel";
@@ -27,6 +28,7 @@ import {
   getNisarPolarization,
   getNisarRhythm,
   getOutlook,
+  getPlaceBoundaries,
   getPlaceExposure,
   getRainfallDaily,
   getRainfallMonthly,
@@ -46,7 +48,7 @@ import useLatched from "../utils/useLatched";
 import useProjection from "../utils/useProjection";
 import { useTier } from "../utils/useTier";
 
-const MODE_ORDER = ["season", "rhythm", "motion", "history", "future"];
+const MODE_ORDER = ["rhythm", "season", "motion", "history", "future"];
 const addDays = (iso, n) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
 
 function safeStorage(fn) {
@@ -74,6 +76,50 @@ function histDateFor(i) {
   return `${y}-${String(m).padStart(2, "0")}-01`;
 }
 
+function ModeIcon({ id, active }) {
+  const stroke = active ? "#1E5B3A" : "#4A5850";
+  const sw = active ? 2 : 1.75;
+  if (id === "rhythm") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 2.5C12 2.5 5 10.5 5 15a7 7 0 0 0 14 0c0-4.5-7-12.5-7-12.5Z" />
+        <path d="M8.5 15.5a3.5 3.5 0 0 0 3.5 3.5" />
+      </svg>
+    );
+  }
+  if (id === "season") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M16 3v4M8 3v4M3 10h18" />
+        <path d="M8 14h3v3H8z" />
+      </svg>
+    );
+  }
+  if (id === "motion") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M3 18h18" />
+        <path d="M7 14v4M12 10v8M17 12v6" />
+        <path d="M12 4v3m0 0-2-2m2 2 2-2" />
+      </svg>
+    );
+  }
+  if (id === "history") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 20V10M10 20V4M16 20v-7M21 20H3" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M17 7h4v4" />
+    </svg>
+  );
+}
+
 export default function CamanavaWorkspace(props) {
   return (
     <LimitsProvider>
@@ -86,14 +132,13 @@ function Workspace({ onRegional }) {
   const { t, lang, setLang } = useLang();
   const { entries } = useLimits();
   const limitCount = Object.values(entries).reduce((n, e) => n + e.limitations.length + e.warnings.length, 0);
-  // the REAL API marks demo products with dataKind "synthetic": say so loudly, listing what in view is synthetic
-  const syntheticLabels = [...new Set(Object.values(entries).filter((e) => e.dataKind === "synthetic").map((e) => e.label))];
 
-  const [mode, setMode] = useState("season");
+  const [mode, setMode] = useState("rhythm");
   const [passIdx, setPassIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [polView, setPolView] = useState("flood");
-  const [opacity, setOpacity] = useState(0.8);
+  const [opacity, setOpacity] = useState(0.75);
+  const [showVeg, setShowVeg] = useState(true);
   const [compareOn, setCompareOn] = useState(false);
   const [cmpBefore, setCmpBefore] = useState(0);
   const [cmpAfter, setCmpAfter] = useState(0);
@@ -111,13 +156,20 @@ function Workspace({ onRegional }) {
   const [copied, setCopied] = useState(false);
   const [scenarioId, setScenarioId] = useState(null);
   const [histIdx, setHistIdx] = useState(0);
+  const [futureMonthIdx, setFutureMonthIdx] = useState(8);
   const [projYear, setProjYear] = useState(2026);
-  const [panelOpen, setPanelOpen] = useState(true);
+  const [sheetExpanded, setSheetExpanded] = useState(false);
   const [searchHighlight, setSearchHighlight] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [hypotheses, setHypotheses] = useState([]);
   const [stories, setStories] = useState([]);
+  const [mapMode, setMapMode] = useState("streets");
+  const [layers, setLayers] = useState(DEFAULT_LAYERS);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   const searchRef = useRef(null);
+  const settingsRef = useRef(null);
   const pending = useRef({ pass: null, cmp: null });
   const nonce = useRef(0);
 
@@ -127,6 +179,24 @@ function Workspace({ onRegional }) {
   }, []);
   useEffect(() => setHistIdx(histMax), [histMax]);
 
+  useEffect(() => {
+    if (!settingsOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") setSettingsOpen(false);
+    };
+    const onDown = (e) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
+        setSettingsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("mousedown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("mousedown", onDown);
+    };
+  }, [settingsOpen]);
+
   // ---- data ---------------------------------------------------------------------------------
   const passesTier = useTier(() => getNisarPasses(AREA_ID), []);
   const passes = useMemo(() => passesTier.data?.passes ?? [], [passesTier.data]);
@@ -134,6 +204,7 @@ function Workspace({ onRegional }) {
   const rainStart = passDates.length ? addDays(passDates[0], -14) : null;
   const rainEnd = passDates.length ? passDates[passDates.length - 1] : null;
   const rainTier = useTier(rainStart ? () => getRainfallDaily(AREA_ID, rainStart, rainEnd) : null, [rainStart, rainEnd]);
+  const boundariesTier = useTier(() => getPlaceBoundaries("barangay"), []);
 
   const needRhythm = useLatched(mode === "rhythm" || mode === "motion");
   const rhythmTier = useTier(needRhythm ? () => getNisarRhythm(AREA_ID) : null, [needRhythm]);
@@ -158,6 +229,8 @@ function Workspace({ onRegional }) {
   const flood = useTier(needFuture && scenarioId ? () => getFloodScenario(AREA_ID, scenarioId) : null, [needFuture, scenarioId]);
   const proj = useProjection({ eventId: AREA_ID, year: projYear, demo: false, active: mode === "future" });
 
+  const { spot: spotTier, briefing: briefingTier } = useSpotData(point);
+
   useReportMany([
     ["passes", t("season.title"), passesTier.data],
     ["rain", t("season.rain"), rainTier.data],
@@ -176,12 +249,10 @@ function Workspace({ onRegional }) {
     ["flood", t("future.flood.title"), flood.data],
   ]);
 
-  // default scenario once the list arrives
   useEffect(() => {
     if (scenarios.data?.scenarios?.length && !scenarioId) setScenarioId(scenarios.data.scenarios[0].id);
   }, [scenarios.data, scenarioId]);
 
-  // Referenced N6 hypotheses and optional team-authored U7 stories.
   useEffect(() => {
     fetchJsonArray("/hypotheses.json").then(setHypotheses);
     fetchJsonArray("/stories.json").then((list) =>
@@ -193,17 +264,13 @@ function Workspace({ onRegional }) {
   useEffect(() => {
     const u = readUrlState(window.location.search);
     if (u.mode) setMode(u.mode);
-    if (u.point) {
-      setPoint(u.point);
-      setSideTab("spot");
-    }
+    if (u.point) setPoint(u.point);
     pending.current = { pass: u.pass, cmp: u.cmp };
     const dismissed = safeStorage((s) => s.getItem(STORY_KEY)) === "1";
     if (!dismissed && !u.mode && !u.point) setTour({ open: true, step: 0 });
     setHydrated(true);
   }, []);
 
-  // apply ?pass= and ?cmp= once the pass list exists
   useEffect(() => {
     if (!passes.length) return;
     const { pass, cmp } = pending.current;
@@ -218,7 +285,6 @@ function Workspace({ onRegional }) {
     pending.current = { pass: null, cmp: null };
   }, [passes]);
 
-  // keep the address bar in step with the view (U8)
   const passId = passes[passIdx]?.id ?? null;
   const cmpIds = compareOn && passes[cmpBefore] && passes[cmpAfter] ? [passes[cmpBefore].id, passes[cmpAfter].id] : null;
   const queryString = buildQuery({ mode, pass: passId, cmp: cmpIds, point, lang });
@@ -279,23 +345,29 @@ function Workspace({ onRegional }) {
     return null;
   };
 
-  // ---- mode switching -----------------------------------------------------------------------
+  // ---- mode & spot interactions -------------------------------------------------------------
   function goMode(m) {
     if (tour.open) closeTour();
     setBare(false);
     setMode(m);
     setSideTab("findings");
-    setPanelOpen(true);
   }
 
-  // ---- spot check ---------------------------------------------------------------------------
   const openSpot = useCallback((pt, hint = null, story = null) => {
     setPoint(pt);
     setPlaceHint(hint);
     setActiveStory(story);
-    setSideTab("spot");
-    setPanelOpen(true);
+    // Keep desktop showing floating SpotCard over the map until user clicks "Full details".
+    setSideTab("findings");
   }, []);
+
+  const clearSpot = useCallback(() => {
+    setPoint(null);
+    setPlaceHint(null);
+    setActiveStory(null);
+    setSideTab("findings");
+  }, []);
+
   const onPick = useCallback((lon, lat) => openSpot({ lon, lat }), [openSpot]);
 
   function onSearchSelect(r) {
@@ -327,9 +399,8 @@ function Workspace({ onRegional }) {
     if (mode === "season" && passes.length) {
       const cur = passes[passIdx];
       const url = (p) => (polView === "hh" ? p?.backscatterUrl : p?.overlayUrl);
-      // the flood mask is the water PNG plus, when the API sends one, the separate flooded-vegetation PNG
       const veg = (p, pane, k) =>
-        polView === "flood" && p?.floodedVegetationUrl ? [{ key: `${k}-veg-${p.id}`, url: p.floodedVegetationUrl, pane, opacity, bounds, alt: `${p.date} vegetation` }] : [];
+        showVeg && polView === "flood" && p?.floodedVegetationUrl ? [{ key: `${k}-veg-${p.id}`, url: p.floodedVegetationUrl, pane, opacity, bounds, alt: `${p.date} vegetation` }] : [];
       if (compareOn) {
         const b = passes[cmpBefore];
         const a = passes[cmpAfter];
@@ -346,7 +417,7 @@ function Workspace({ onRegional }) {
       out.push({ key: "rhythm", url: rhythmTier.data.overlayUrl, pane: "rhythmPane", opacity, bounds: rhythmTier.data.bounds ?? bounds, alt: t("rhythm.title") });
     }
     return out;
-  }, [bare, mode, passes, passIdx, polView, compareOn, cmpBefore, cmpAfter, opacity, bounds, polTier.data, rhythmTier.data, rhythmUnder, t]);
+  }, [bare, mode, passes, passIdx, polView, showVeg, compareOn, cmpBefore, cmpAfter, opacity, bounds, polTier.data, rhythmTier.data, rhythmUnder, t]);
 
   const losScale = useMemo(() => makeLosScale(motionTier.data?.heatmapGeojson), [motionTier.data]);
   const geojsons = useMemo(() => {
@@ -358,7 +429,7 @@ function Workspace({ onRegional }) {
         pane: "motionPane",
         style: (f) => {
           const c = losScale.color(f?.properties?.[losScale.prop]);
-          return { color: c, weight: 0.4, fillColor: c, fillOpacity: rhythmUnder ? 0.5 : 0.7 };
+          return { color: c, weight: 0.4, fillColor: c, fillOpacity: Math.min(0.95, opacity * (rhythmUnder ? 0.65 : 0.85)) };
         },
         tooltip: (f) => `${t("motion.tip")}: ${fmt(f?.properties?.[losScale.prop]) ?? "—"} ${losScale.unit}`,
       });
@@ -368,12 +439,12 @@ function Workspace({ onRegional }) {
         key: "proj",
         data: proj.geojson,
         pane: "projectionPane",
-        style: { color: "#CC79A7", weight: 2, dashArray: "4 4", fillColor: "#CC79A7", fillOpacity: 0.3 },
+        style: { color: "#6B5A9E", weight: 2, dashArray: "4 4", fillColor: "#6B5A9E", fillOpacity: 0.28 },
         tooltip: (f) => `${t("future.projection.tip")} ${f.properties?.year ?? ""}: ${fmt(f.properties?.areaKm2) ?? "—"} km²`,
       });
     }
     return out;
-  }, [mode, losScale, motionTier.data, rhythmUnder, proj.geojson, t]);
+  }, [mode, losScale, motionTier.data, rhythmUnder, opacity, proj.geojson, t]);
 
   const pins = useMemo(() => stories.map((s, i) => ({ id: String(s.id ?? i), lat: s.lat, lon: s.lon, label: s.name ?? s.barangay ?? t("stories.pin") })), [stories, t]);
   const onPin = useCallback(
@@ -396,224 +467,569 @@ function Workspace({ onRegional }) {
   const closeLimits = useCallback(() => setLimitsOpen(false), []);
 
   function onZone(z) {
-    // table rows jump to the place via the gazetteer
     searchPlaces(z.name, 1)
       .then((d) => d.results?.[0] && onSearchSelect(d.results[0]))
       .catch(() => {});
   }
 
-  const modeLabels = { season: t("mode.season"), rhythm: t("mode.rhythm"), motion: t("mode.motion"), history: t("mode.history"), future: t("mode.future") };
+  const railLabels = {
+    season: t("mode.season"),
+    rhythm: t("mode.rhythm"),
+    motion: t("mode.motion"),
+    history: t("mode.history"),
+    future: t("mode.future"),
+  };
+  const phoneShortLabels = {
+    season: t("mode.season"),
+    rhythm: t("rail.rhythm.short"),
+    motion: t("rail.motion.short"),
+    history: t("mode.history"),
+    future: t("mode.future"),
+  };
   const histDate = histDateFor(histIdx);
   const scenarioMonths = scenarios.data?.scenarios?.find((s) => s.id === scenarioId)?.months ?? scenarios.data?.scenarios?.[0]?.months ?? [];
+  const areaTitle = mode === "history" ? t("header.area.history") : mode === "future" ? t("header.area.future") : t("header.area.season");
+
+  const activeOverlay = OVERLAY_FOR_MODE[mode] ?? "rhythm";
+  const isDemoOverlay =
+    (mode === "rhythm" && rhythmTier.data?.dataKind === "synthetic") ||
+    (mode === "season" && passesTier.data?.dataKind === "synthetic") ||
+    (mode === "motion" && motionTier.data?.dataKind === "synthetic") ||
+    (mode === "future" && (flood.data?.dataKind === "synthetic" || scenarios.data?.dataKind === "synthetic"));
+
+  const resetMapControls = () => {
+    setMapMode("streets");
+    setLayers(DEFAULT_LAYERS);
+    setShowVeg(true);
+    setOpacity(0.75);
+  };
+
+  const renderFindingsContent = () => (
+    <>
+      {point && sideTab === "spot" ? (
+        <>
+          {activeStory && (
+            <div className="mb-3 rounded-xl border border-[#C2A5CF] bg-[#F6F1F9] p-3 text-[#16231B]" data-testid="story-pin-card">
+              <div className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#5B2370]">{t("stories.pin")}</div>
+              {activeStory.name && <div className="mt-0.5 text-[14px] font-semibold">{activeStory.name}</div>}
+              <p className="mt-1 text-[13px] leading-relaxed text-[#4A5850]">{activeStory.text}</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {activeStory.photo && <img src={activeStory.photo} alt={activeStory.photoAlt ?? ""} className="mt-2 max-h-40 rounded-lg" />}
+            </div>
+          )}
+          <SpotCheck
+            key={`${point.lon.toFixed(5)},${point.lat.toFixed(5)}`}
+            point={point}
+            placeHint={placeHint}
+            selectedDate={passes[passIdx]?.date}
+            spotTier={spotTier}
+            briefingTier={briefingTier}
+            onBack={() => setSideTab("findings")}
+            onClose={clearSpot}
+            onCopy={copyLink}
+            copied={copied}
+            onHelp={openHelp}
+          />
+        </>
+      ) : (
+        <>
+          {point && (
+            <div className="mb-3 min-[900px]:hidden">
+              <SpotCard
+                point={point}
+                placeHint={placeHint}
+                spotTier={spotTier}
+                mode={mode}
+                selectedDate={passes[passIdx]?.date}
+                onClose={clearSpot}
+                onOpenDetails={() => setSideTab("spot")}
+              />
+            </div>
+          )}
+
+          {mode === "rhythm" && (
+            <>
+              <RhythmPanel
+                tier={rhythmTier}
+                exposureTier={exposureRhythm}
+                passes={passes}
+                onHelp={openHelp}
+                onPlace={onZone}
+                onSources={() => setLimitsOpen(true)}
+              />
+              <ValidationPanel tier={validationTier} />
+              <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
+            </>
+          )}
+
+          {mode === "season" && (
+            <SeasonPanel
+              passesTier={passesTier}
+              rainTier={rainTier}
+              polTier={polTier}
+              idx={passIdx}
+              onIdx={setPassIdx}
+              playing={playing}
+              onPlaying={setPlaying}
+              polView={polView}
+              onPolView={setPolView}
+              compare={{
+                on: compareOn,
+                onToggle: (on) => {
+                  setCompareOn(on);
+                  if (on) {
+                    setPlaying(false);
+                    if (polView === "rgb") setPolView("flood");
+                    setCmpBefore(Math.max(0, passIdx - 1 >= 0 ? passIdx - 1 : 0));
+                    setCmpAfter(passIdx === 0 && passes.length > 1 ? passes.length - 1 : passIdx);
+                  }
+                },
+                before: cmpBefore,
+                after: cmpAfter,
+                onBefore: setCmpBefore,
+                onAfter: setCmpAfter,
+                split,
+                onSplit: setSplit,
+              }}
+              opacity={opacity}
+              onOpacity={setOpacity}
+              onHelp={openHelp}
+              onSources={() => setLimitsOpen(true)}
+            />
+          )}
+
+          {mode === "motion" && (
+            <>
+              <MotionPanel
+                tier={motionTier}
+                scale={losScale}
+                rhythmUnder={rhythmUnder}
+                onRhythmUnder={setRhythmUnder}
+                priorityTier={exposurePriority}
+                onHelp={openHelp}
+                onPlace={onZone}
+                onSources={() => setLimitsOpen(true)}
+              />
+              <ValidationPanel tier={validationTier} />
+              <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
+            </>
+          )}
+
+          {mode === "history" && (
+            <HistoryPanel
+              availabilityTier={availability}
+              monthlyTier={monthly}
+              rankTier={rank}
+              trendTier={trend}
+              date={histDate}
+              onHelp={openHelp}
+              onSources={() => setLimitsOpen(true)}
+            />
+          )}
+
+          {mode === "future" && (
+            <FuturePanel
+              outlookTier={outlook}
+              scenariosTier={scenarios}
+              scenarioId={scenarioId}
+              onScenario={setScenarioId}
+              floodTier={flood}
+              activeMonthIdx={futureMonthIdx}
+              onHelp={openHelp}
+              onSources={() => setLimitsOpen(true)}
+              projectionNode={<ProjectionPanel proj={proj} year={projYear} setYear={setProjYear} demo={false} onDemo={null} />}
+            />
+          )}
+        </>
+      )}
+    </>
+  );
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-slate-950 text-white" data-testid="workspace">
-      {/* header */}
-      <header className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-slate-700 bg-slate-900 px-3 py-2">
-        <div className="mr-1 leading-tight">
-          <div className="text-base font-black uppercase tracking-[0.18em] text-blue-300">Tanaw</div>
-          <div className="text-[10px] text-slate-400">{t("app.tagline")}</div>
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#F2F5F1] text-[#16231B]" data-testid="workspace">
+      {/* Header */}
+      <header className="relative z-[1200] flex h-[56px] shrink-0 items-center justify-between border-b border-[#DCE3DB] bg-white px-4 min-[900px]:h-[58px] min-[900px]:px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#1E5B3A] text-white" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2.5C12 2.5 5.5 9.5 5.5 14.5a6.5 6.5 0 0 0 13 0c0-5-6.5-12-6.5-12Z" />
+                <path d="M12 10v8M9 14l3-2 3 2" />
+              </svg>
+            </span>
+            <span className="text-[17px] font-bold tracking-[0.14em] text-[#16231B]">TANAW</span>
+          </div>
+          <span className="hidden h-5 w-px bg-[#DCE3DB] sm:inline-block" aria-hidden="true" />
+          <span className="truncate text-[13px] font-medium text-[#4A5850]">{areaTitle}</span>
         </div>
-        <SearchBox onSelect={onSearchSelect} inputRef={searchRef} highlight={searchHighlight} />
-        <nav aria-label={t("nav.modes")} className="order-last flex w-full gap-1 overflow-x-auto md:order-none md:w-auto" data-testid="mode-tabs">
+
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setTour({ open: true, step: 0 })}
             aria-current={tour.open ? "page" : undefined}
-            className={`whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-semibold ${tour.open ? "border-yellow-300 bg-yellow-300/20 text-white" : "border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700"}`}
+            className={`hidden h-9 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-semibold transition-colors min-[900px]:inline-flex ${
+              tour.open ? "border-[#1E5B3A] bg-[#1E5B3A] text-white" : "border-[#1E5B3A] bg-white text-[#1E5B3A] hover:bg-[#E3EFE7]"
+            }`}
             data-testid="tab-story"
           >
-            ★ {t("mode.story")}
+            {t("header.tour")}
           </button>
-          {MODE_ORDER.map((m) => (
+
+          <button
+            type="button"
+            onClick={() => setLimitsOpen(true)}
+            className="hidden h-9 items-center rounded-lg border border-[#DCE3DB] bg-white px-3 text-[13px] font-medium text-[#16231B] transition-colors hover:bg-[#F2F5F1] min-[900px]:inline-flex"
+            data-testid="open-limits"
+          >
+            {t("header.sources")} ({limitCount})
+          </button>
+
+          <div className="relative" ref={settingsRef}>
+            <button
+              type="button"
+              onClick={() => setSettingsOpen((o) => !o)}
+              aria-expanded={settingsOpen}
+              aria-label={t("header.settings")}
+              title={t("header.settings")}
+              className={`flex h-11 w-11 items-center justify-center rounded-lg border transition-colors ${
+                settingsOpen ? "border-[#1E5B3A] bg-[#E3EFE7] text-[#123B25]" : "border-[#DCE3DB] bg-white text-[#16231B] hover:bg-[#F2F5F1]"
+              }`}
+              data-testid="open-settings"
+            >
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.79 1 1.44 1.07H21a2 2 0 0 1 0 4h-.09c-.65.07-1.18.47-1.51 1Z" />
+              </svg>
+            </button>
+
+            {settingsOpen && (
+              <div
+                role="dialog"
+                aria-label={t("header.settings")}
+                className="absolute right-0 top-[50px] z-[1500] w-[280px] rounded-2xl border border-[#DCE3DB] bg-white p-3.5 text-[#16231B] shadow-[0_8px_24px_rgba(20,30,40,0.16)]"
+                data-testid="settings-popover"
+              >
+                <div className="mb-3">
+                  <div className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#4A5850]">{t("lang.label")}</div>
+                  <div role="group" aria-label={t("lang.label")} className="grid grid-cols-2 gap-1.5">
+                    {["en", "fil"].map((l) => (
+                      <button
+                        key={l}
+                        type="button"
+                        onClick={() => setLang(l)}
+                        aria-pressed={lang === l}
+                        className={`h-9 rounded-lg border text-[12px] font-semibold transition-colors ${
+                          lang === l ? "border-[#1E5B3A] bg-[#E3EFE7] text-[#123B25]" : "border-[#DCE3DB] bg-white text-[#4A5850] hover:bg-[#F2F5F1]"
+                        }`}
+                        data-testid={`lang-${l}`}
+                      >
+                        {l === "en" ? "English (EN)" : "Filipino (FIL)"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-3 border-t border-[#DCE3DB] pt-2.5">
+                  <div className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#4A5850]">{t("map.tools.mode")}</div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {["streets", "minimal"].map((mm) => (
+                      <button
+                        key={mm}
+                        type="button"
+                        onClick={() => setMapMode(mm)}
+                        aria-pressed={mapMode === mm}
+                        className={`h-9 rounded-lg border text-[12px] font-medium ${
+                          mapMode === mm ? "border-[#1E5B3A] bg-[#E3EFE7] font-semibold text-[#123B25]" : "border-[#DCE3DB] bg-white text-[#4A5850] hover:bg-[#F2F5F1]"
+                        }`}
+                      >
+                        {t(`map.tools.mode.${mm}`)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5 border-t border-[#DCE3DB] pt-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettingsOpen(false);
+                      setTour({ open: true, step: 0 });
+                    }}
+                    className="flex h-9 items-center justify-between rounded-lg border border-[#DCE3DB] bg-white px-3 text-[12px] font-medium text-[#16231B] hover:bg-[#F2F5F1] min-[900px]:hidden"
+                  >
+                    <span>{t("header.tour")}</span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettingsOpen(false);
+                      setLimitsOpen(true);
+                    }}
+                    className="flex h-9 items-center justify-between rounded-lg border border-[#DCE3DB] bg-white px-3 text-[12px] font-medium text-[#16231B] hover:bg-[#F2F5F1] min-[900px]:hidden"
+                  >
+                    <span>{t("header.sources")} ({limitCount})</span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettingsOpen(false);
+                      openHelp("water");
+                    }}
+                    className="flex h-9 items-center justify-between rounded-lg border border-[#DCE3DB] bg-white px-3 text-[12px] font-medium text-[#16231B] hover:bg-[#F2F5F1]"
+                  >
+                    <span>{t("radar.button")}</span>
+                    <span aria-hidden="true">?</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettingsOpen(false);
+                      onRegional();
+                    }}
+                    className="flex min-h-[38px] items-center justify-between rounded-lg border border-[#DCE3DB] bg-[#F2F5F1] px-3 py-1.5 text-left text-[12px] font-medium text-[#16231B] hover:bg-[#E3EFE7]"
+                    data-testid="open-regional"
+                  >
+                    <span>{t("header.regional")}</span>
+                    <span aria-hidden="true">↗</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {FIXTURES_ON && (
+        <div role="status" className="border-b border-dashed border-[#7A5B00] bg-[#FFF6DE] px-3 py-1 text-center text-[12px] font-semibold text-[#7A5B00]" data-testid="fixture-banner">
+          {t(FIXTURE_SCOPE === "nisar" ? "fixtures.banner.nisar" : "fixtures.banner")}
+        </div>
+      )}
+
+      {/* Main workspace row */}
+      <div className="flex min-h-0 flex-1 flex-col min-[900px]:flex-row">
+        {/* Desktop left icon rail */}
+        <aside className="hidden w-[84px] shrink-0 flex-col justify-between border-r border-[#DCE3DB] bg-white py-2.5 min-[900px]:flex">
+          <nav aria-label={t("nav.modes")} className="flex flex-col gap-1 px-1.5" data-testid="mode-tabs">
+            {MODE_ORDER.map((m) => {
+              const active = mode === m && !tour.open;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => goMode(m)}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative flex min-h-[58px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5 text-center text-[11px] leading-tight transition-colors ${
+                    active ? "bg-[#E3EFE7] font-semibold text-[#123B25]" : "font-medium text-[#4A5850] hover:bg-[#F2F5F1] hover:text-[#16231B]"
+                  }`}
+                  data-testid={`tab-${m}`}
+                >
+                  {active && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r bg-[#1E5B3A]" aria-hidden="true" />}
+                  <ModeIcon id={m} active={active} />
+                  <span>{railLabels[m]}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="flex flex-col gap-1 border-t border-[#DCE3DB] px-1.5 pt-2.5">
+            <button
+              type="button"
+              onClick={() => setToolsOpen((o) => !o)}
+              aria-pressed={toolsOpen}
+              className={`flex min-h-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-[11px] font-medium ${
+                toolsOpen ? "bg-[#E3EFE7] text-[#123B25]" : "text-[#4A5850] hover:bg-[#F2F5F1]"
+              }`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                <polyline points="2 12 12 17 22 12" />
+                <polyline points="2 17 12 22 22 17" />
+              </svg>
+              <span>{t("rail.layers")}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => openHelp("water")}
+              className="flex min-h-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-[11px] font-medium text-[#4A5850] hover:bg-[#F2F5F1]"
+              data-testid="open-radar"
+            >
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-[#DCE3DB] text-[11px] font-bold text-[#1E5B3A]" aria-hidden="true">
+                ?
+              </span>
+              <span className="text-[10px] leading-tight">{t("radar.button")}</span>
+            </button>
+          </div>
+        </aside>
+
+        {/* Map column + desktop TimeBar */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div
+            className={`relative shrink-0 min-[900px]:min-h-0 min-[900px]:flex-1 ${
+              sheetExpanded ? "h-[160px]" : "h-[310px]"
+            }`}
+          >
+            <NisarMap
+              overlays={overlays}
+              geojsons={geojsons}
+              pins={pins}
+              point={mapPoint}
+              compare={compare}
+              view={view}
+              onPick={onPick}
+              onPin={onPin}
+              ariaLabel={t("map.aria")}
+              mapMode={mapMode}
+              layers={layers}
+              boundariesGeojson={boundariesTier.data}
+              mode={mode}
+              passCount={passes.length}
+              showVeg={showVeg}
+              losScale={losScale}
+              isDemoOverlay={isDemoOverlay}
+              topLeftSearch={<SearchBox onSelect={onSearchSelect} inputRef={searchRef} highlight={searchHighlight} />}
+              topRightTools={
+                <MapTools
+                  open={toolsOpen}
+                  onToggle={() => setToolsOpen((o) => !o)}
+                  onClose={() => setToolsOpen(false)}
+                  mapMode={mapMode}
+                  onMapMode={setMapMode}
+                  overlay={activeOverlay}
+                  onOverlay={(ov) => {
+                    const nextMode = MODE_FOR_OVERLAY[ov];
+                    if (nextMode) goMode(nextMode);
+                  }}
+                  showVeg={showVeg}
+                  onShowVeg={setShowVeg}
+                  opacity={opacity}
+                  onOpacity={setOpacity}
+                  layers={layers}
+                  onToggleLayer={(k) => setLayers((prev) => ({ ...prev, [k]: !prev[k] }))}
+                  onReset={resetMapControls}
+                  isDemoOverlay={isDemoOverlay}
+                />
+              }
+              bottomLeftSpot={
+                point ? (
+                  <div className="hidden min-[900px]:block">
+                    <SpotCard
+                      point={point}
+                      placeHint={placeHint}
+                      spotTier={spotTier}
+                      mode={mode}
+                      selectedDate={passes[passIdx]?.date}
+                      onClose={clearSpot}
+                      onOpenDetails={() => setSideTab("spot")}
+                    />
+                  </div>
+                ) : null
+              }
+            />
+
+            {tour.open && (
+              <StoryTour
+                step={tour.step}
+                onStep={(s) => setTour({ open: true, step: s })}
+                onClose={closeTour}
+                fact={storyFact}
+                onTry={() => searchRef.current?.focus()}
+              />
+            )}
+          </div>
+
+          <div className="hidden shrink-0 min-[900px]:block">
+            <TimeBar
+              mode={mode}
+              passes={passes}
+              idx={passIdx}
+              onIdx={setPassIdx}
+              playing={playing}
+              onPlaying={setPlaying}
+              rainDays={rainTier.data?.days ?? []}
+              motionEpochs={motionTier.data?.epochs ?? []}
+              hist={{ value: histIdx, max: histMax, date: histDate, onChange: setHistIdx, datasets: availability.data?.datasets }}
+              future={{
+                months: scenarioMonths,
+                activeIdx: futureMonthIdx,
+                onSelectMonth: setFutureMonthIdx,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Findings panel (desktop aside + phone bottom sheet) */}
+        <aside
+          className="relative z-[1050] -mt-[14px] flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-[18px] border-t border-[#DCE3DB] bg-white shadow-[0_-4px_16px_rgba(20,30,40,0.10)] min-[900px]:mt-0 min-[900px]:w-[440px] min-[900px]:flex-none min-[900px]:rounded-none min-[900px]:border-l min-[900px]:border-t-0 min-[900px]:shadow-none xl:w-[460px]"
+          aria-label={t("panel.findings")}
+          data-testid="findings"
+        >
+          <div className="flex shrink-0 justify-center py-2 min-[900px]:hidden">
+            <button
+              type="button"
+              onClick={() => setSheetExpanded((e) => !e)}
+              aria-expanded={sheetExpanded}
+              aria-label={sheetExpanded ? t("panel.hide") : t("panel.show")}
+              className="flex h-5 w-16 items-center justify-center rounded-full"
+            >
+              <span className="h-1 w-10 rounded-full bg-[#C9D1C7]" />
+            </button>
+          </div>
+
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-5 pt-1 min-[900px]:p-5">
+            {renderFindingsContent()}
+          </div>
+
+          <div className="shrink-0 min-[900px]:hidden">
+            <TimeBar
+              mode={mode}
+              passes={passes}
+              idx={passIdx}
+              onIdx={setPassIdx}
+              playing={playing}
+              onPlaying={setPlaying}
+              rainDays={rainTier.data?.days ?? []}
+              motionEpochs={motionTier.data?.epochs ?? []}
+              hist={{ value: histIdx, max: histMax, date: histDate, onChange: setHistIdx, datasets: availability.data?.datasets }}
+              future={{
+                months: scenarioMonths,
+                activeIdx: futureMonthIdx,
+                onSelectMonth: setFutureMonthIdx,
+              }}
+            />
+          </div>
+        </aside>
+      </div>
+
+      {/* Mobile bottom tab bar (<900px) */}
+      <nav
+        aria-label={t("nav.modes")}
+        className="flex h-[56px] shrink-0 items-stretch border-t border-[#DCE3DB] bg-white min-[900px]:hidden"
+      >
+        {MODE_ORDER.map((m) => {
+          const active = mode === m && !tour.open;
+          return (
             <button
               key={m}
               type="button"
               onClick={() => goMode(m)}
-              aria-current={mode === m && !tour.open ? "page" : undefined}
-              className={`whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-semibold ${mode === m && !tour.open ? "border-sky-300 bg-sky-600/40 text-white" : "border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700"}`}
-              data-testid={`tab-${m}`}
+              aria-current={active ? "page" : undefined}
+              className={`relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px] leading-none ${
+                active ? "bg-[#E3EFE7]/60 font-semibold text-[#1E5B3A]" : "font-medium text-[#4A5850]"
+              }`}
             >
-              {modeLabels[m]}
+              <ModeIcon id={m} active={active} />
+              <span>{phoneShortLabels[m]}</span>
             </button>
-          ))}
-        </nav>
-        <div className="ml-auto flex items-center gap-1.5">
-          <button type="button" onClick={() => openHelp("water")} className="rounded-md border border-slate-500 bg-slate-800 px-2 py-1 text-xs hover:bg-slate-700" data-testid="open-radar">
-            ? {t("radar.button")}
-          </button>
-          <button type="button" onClick={() => setLimitsOpen(true)} className="rounded-md border border-amber-300/70 bg-amber-500/10 px-2 py-1 text-xs font-semibold text-amber-100 hover:bg-amber-500/20" data-testid="open-limits">
-            {t("limits.button")} ({limitCount})
-          </button>
-          <div role="group" aria-label={t("lang.label")} className="flex overflow-hidden rounded-md border border-slate-500 text-xs">
-            {["en", "fil"].map((l) => (
-              <button key={l} type="button" onClick={() => setLang(l)} aria-pressed={lang === l} className={`px-2 py-1 font-semibold ${lang === l ? "bg-sky-600 text-white" : "bg-slate-800 text-slate-300 hover:bg-slate-700"}`} data-testid={`lang-${l}`}>
-                {l === "en" ? "EN" : "FIL"}
-              </button>
-            ))}
-          </div>
-          <button type="button" onClick={onRegional} className="rounded-md border border-slate-500 bg-slate-800 px-2 py-1 text-xs hover:bg-slate-700" data-testid="open-regional">
-            {t("regional.button")}
-          </button>
-        </div>
-      </header>
-
-      {FIXTURES_ON ? (
-        <div role="status" className="border-b border-yellow-300 bg-yellow-400/20 px-3 py-1 text-center text-xs font-bold text-yellow-100" data-testid="fixture-banner">
-          ▨ {t(FIXTURE_SCOPE === "nisar" ? "fixtures.banner.nisar" : "fixtures.banner")}
-        </div>
-      ) : (
-        syntheticLabels.length > 0 && (
-          <div role="status" className="border-b border-yellow-300 bg-yellow-400/20 px-3 py-1 text-center text-xs font-bold text-yellow-100" data-testid="synthetic-banner">
-            ▨ {t("synthetic.banner", { what: syntheticLabels.join(", ") })}
-          </div>
-        )
-      )}
-
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        {/* map and time bar */}
-        <div className="flex min-h-[230px] min-w-0 flex-1 flex-col">
-          <div className="relative min-h-0 flex-1">
-            <NisarMap overlays={overlays} geojsons={geojsons} pins={pins} point={mapPoint} compare={compare} view={view} onPick={onPick} onPin={onPin} ariaLabel={t("map.aria")} />
-            {tour.open && <StoryTour step={tour.step} onStep={(s) => setTour({ open: true, step: s })} onClose={closeTour} fact={storyFact} onTry={() => searchRef.current?.focus()} />}
-            <button
-              type="button"
-              onClick={() => setPanelOpen((o) => !o)}
-              className="absolute right-3 top-3 z-[1000] rounded-md border border-slate-500 bg-slate-900/90 px-2 py-1 text-xs text-white md:hidden"
-              aria-expanded={panelOpen}
-            >
-              {panelOpen ? t("panel.hide") : t("panel.show")}
-            </button>
-          </div>
-          <TimeBar
-            mode={mode}
-            passes={passes}
-            idx={passIdx}
-            onIdx={setPassIdx}
-            playing={playing}
-            onPlaying={setPlaying}
-            hist={{ value: histIdx, max: histMax, date: histDate, onChange: setHistIdx, datasets: availability.data?.datasets }}
-            future={{ months: scenarioMonths }}
-          />
-        </div>
-
-        {/* findings */}
-        <aside
-          className={`${panelOpen ? "h-[42vh]" : "h-0 overflow-hidden border-0"} shrink-0 overflow-y-auto border-t border-slate-700 bg-slate-900 md:h-auto md:w-[400px] md:border-l md:border-t-0`}
-          aria-label={t("panel.findings")}
-          data-testid="findings"
-        >
-          <div className="p-3">
-            {point && (
-              <div role="group" aria-label={t("panel.tabs")} className="mb-3 flex gap-1.5">
-                {[
-                  ["findings", t("panel.findings")],
-                  ["spot", t("spot.title")],
-                ].map(([k, label]) => (
-                  <button key={k} type="button" onClick={() => setSideTab(k)} aria-pressed={sideTab === k} className={`flex-1 rounded-md border px-2 py-1 text-xs font-semibold ${sideTab === k ? "border-sky-300 bg-sky-600/40 text-white" : "border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700"}`}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {point && sideTab === "spot" ? (
-              <>
-                {activeStory && (
-                  <div className="mb-3 rounded-lg border border-fuchsia-300/50 bg-fuchsia-500/10 p-2.5" data-testid="story-pin-card">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-fuchsia-100">{t("stories.pin")}</div>
-                    {activeStory.name && <div className="text-sm font-semibold text-slate-100">{activeStory.name}</div>}
-                    <p className="mt-1 text-xs text-slate-200">{activeStory.text}</p>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    {activeStory.photo && <img src={activeStory.photo} alt={activeStory.photoAlt ?? ""} className="mt-2 max-h-40 rounded" />}
-                  </div>
-                )}
-                <SpotCheck
-                  key={`${point.lon.toFixed(5)},${point.lat.toFixed(5)}`}
-                  point={point}
-                  placeHint={placeHint}
-                  selectedDate={passes[passIdx]?.date}
-                  onClose={() => {
-                    setPoint(null);
-                    setActiveStory(null);
-                    setSideTab("findings");
-                  }}
-                  onCopy={copyLink}
-                  copied={copied}
-                  onHelp={openHelp}
-                />
-              </>
-            ) : (
-              <>
-                <p className="mb-3 text-[11px] text-slate-400">{t("panel.click")}</p>
-                {mode === "season" && (
-                  <SeasonPanel
-                    passesTier={passesTier}
-                    rainTier={rainTier}
-                    polTier={polTier}
-                    idx={passIdx}
-                    onIdx={setPassIdx}
-                    playing={playing}
-                    onPlaying={setPlaying}
-                    polView={polView}
-                    onPolView={setPolView}
-                    compare={{
-                      on: compareOn,
-                      onToggle: (on) => {
-                        setCompareOn(on);
-                        if (on) {
-                          setPlaying(false);
-                          if (polView === "rgb") setPolView("flood");
-                          setCmpBefore(Math.max(0, passIdx - 1 >= 0 ? passIdx - 1 : 0));
-                          setCmpAfter(passIdx);
-                          if (passIdx === 0 && passes.length > 1) setCmpAfter(passes.length - 1);
-                        }
-                      },
-                      before: cmpBefore,
-                      after: cmpAfter,
-                      onBefore: setCmpBefore,
-                      onAfter: setCmpAfter,
-                      split,
-                      onSplit: setSplit,
-                    }}
-                    opacity={opacity}
-                    onOpacity={setOpacity}
-                    onHelp={openHelp}
-                  />
-                )}
-                {mode === "rhythm" && (
-                  <>
-                    <RhythmPanel tier={rhythmTier} exposureTier={exposureRhythm} onHelp={openHelp} onPlace={onZone} />
-                    <ValidationPanel tier={validationTier} />
-                    <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
-                  </>
-                )}
-                {mode === "motion" && (
-                  <>
-                    <MotionPanel tier={motionTier} scale={losScale} rhythmUnder={rhythmUnder} onRhythmUnder={setRhythmUnder} priorityTier={exposurePriority} onHelp={openHelp} onPlace={onZone} />
-                    <ValidationPanel tier={validationTier} />
-                    <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
-                  </>
-                )}
-                {mode === "history" && (
-                  <HistoryPanel availabilityTier={availability} monthlyTier={monthly} rankTier={rank} trendTier={trend} date={histDate} onHelp={openHelp} />
-                )}
-                {mode === "future" && (
-                  <FuturePanel
-                    outlookTier={outlook}
-                    scenariosTier={scenarios}
-                    scenarioId={scenarioId}
-                    onScenario={setScenarioId}
-                    floodTier={flood}
-                    onHelp={openHelp}
-                    projectionNode={<ProjectionPanel proj={proj} year={projYear} setYear={setProjYear} demo={false} onDemo={null} />}
-                  />
-                )}
-              </>
-            )}
-          </div>
-        </aside>
-      </div>
+          );
+        })}
+      </nav>
 
       <RadarCards open={radar.open} initial={radar.card} onClose={closeHelp} />
       <LimitsDrawer open={limitsOpen} onClose={closeLimits} />

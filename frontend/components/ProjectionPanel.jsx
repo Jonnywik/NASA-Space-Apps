@@ -32,21 +32,21 @@ export default function ProjectionPanel({ proj, year, setYear, demo, onDemo }) {
 
   const metric = data?.annualMetric;
   return (
-    <section className="mt-4 border-t border-slate-700 pt-4" aria-label="Future scenario">
+    <section className="mt-3 border-t border-[#DCE3DB] pt-3 text-[#16231B]" aria-label="Future scenario">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 className="text-sm font-bold text-slate-100">Future · Scenario</h3>
+        <h3 className="font-serif text-sm font-semibold text-[#16231B]">Future · Scenario</h3>
         {state === 'ready' && <DataBadge dataStatus={data.dataStatus} dataKind={data.dataKind} isSample={demo} />}
       </div>
 
-      <div className="rounded-lg border-2 border-violet-400/60 bg-violet-500/10 px-3 py-2">
-        <div className="text-xs font-black uppercase tracking-[0.2em] text-violet-300">Projection</div>
-        <div className="text-[11px] text-slate-300">A conditional what-if, not a prediction.</div>
+      <div className="rounded-xl border border-dashed border-[#6B5A9E] bg-[#ECE8F4] px-3 py-2">
+        <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#4E3F80]">Projection</div>
+        <div className="text-[12px] text-[#4A5850]">A conditional what-if, not a prediction.</div>
       </div>
 
       <div className="mt-3">
-        <label htmlFor="proj-year" className="flex items-baseline justify-between text-xs text-slate-300">
+        <label htmlFor="proj-year" className="flex items-baseline justify-between text-xs text-[#4A5850]">
           <span>Year</span>
-          <span className="text-lg font-black text-violet-300">{year}</span>
+          <span className="text-lg font-bold text-[#6B5A9E]">{year}</span>
         </label>
         <input
           id="proj-year"
@@ -56,14 +56,14 @@ export default function ProjectionPanel({ proj, year, setYear, demo, onDemo }) {
           step={1}
           value={year}
           onChange={(e) => setYear(parseInt(e.target.value, 10))}
-          className="mt-1 w-full accent-violet-400"
+          className="mt-1 w-full accent-[#6B5A9E]"
         />
-        <div className="flex justify-between text-[10px] text-slate-500">
+        <div className="flex justify-between text-[10px] text-[#4A5850]">
           <span>{FIRST}</span>
           <span>{LAST}</span>
         </div>
         {supported && !supported.includes(year) && (
-          <p className="mt-1 text-[11px] text-amber-300">Only {supported.join(', ')} are supported by this model.</p>
+          <p className="mt-1 text-[11px] text-[#7A5B00]">Only {supported.join(', ')} are supported by this model.</p>
         )}
       </div>
 
@@ -72,24 +72,24 @@ export default function ProjectionPanel({ proj, year, setYear, demo, onDemo }) {
       {state === 'ready' && (
         <>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <div className="rounded-xl border border-slate-700/50 bg-slate-800/80 p-3">
-              <div className="mb-1 text-xs text-slate-400">Potential water-exposed area</div>
-              <div className="text-lg font-bold text-violet-300">{areaKm2 == null ? '—' : `${num(areaKm2)} km²`}</div>
+            <div className="rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3">
+              <div className="mb-1 text-xs text-[#4A5850]">Potential water-exposed area</div>
+              <div className="text-lg font-bold text-[#6B5A9E]">{areaKm2 == null ? '—' : `${num(areaKm2)} km²`}</div>
             </div>
-            <div className="rounded-xl border border-slate-700/50 bg-slate-800/80 p-3">
-              <div className="mb-1 text-xs text-slate-400">Median ground movement</div>
-              <div className="text-lg font-bold text-slate-100">
-                {num(pick(metric, 'medianLosMm'), 0)} <span className="text-xs font-normal">mm</span>
+            <div className="rounded-xl border border-[#DCE3DB] bg-[#F2F5F1] p-3">
+              <div className="mb-1 text-xs text-[#4A5850]">Median ground movement</div>
+              <div className="text-lg font-bold text-[#16231B]">
+                {num(pick(metric, 'medianLosMm'), 0)} <span className="text-xs font-normal text-[#4A5850]">mm</span>
               </div>
             </div>
           </div>
-          <p className="mt-1 text-[11px] text-slate-500">
+          <p className="mt-1 text-[11px] text-[#4A5850]">
             Baseline {data.baselineEpoch ?? '—'}. Movement is along the satellite’s line of sight, not straight down.
           </p>
 
           {list(data.assumptions).length > 0 && (
-            <details className="mt-2 text-[11px] text-slate-400">
-              <summary className="cursor-pointer text-slate-300">Assumptions ({list(data.assumptions).length})</summary>
+            <details className="mt-2 text-[11px] text-[#4A5850]">
+              <summary className="cursor-pointer font-medium text-[#16231B]">Assumptions ({list(data.assumptions).length})</summary>
               <ul className="mt-1 list-disc space-y-1 pl-4">
                 {list(data.assumptions).map((a) => (
                   <li key={a}>{a}</li>
@@ -97,7 +97,7 @@ export default function ProjectionPanel({ proj, year, setYear, demo, onDemo }) {
               </ul>
             </details>
           )}
-          <p className="mt-2 text-[11px] italic text-slate-500">
+          <p className="mt-2 text-[11px] text-[#4A5850]">
             Confidence: {data.uncertainty?.reason ?? 'Uncertainty is not fully quantified. Treat as a scenario, not an expectation.'}
           </p>
         </>
