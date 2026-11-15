@@ -8,10 +8,37 @@ Coding freezes at 17:00 Manila time. Each task is meant to take 30–90 minutes.
 
 - **You own:** `frontend/` (all of it), `docs/FIL_REVIEW.md` (new) and `docs/ANTIGRAVITY_STATUS.md` (new).
 - **Do not edit:** anything under `backend/`, `README.md`, `AGENTS.md`, `docs/SUBMISSION_SCOPE.md`, `docs/API_CONTRACT.md` or `docs/CODEX_TASKS.md`. If you need a backend change, write it in `docs/ANTIGRAVITY_STATUS.md` under `NEEDS-BACKEND:` and move on.
-- **Git:** commit small and often to `claude/kind-pascal-93n7ns`. Run `git pull --rebase` before each push. Never force-push.
+- **Git (updated 15 Nov):** the main repository is now `Jonnywik/NASA-SA-Final`. For A6, create branch `antigravity/a6-mangrove` from the latest `main`, commit small and often there, and push it. The coordinator reviews and merges it. Run `git pull --rebase` before each push. Never force-push. Don't reuse the old `antigravity/codex-tasks-t3-t7` branch.
 - **Before each push:** `cd frontend && npm run lint && npm run build` must pass.
 - **Rules from `AGENTS.md` section 2 apply in full.** No invented numbers, stories or references. Synthetic data keeps its badge. Say "exposure", not "damage". Say "line-of-sight motion", not "sinking".
 - **Running the app:** start the backend with `cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000`, then the frontend with `cd frontend && npm run dev`. Don't use fixture mode for checking; it's for development only.
+
+## Status update (15 Nov, coordinator): do A6, then A2 and A5
+
+- **A1, A3 and A4 are already done by Codex** and merged to `main`: `docs/FIL_REVIEW.md` exists, the pass legend uses shared colours, and the briefing buttons are wired. Don't redo them. A1 now only waits for the native-speaker corrections.
+- **Your order now:** **A6** (the redesign, below) → **A2** (base map, as part of A6's Map tools "Map mode") → **A5** (final UI check on the new design).
+
+## A6: Restyle the app to the approved "Mangrove" design (main task; about 4–6 h)
+
+**Why:** the owner approved a new interface design. It is calm civic with a map-first layout, a left mode rail, a Map tools panel and a spot card on the map. It aims at the Presentation and Impact scores.
+
+**Spec:** **`docs/DESIGN_SPEC_V2.md`**. Read all of it first. The board sources are in `docs/design/v2-mangrove/` for exact structure and styles.
+
+**Steps:**
+1. **Tokens and fonts.** Add the Mangrove CSS variables and Tailwind names, and switch the fonts to Inter plus Source Serif 4 via `next/font/google` (spec §2).
+2. **Shell.** Header, left mode rail, map with floating search, findings panel, footer timeline (§3). First view: **Flood rhythm**.
+3. **Map tools.** Map mode, overlay (one at a time, following the mode by default) and layers, with reset and a live summary (§4.3). Base-map tiles: free and key-less only; this is where A2 lands.
+4. **Spot card** at the bottom-left of the map, using the existing `/spot-check` and briefing wiring (§4.5).
+5. **Findings panel pattern:** eyebrow, serif headline built from API fields, stat cards, "In plain words", source line (§4.6). Add all new strings to `i18n.js` in English and Filipino (Filipino marked pending review).
+6. **Timeline:** stepper plus a slider with real daily rain bars and pass dots. History has the data ribbon; Future has the observed/outlook/scenario band (§4.8).
+7. **Demo tags replace the yellow banner,** on every synthetic number and overlay legend, driven by `dataKind` (§4.9).
+8. **The five modes** per §5, including UTC + Manila time on passes and the POWER caveat under the Future chart.
+9. **Phone layout** below 900px: bottom sheet and bottom tab bar (§6).
+10. **Motion rules and reduce-motion** (§7). Work through the accessibility checklist (§8).
+
+**Don't:** change API calls, analysis or wording rules; touch `backend/`; invent numbers; remove any existing feature. Move features, don't delete them: Story tour, Limits, Radar cards, Regional context, Pipeline preview and briefing exports must all remain reachable.
+
+**Done when:** every item in spec §10 passes, screenshots are in `frontend/screenshots/v2/`, and lint, build and `test:api` pass. Log the status and any `NEEDS-BACKEND:` lines in `docs/ANTIGRAVITY_STATUS.md`.
 
 ## A1: Filipino review sheet (do first; about 30 min)
 
@@ -60,8 +87,8 @@ Coding freezes at 17:00 Manila time. Each task is meant to take 30–90 minutes.
 
 1. Walk through Story Mode and every mode at **1366×768** and at a phone width (390×844) on the real backend.
 2. Fix only real defects: overlapping text, cut-off labels, controls you can't reach with the keyboard, missing focus outlines, any status shown by colour alone, and console errors.
-3. Check that every number on screen has its source and data-kind badge, and that the SYNTHETIC banner appears whenever any layer in view is synthetic.
-4. Save screenshots of every mode to `frontend/screenshots/` (create it; commit them). The team will use them for the project page.
+3. Check that every number on screen has its source, and that every synthetic number and overlay carries a **Demo** tag. The yellow banner is retired in the v2 design.
+4. Save screenshots of every mode to `frontend/screenshots/v2/` (create it; commit them). The team will use them for the project page.
 5. List anything you couldn't fix in `docs/ANTIGRAVITY_STATUS.md`.
 
 **Done when:** there are no console errors, the screenshots are committed, and lint and build pass.

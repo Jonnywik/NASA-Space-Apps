@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tanaw · Map-first · Flood rhythm</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E5B3A}a:hover{color:#123B25}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 820px; box-sizing: border-box; padding: 12px; background: {{t.ground}}; color: {{t.ink}}; font-family: Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums">
+<div style="display: flex; flex-direction: column; min-height: 796px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 14px; overflow: hidden">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 0 16px; min-height: 58px; border-bottom: 1px solid {{t.line}}">
+    <a href="#home" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: {{t.ink}}">
+      <svg width="30" height="22" viewBox="0 0 30 22" fill="none" stroke="{{t.primary}}" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M2 19 L11 6 L17 14 L21 9 L28 19"></path><path d="M2 19 C8 16 14 22 20 18 C24 16 26 17 28 19"></path></svg>
+      <span style="font-weight: 700; font-size: 19px; letter-spacing: 0.06em">TANAW</span>
+    </a>
+    <span aria-hidden="true" style="width: 1px; height: 28px; background: {{t.line}}"></span>
+    <button type="button" aria-haspopup="listbox" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: {{t.ink}}; font: inherit; font-weight: 600; font-size: 14px">CAMANAVA · 2026 wet season
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <div style="display: flex; align-items: center; gap: 8px; margin-left: auto">
+      <button type="button" style="height: 40px; padding: 0 14px; border: 1px solid {{t.primary}}; border-radius: 10px; background: {{t.surface}}; color: {{t.primary}}; font: inherit; font-weight: 600; font-size: 13px">Take the tour</button>
+      <a href="#sources" style="display: flex; align-items: center; height: 40px; padding: 0 10px; color: {{t.ink}}; font-size: 13px; text-decoration: none">Sources and limits</a>
+      <button type="button" aria-label="Settings: language, base map, units" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.ink}}" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; flex: 1 1 auto; min-height: 0">
+
+    <nav aria-label="Modes" style="flex: 0 0 84px; box-sizing: border-box; padding: 10px 8px; border-right: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 4px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="5">
+        <a href="{{m.href}}" aria-current="{{m.current}}" style="{{m.style}}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"></path></svg>
+          <span>{{m.label}}</span>
+        </a>
+      </sc-for>
+      <span style="flex: 1"></span>
+      <button type="button" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border: 0; border-radius: 10px; background: transparent; color: {{t.muted}}; font: inherit; font-size: 11px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>Layers</button>
+      <button type="button" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border: 0; border-radius: 10px; background: transparent; color: {{t.muted}}; font: inherit; font-size: 11px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6"></path><path d="M12 17v.5"></path></svg>How radar sees</button>
+    </nav>
+
+    <section aria-label="Map" style="position: relative; flex: 999 1 480px; min-width: 0; min-height: 590px; background: #E8EBE3">
+      <svg viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative flood-rhythm map of CAMANAVA: darker blue means water on more NISAR passes" style="position: absolute; inset: 0; width: 100%; height: 100%">
+        <rect width="900" height="600" fill="#F1F2EC"></rect>
+        <path d="M0 0 H330 C312 90 350 160 326 240 C305 310 342 400 318 470 C300 540 330 580 312 600 H0 Z" fill="#D3E2EA"></path>
+        <path d="M326 240 C410 262 500 250 590 280 C680 305 780 290 900 312" fill="none" stroke="#B5CCD8" stroke-width="7"></path>
+        <path d="M318 470 C410 450 520 480 610 458 C700 438 790 468 900 450" fill="none" stroke="#B5CCD8" stroke-width="5"></path>
+        <path d="M480 0 C490 80 470 150 500 230" fill="none" stroke="#B5CCD8" stroke-width="4"></path>
+        <path d="M380 300 L470 300 L520 380 L500 470 L410 470 L370 400 Z" fill="none" stroke="#C3C8BD" stroke-width="1.5"></path>
+        <path d="M470 300 L620 300 L650 390 L520 380 Z" fill="none" stroke="#C3C8BD" stroke-width="1.5"></path>
+        <path d="M350 150 L490 150 L500 230 L470 300 L380 300 L346 230 Z" fill="none" stroke="#C3C8BD" stroke-width="1.5"></path>
+        <path d="M335 140 C380 150 400 200 380 250 C360 300 400 340 370 380 C350 410 380 440 360 470 L330 470 C322 400 340 300 328 220 Z" fill="{{r1}}" fill-opacity="0.8"></path>
+        <path d="M340 175 C365 200 372 240 358 265 C344 292 370 320 352 350 C340 370 362 392 352 420 L332 420 C326 380 340 320 333 270 Z" fill="{{r2}}" fill-opacity="0.85"></path>
+        <path d="M338 210 C352 228 354 255 345 275 C336 296 352 316 342 340 L334 340 C330 300 338 260 335 230 Z" fill="{{r4}}" fill-opacity="0.9"></path>
+        <path d="M402 318 C434 302 466 318 474 344 C482 370 452 386 426 376 C400 366 390 340 402 318 Z" fill="{{r2}}" fill-opacity="0.85"></path>
+        <path d="M418 330 C436 324 452 334 454 348 C456 362 440 368 428 362 C416 356 410 342 418 330 Z" fill="{{r3}}" fill-opacity="0.9"></path>
+        <path d="M350 480 C380 466 416 480 422 506 C428 532 392 542 366 532 C344 522 338 498 350 480 Z" fill="{{r1}}" fill-opacity="0.8"></path>
+        <path d="M505 176 C527 164 554 176 558 196 C562 214 540 224 520 216 C500 208 494 190 505 176 Z" fill="{{t.veg}}" fill-opacity="0.75"></path>
+        <rect x="300" y="60" width="360" height="500" fill="none" stroke="#1B2430" stroke-width="1.8" stroke-dasharray="8 6"></rect>
+      </svg>
+      <span aria-hidden="true" style="position: absolute; left: 9%; top: 58%; font-family: 'Source Serif 4', serif; font-size: 15px; font-style: italic; color: #4A6F86">Manila Bay</span>
+      <span aria-hidden="true" style="position: absolute; left: 44%; top: 21%; font-size: 12px; font-weight: 600; color: #3A4552">Obando</span>
+      <span aria-hidden="true" style="position: absolute; left: 62%; top: 27%; font-size: 12px; font-weight: 600; color: #3A4552">Meycauayan</span>
+      <span aria-hidden="true" style="position: absolute; left: 58%; top: 46%; font-size: 12px; font-weight: 600; color: #3A4552">Valenzuela</span>
+      <span aria-hidden="true" style="position: absolute; left: 43%; top: 56%; font-size: 12px; font-weight: 600; color: #3A4552">Malabon</span>
+      <span aria-hidden="true" style="position: absolute; left: 50%; top: 77%; font-size: 12px; font-weight: 600; color: #3A4552">Caloocan</span>
+
+      <label style="position: absolute; top: 16px; left: 16px; right: 200px; max-width: 400px; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 14px; box-shadow: 0 2px 10px rgba(20,30,40,0.12)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.primary}}" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Find my barangay or city</span>
+        <input type="search" placeholder="Find my barangay or city" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 15px; color: {{t.ink}}">
+      </label>
+
+      <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; align-items: flex-start">
+        <button type="button" aria-expanded="false" aria-haspopup="dialog" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px 0 10px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 12px; box-shadow: 0 2px 8px rgba(20,30,40,0.12); color: {{t.ink}}; font: inherit; font-size: 13px; font-weight: 600">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.primary}}" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+          Map tools
+          <span style="font-size: 11px; font-weight: 500; color: {{t.muted}}">Flood rhythm · Streets</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div style="display: flex; flex-direction: column; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(20,30,40,0.10)">
+          <button type="button" aria-label="Zoom in" style="width: 40px; height: 40px; border: 0; border-bottom: 1px solid {{t.line}}; background: {{t.surface}}; font-size: 18px; color: {{t.ink}}">+</button>
+          <button type="button" aria-label="Zoom out" style="width: 40px; height: 40px; border: 0; background: {{t.surface}}; font-size: 18px; color: {{t.ink}}">−</button>
+        </div>
+      </div>
+
+      <div role="dialog" aria-label="Spot check: Niugan, City of Malabon" style="position: absolute; left: 16px; bottom: 16px; width: 330px; max-width: calc(100% - 32px); box-sizing: border-box; padding: 14px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 14px; box-shadow: 0 4px 16px rgba(20,30,40,0.16); display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: flex-start; gap: 8px">
+          <div style="flex: 1; display: flex; flex-direction: column">
+            <span style="font-family: 'Source Serif 4', serif; font-size: 19px; font-weight: 600">Niugan</span>
+            <span style="font-size: 12px; color: {{t.muted}}">City of Malabon · 14.665° N, 120.957° E</span>
+          </div>
+          <button type="button" aria-label="Close spot check" style="width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; font-size: 18px; color: {{t.ink}}">×</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <span style="font-size: 15px; font-weight: 600">Flooded on [n] of [valid] passes</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="padding: 1px 6px; border: 1px dashed {{t.demoInk}}; border-radius: 4px; background: {{t.demoBg}}; color: {{t.demoInk}}; font-size: 11px; font-weight: 600">Demo</span></sc-if>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 12px">
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="color: {{t.muted}}">Rain, 7 days before 2 Nov</span><span style="font-size: 15px; font-weight: 600">34.0 mm</span></span>
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="color: {{t.muted}}">Ground motion</span><span style="font-size: 13px; font-weight: 500">Not available yet</span></span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <button type="button" style="height: 38px; padding: 0 12px; border: 0; border-radius: 9px; background: {{t.primary}}; color: #FFFFFF; font: inherit; font-weight: 600; font-size: 13px">Briefing</button>
+          <button type="button" style="height: 38px; padding: 0 12px; border: 1px solid {{t.line}}; border-radius: 9px; background: {{t.surface}}; color: {{t.ink}}; font: inherit; font-size: 13px">CSV</button>
+          <a href="#place" style="display: flex; align-items: center; height: 38px; padding: 0 6px; font-size: 13px; font-weight: 600; color: {{t.primary}}">Full details</a>
+        </div>
+      </div>
+
+      <div style="position: absolute; right: 16px; bottom: 26px; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 12px; font-size: 12px; box-shadow: 0 1px 4px rgba(20,30,40,0.10)">
+        <span style="font-weight: 600">Passes with water (of 11)</span>
+        <span style="display: flex; gap: 2px">
+          <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span aria-hidden="true" style="width: 40px; height: 10px; background: {{r1}}"></span><span>1–2</span></span>
+          <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span aria-hidden="true" style="width: 40px; height: 10px; background: {{r2}}"></span><span>3–5</span></span>
+          <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span aria-hidden="true" style="width: 40px; height: 10px; background: {{r3}}"></span><span>6–8</span></span>
+          <span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span aria-hidden="true" style="width: 40px; height: 10px; background: {{r4}}"></span><span>9–11</span></span>
+        </span>
+        <span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 9px; height: 9px; margin: 0.5px; transform: rotate(45deg); background: {{t.veg}}"></span>Possible flooded vegetation</span>
+        <span style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 0; border-top: 2px dashed #1B2430"></span>Study area</span>
+      </div>
+      <span style="position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #3A4552">© OpenStreetMap contributors · NISAR: NASA/ISRO via ASF</span>
+    </section>
+
+    <aside aria-label="Findings" style="flex: 1 1 300px; max-width: 340px; box-sizing: border-box; padding: 20px; border-left: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 16px">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: {{t.primary}}">FLOOD RHYTHM · 2026 WET SEASON</span>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-family: 'Source Serif 4', serif; font-size: 25px; line-height: 1.22; font-weight: 600">[km²] of CAMANAVA was under water on half or more of the season's passes</h1>
+        <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="align-self: flex-start; padding: 1px 6px; border: 1px dashed {{t.demoInk}}; border-radius: 4px; background: {{t.demoBg}}; color: {{t.demoInk}}; font-size: 11px; font-weight: 600">Demo number</span></sc-if>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="padding: 12px; border: 1px solid {{t.line}}; border-radius: 12px; background: {{t.ground}}; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: {{t.muted}}">NISAR passes</span>
+          <span style="font-size: 24px; font-weight: 700">11</span>
+          <span style="font-size: 11px; color: {{t.muted}}">23 Jun – 2 Nov</span>
+        </div>
+        <div style="padding: 12px; border: 1px solid {{t.line}}; border-radius: 12px; background: {{t.ground}}; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: {{t.muted}}">Valid coverage</span>
+          <span style="font-size: 24px; font-weight: 700">[%]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="align-self: flex-start; font-size: 11px; font-weight: 600; color: {{t.demoInk}}">Demo</span></sc-if>
+        </div>
+        <div style="padding: 12px; border: 1px solid {{t.line}}; border-radius: 12px; background: {{t.ground}}; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: {{t.muted}}">People living there</span>
+          <span style="font-size: 24px; font-weight: 700">[n]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="align-self: flex-start; font-size: 11px; font-weight: 600; color: {{t.demoInk}}">Demo</span></sc-if>
+        </div>
+        <div style="padding: 12px; border: 1px solid {{t.line}}; border-radius: 12px; background: {{t.ground}}; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: {{t.muted}}">Buildings there</span>
+          <span style="font-size: 24px; font-weight: 700">[n]</span>
+          <sc-if value="{{showDemo}}" hint-placeholder-val="{{ true }}"><span style="align-self: flex-start; font-size: 11px; font-weight: 600; color: {{t.demoInk}}">Demo</span></sc-if>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid {{t.line}}">
+        <span style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 600">In plain words</span>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6; color: {{t.ink}}">Between 23 June and 2 November 2026, NASA and ISRO's NISAR satellite passed over CAMANAVA 11 times, seeing through clouds and rain. The darkest blue areas were under water on most of those passes. These are exposure figures, not damage. [The finished summary appears once the real NISAR data is processed.]</p>
+      </div>
+
+      <span style="margin-top: auto; font-size: 11px; color: {{t.muted}}">NISAR L2 GCOV · track 140 ascending · 30 m · <a href="#sources" style="color: {{t.primary}}">Sources and limits</a></span>
+    </aside>
+  </div>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 10px 16px; border-top: 1px solid {{t.line}}">
+    <div style="display: flex; align-items: center; gap: 2px">
+      <button type="button" aria-label="Previous pass" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: {{t.ink}}">‹</button>
+      <span style="min-width: 112px; text-align: center; font-size: 13px; font-weight: 600">Whole season</span>
+      <button type="button" aria-label="Next pass" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: {{t.ink}}">›</button>
+      <button type="button" aria-label="Play the season" style="width: 40px; height: 40px; margin-left: 4px; border: 0; border-radius: 50%; background: {{t.primary}}; color: #FFFFFF; font-size: 13px">▶</button>
+    </div>
+    <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+      <div role="slider" aria-label="Season timeline: 23 June to 2 November 2026" aria-valuetext="Whole season" tabindex="0" style="position: relative; height: 46px; border-radius: 8px; background: {{t.ground}}">
+        <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 34px; display: flex; align-items: flex-end; gap: 1px; padding: 0 2px">
+          <sc-for list="{{rain}}" as="r" hint-placeholder-count="133">
+            <span style="{{r.style}}"></span>
+          </sc-for>
+        </div>
+        <sc-for list="{{passes}}" as="p" hint-placeholder-count="11">
+          <span title="{{p.label}}" style="{{p.style}}"></span>
+        </sc-for>
+      </div>
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 11px; color: {{t.muted}}"><span>23 Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>2 Nov</span></div>
+    </div>
+    <span style="font-size: 11px; color: {{t.muted}}; max-width: 150px">Bars: daily rain, NASA POWER. Dots: NISAR passes.</span>
+  </footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"palette":{"editor":"enum","options":["mangrove","harbour","clay","instrument"],"default":"mangrove"},"showDemo":{"editor":"boolean","default":true},"$preview":{"width":1366,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const P = {
+      mangrove: { primary:'#1E5B3A', primarySoft:'#E3EFE7', ground:'#F2F5F1', surface:'#FFFFFF', ink:'#16231B', muted:'#4A5850', line:'#DCE3DB', ramp:['#C6DBEF','#6BAED6','#2171B5','#08306B'], veg:'#E69F00', motion:'#7B3294', demoBg:'#FFF6DE', demoInk:'#7A5B00' },
+      harbour:  { primary:'#0F4C6E', primarySoft:'#E0ECF4', ground:'#F1F5F8', surface:'#FFFFFF', ink:'#122130', muted:'#475766', line:'#D6E0E8', ramp:['#C7E9F1','#7CCBE0','#2A9FC4','#0B5E7E'], veg:'#E08A00', motion:'#B03A82', demoBg:'#FFF6DE', demoInk:'#7A5B00' },
+      clay:     { primary:'#9C4426', primarySoft:'#F5E4DA', ground:'#F7F2EA', surface:'#FFFDF9', ink:'#2B2019', muted:'#5E5248', line:'#E8DDCF', ramp:['#CFE1F2','#88B6E0','#3B82C4','#164C86'], veg:'#5E9A2E', motion:'#6A51A3', demoBg:'#FFF3D6', demoInk:'#7A5B00' },
+      instrument:{ primary:'#2C4A5A', primarySoft:'#E2EAEE', ground:'#F3F4F5', surface:'#FFFFFF', ink:'#101820', muted:'#4A5560', line:'#D8DDE2', ramp:['#D0E4F0','#79B3D9','#2C7FB8','#173F6E'], veg:'#E69F00', motion:'#CC79A7', demoBg:'#FFF6DE', demoInk:'#7A5B00' }
+    };
+    const t = P[this.props.palette] || P.mangrove;
+    const icons = {
+      season: 'M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z',
+      rhythm: 'M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 18c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 6c2-3 4-3 6 0s4 3 6 0 4-3 6 0',
+      motion: 'M12 3v14M6 11l6 6 6-6M4 21h16',
+      history: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2',
+      future: 'M3 17l6-6 4 4 8-8M15 7h6v6'
+    };
+    const list = [['season','Season'],['rhythm','Flood rhythm'],['motion','Ground motion'],['history','History'],['future','Future']];
+    const modes = list.map(([k, label]) => {
+      const on = k === 'rhythm';
+      return {
+        href: '#' + k, label, icon: icons[k], current: on ? 'page' : 'false',
+        style: 'display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 2px; border-radius: 10px; text-decoration: none; font-size: 11px; text-align: center; line-height: 1.2; '
+          + (on ? 'background: ' + t.primarySoft + '; color: ' + t.primary + '; font-weight: 700' : 'color: ' + t.muted + '; font-weight: 500')
+      };
+    });
+    const mm = [0.4,4.2,3.7,8.6,1.4,2.5,3.6,36.9,7.2,2.6,3.8,3.1,2.2,1.2,6.4,5.9,4.3,25.3,15.8,10.2,9.3,0.3,0.0,1.1,1.8,1.5,2.5,5.1,14.1,6.9,3.8,14.2,16.5,2.6,6.6,24.5,39.2,6.8,15.5,3.9,12.0,15.2,12.6,20.5,19.4,19.5,105.2,37.1,44.3,10.0,19.9,21.1,14.8,4.0,9.7,62.4,37.5,11.2,3.6,0.3,1.3,1.2,1.9,2.1,2.1,6.0,44.2,41.6,19.3,2.8,0.4,3.5,15.3,14.5,22.0,13.2,20.5,17.7,8.7,12.6,2.1,0.9,7.9,6.4,14.5,12.9,21.1,19.5,2.6,6.2,20.1,16.3,9.2,12.1,7.5,4.4,2.1,4.4,1.4,1.6,3.4,16.6,16.1,11.6,9.4,15.1,6.5,9.0,3.5,10.7,23.7,10.6,7.7,5.6,2.6,5.3,4.4,4.1,4.0,3.4,3.5,4.3,0.4,6.7,1.6,4.3,3.8,1.6,3.3,4.8,6.7,9.6,4.3];
+    const rain = mm.map((v) => ({ style: 'flex: 1; min-width: 0; height: ' + Math.max(1, Math.round(Math.sqrt(v / 105.2) * 32)) + 'px; background: ' + t.ramp[1] + '; border-radius: 1px' }));
+    const offsets = [0,12,24,48,60,72,84,96,108,120,132];
+    const names = ['23 Jun','5 Jul','17 Jul','10 Aug','22 Aug','3 Sep','15 Sep','27 Sep','9 Oct','21 Oct','2 Nov'];
+    const passes = offsets.map((o, i) => ({ label: 'NISAR pass ' + names[i], style: 'position: absolute; top: 3px; left: calc(' + (o / 132 * 100).toFixed(2) + '% - 5px); width: 10px; height: 10px; border-radius: 50%; background: ' + t.primary + '; border: 2px solid ' + t.surface + '; box-sizing: border-box' }));
+    return { t, modes, rain, passes, showDemo: this.props.showDemo ?? true, r1: t.ramp[0], r2: t.ramp[1], r3: t.ramp[2], r4: t.ramp[3] };
+  }
+}
+</script>
+</body>
+</html>

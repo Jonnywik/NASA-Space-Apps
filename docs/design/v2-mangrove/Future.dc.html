@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tanaw · Future</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E5B3A}a:hover{color:#123B25}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 820px; box-sizing: border-box; padding: 12px; background: #F2F5F1; color: #16231B; font-family: Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums">
+<div style="display: flex; flex-direction: column; min-height: 796px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 14px; overflow: hidden">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 0 16px; min-height: 58px; border-bottom: 1px solid #DCE3DB">
+    <a href="#home" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #16231B">
+      <svg width="30" height="22" viewBox="0 0 30 22" fill="none" stroke="#1E5B3A" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M2 19 L11 6 L17 14 L21 9 L28 19"></path><path d="M2 19 C8 16 14 22 20 18 C24 16 26 17 28 19"></path></svg>
+      <span style="font-weight: 700; font-size: 19px; letter-spacing: 0.06em">TANAW</span>
+    </a>
+    <span aria-hidden="true" style="width: 1px; height: 28px; background: #DCE3DB"></span>
+    <button type="button" aria-haspopup="listbox" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #16231B; font: inherit; font-weight: 600; font-size: 14px">CAMANAVA · Dec 2026 – Nov 2027
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <div style="display: flex; align-items: center; gap: 8px; margin-left: auto">
+      <button type="button" style="height: 40px; padding: 0 14px; border: 1px solid #1E5B3A; border-radius: 10px; background: #FFFFFF; color: #1E5B3A; font: inherit; font-weight: 600; font-size: 13px">Take the tour</button>
+      <a href="#sources" style="display: flex; align-items: center; height: 40px; padding: 0 10px; color: #16231B; font-size: 13px; text-decoration: none">Sources and limits</a>
+      <button type="button" aria-label="Settings: language, base map, units" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16231B" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; flex: 1 1 auto; min-height: 0">
+    <nav aria-label="Modes" style="flex: 0 0 84px; box-sizing: border-box; padding: 10px 8px; border-right: 1px solid #DCE3DB; display: flex; flex-direction: column; gap: 4px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="5">
+        <a href="{{m.href}}" aria-current="{{m.current}}" style="{{m.style}}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"></path></svg>
+          <span>{{m.label}}</span>
+        </a>
+      </sc-for>
+    </nav>
+
+    <section aria-label="Map" style="position: relative; flex: 999 1 380px; min-width: 0; min-height: 590px; background: #E8EBE3; overflow: hidden">
+      <svg viewBox="0 0 700 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative exploratory flood scenario: hatched purple areas show where water may appear under the chosen rainfall" style="position: absolute; inset: 0; width: 100%; height: 100%">
+        <defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#8A7BB5" fill-opacity="0.18"></rect><line x1="0" y1="0" x2="0" y2="8" stroke="#6B5A9E" stroke-width="3"></line></pattern></defs>
+        <rect width="700" height="600" fill="#F1F2EC"></rect>
+        <path d="M0 0 H250 C232 90 270 160 246 240 C225 310 262 400 238 470 C220 540 250 580 232 600 H0 Z" fill="#D3E2EA"></path>
+        <path d="M246 240 C330 262 420 250 510 280 C600 305 650 290 700 312" fill="none" stroke="#B5CCD8" stroke-width="7"></path>
+        <path d="M255 140 C300 150 320 200 300 250 C280 300 320 340 290 380 C270 410 300 440 280 470 L250 470 C242 400 260 300 248 220 Z" fill="url(#hatch)"></path>
+        <path d="M330 300 C370 286 410 300 418 330 C426 360 394 376 366 366 C340 356 320 324 330 300 Z" fill="url(#hatch)"></path>
+        <rect x="230" y="90" width="300" height="420" fill="none" stroke="#1B2430" stroke-width="1.8" stroke-dasharray="8 6"></rect>
+      </svg>
+      <div style="position: absolute; left: 16px; bottom: 16px; max-width: 320px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 12px; font-size: 12px; line-height: 1.5; box-shadow: 0 1px 4px rgba(20,30,40,0.10); display: flex; flex-direction: column; gap: 6px">
+        <span style="display: flex; align-items: center; gap: 8px; font-weight: 600"><span aria-hidden="true" style="width: 14px; height: 14px; border-radius: 3px; background: repeating-linear-gradient(45deg, #6B5A9E 0 2px, #E7E3F1 2px 5px)"></span>Exploratory flood scenario</span>
+        <span style="color: #4A5850">Where water appeared on NISAR passes after similar rain. A what-if, not a forecast of next year's floods.</span>
+      </div>
+      <button type="button" aria-expanded="false" aria-haspopup="dialog" style="position: absolute; top: 16px; right: 16px; display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px 0 10px; background: #FFFFFF; border: 1px solid #DCE3DB; border-radius: 12px; box-shadow: 0 2px 8px rgba(20,30,40,0.12); color: #16231B; font: inherit; font-size: 13px; font-weight: 600">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5B3A" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+        Map tools
+        <span style="font-size: 11px; font-weight: 500; color: #4A5850">Flood scenario · Streets</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+      <span style="position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #3A4552">© OpenStreetMap contributors</span>
+    </section>
+
+    <aside aria-label="Findings" style="flex: 1 1 420px; max-width: 480px; box-sizing: border-box; padding: 20px; border-left: 1px solid #DCE3DB; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #6B5A9E">FUTURE · OUTLOOK AND CONDITIONAL SCENARIOS</span>
+      <h1 style="margin: 0; font-family: 'Source Serif 4', serif; font-size: 25px; line-height: 1.22; font-weight: 600">The seasonal outlook points drier than usual through April 2027</h1>
+
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Outlook covers</span>
+          <span style="font-size: 18px; font-weight: 700; line-height: 1.35">Dec – Apr</span>
+          <span style="font-size: 11px; color: #4A5850">50 model runs, ~36 km grid</span>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">December vs model normal</span>
+          <span style="font-size: 22px; font-weight: 700">−77 mm</span>
+          <span style="font-size: 11px; color: #4A5850">every outlook month is below</span>
+        </div>
+        <div style="padding: 12px; border: 1px solid #DCE3DB; border-radius: 12px; background: #F2F5F1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #4A5850">Flood scenario, Aug 2027</span>
+          <span style="font-size: 22px; font-weight: 700">[km²]</span>
+          <span style="font-size: 11px; font-weight: 600; color: #6B5A9E">Exploratory</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 13px; font-weight: 600">Choose a 12-month rainfall scenario</span>
+        <div role="radiogroup" aria-label="Rainfall scenario" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+          <sc-for list="{{options}}" as="o" hint-placeholder-count="4">
+            <button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <div role="img" aria-label="{{chartLabel}}" style="position: relative; display: flex; align-items: flex-end; gap: 4px; height: 130px; padding-left: 34px; border-bottom: 1px solid #C9D1C7">
+          <span aria-hidden="true" style="position: absolute; left: 0; top: -2px; font-size: 10px; color: #4A5850">1,100</span>
+          <span aria-hidden="true" style="position: absolute; left: 0; bottom: 0; font-size: 10px; color: #4A5850">0 mm</span>
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="12">
+            <span style="position: relative; flex: 1; min-width: 0; height: 100%; display: flex; align-items: flex-end">
+              <span title="{{b.title}}" style="{{b.style}}"></span>
+              <sc-if value="{{b.hasDot}}" hint-placeholder-val="{{ false }}"><span style="{{b.dot}}"></span></sc-if>
+            </span>
+          </sc-for>
+        </div>
+        <div aria-hidden="true" style="display: flex; gap: 4px; padding-left: 34px; font-size: 10px; color: #4A5850">
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="12"><span style="flex: 1; text-align: center">{{b.m}}</span></sc-for>
+        </div>
+        <span style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 11px; color: #4A5850">
+          <span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; box-sizing: border-box; border: 1.5px dashed #2171B5; background: #DCEAF5"></span>Outlook months</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; background: #8A7BB5"></span>Scenario months</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #16231B"></span>Outlook model mean</span>
+        </span>
+      </div>
+
+      <p style="margin: 0; padding: 10px 12px; border-radius: 10px; background: #FFF6DE; color: #5A4300; font-size: 12px; line-height: 1.5">Scenario rain is NASA POWER, one ~50 km cell. In the dry months it reads much wetter than other records here, so compare scenarios with each other and with the normal year, not as exact millimetres.</p>
+      <span style="margin-top: auto; font-size: 11px; color: #4A5850">Outlook: Open-Meteo seasonal (ECMWF requested; model and run date not stated by the provider) · <a href="#sources">Sources and limits</a></span>
+    </aside>
+  </div>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 10px 16px; border-top: 1px solid #DCE3DB">
+    <div style="display: flex; align-items: center; gap: 2px">
+      <button type="button" aria-label="Previous month" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: #16231B">‹</button>
+      <span style="min-width: 112px; text-align: center; font-size: 13px; font-weight: 600">August 2027</span>
+      <button type="button" aria-label="Next month" style="width: 40px; height: 40px; border: 0; background: transparent; font-size: 20px; color: #16231B">›</button>
+    </div>
+    <div style="flex: 1 1 520px; min-width: 0; display: grid; grid-template-columns: 2fr 5fr 7fr; gap: 4px; font-size: 11px">
+      <span style="display: flex; align-items: center; justify-content: center; height: 34px; border-radius: 8px; background: #E3EFE7; color: #1E5B3A; font-weight: 600">Observed to Nov 2026</span>
+      <span style="display: flex; align-items: center; justify-content: center; height: 34px; border-radius: 8px; box-sizing: border-box; border: 1.5px dashed #2171B5; background: #EEF5FA; color: #0B4F79; font-weight: 600">Outlook · Dec – Apr</span>
+      <span style="display: flex; align-items: center; justify-content: center; height: 34px; border-radius: 8px; background: #ECE8F4; color: #4E3F80; font-weight: 600">Conditional scenario · May – Nov 2027</span>
+    </div>
+  </footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":820}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { scen: 'normal' }; }
+  renderVals() {
+    const icons = {
+      season: 'M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z',
+      rhythm: 'M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 18c2-3 4-3 6 0s4 3 6 0 4-3 6 0M2 6c2-3 4-3 6 0s4 3 6 0 4-3 6 0',
+      motion: 'M12 3v14M6 11l6 6 6-6M4 21h16',
+      history: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2',
+      future: 'M3 17l6-6 4 4 8-8M15 7h6v6'
+    };
+    const active = 'future';
+    const modes = [['season','Season'],['rhythm','Flood rhythm'],['motion','Ground motion'],['history','History'],['future','Future']].map(([k, label]) => ({
+      href: '#' + k, label, icon: icons[k], current: k === active ? 'page' : 'false',
+      style: 'display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 2px; border-radius: 10px; text-decoration: none; font-size: 11px; text-align: center; line-height: 1.2; '
+        + (k === active ? 'background: #E3EFE7; color: #1E5B3A; font-weight: 700' : 'color: #4A5850; font-weight: 500')
+    }));
+    const S = {
+      normal: { label: 'A normal year', v: [385,140,131,106,98,157,225,292,269,280,317,322] },
+      wet2020: { label: 'Wet, like 2020', v: [321,136,738,575,606,245,598,253,247,271,1050,1076] },
+      wettest: { label: 'Wettest since 2000', v: [860,404,738,575,606,368,598,528,606,518,1050,1076] },
+      dry2015: { label: 'Dry, like 2015', v: [456,111,61,58,34,38,142,255,233,239,278,156] }
+    };
+    const cur = this.state.scen;
+    const options = Object.keys(S).map((k) => ({
+      label: S[k].label, checked: k === cur ? 'true' : 'false',
+      pick: () => this.setState({ scen: k }),
+      style: 'height: 40px; padding: 0 10px; border-radius: 9px; font: inherit; font-size: 13px; text-align: left; '
+        + (k === cur ? 'border: 2px solid #1E5B3A; background: #E3EFE7; color: #123B25; font-weight: 700' : 'border: 1px solid #DCE3DB; background: #FFFFFF; color: #16231B')
+    }));
+    const months = ['D','J','F','M','A','M','J','J','A','S','O','N'];
+    const full = ['Dec 2026','Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027','Jul 2027','Aug 2027','Sep 2027','Oct 2027','Nov 2027'];
+    const outlookMean = [32,23,17,12,14];
+    const bars = S[cur].v.map((v, i) => {
+      const out = i < 5;
+      return {
+        m: months[i], title: full[i] + ': ' + v + ' mm' + (out ? ' (outlook month)' : ' (scenario)'),
+        style: 'display: block; width: 100%; height: ' + Math.min(100, v / 1100 * 100).toFixed(1) + '%; border-radius: 3px 3px 0 0; box-sizing: border-box; '
+          + (out ? 'border: 1.5px dashed #2171B5; border-bottom: 0; background: #DCEAF5' : 'background: ' + (i === 8 ? '#6B5A9E' : '#8A7BB5')),
+        hasDot: out,
+        dot: out ? 'position: absolute; left: calc(50% - 4px); bottom: calc(' + (outlookMean[i] / 1100 * 100).toFixed(1) + '% - 4px); width: 8px; height: 8px; border-radius: 50%; background: #16231B' : ''
+      };
+    });
+    const chartLabel = 'Monthly rainfall for the scenario ' + S[cur].label + ', December 2026 to November 2027';
+    return { modes, options, bars, chartLabel };
+  }
+}
+</script>
+</body>
+</html>
