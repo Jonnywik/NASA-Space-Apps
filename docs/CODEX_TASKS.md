@@ -4,7 +4,37 @@ Codex: read `AGENTS.md` first (context, rules, how to run). This file gives you 
 
 Written 15 Nov 2026, about 01:30 Manila time. Coding freezes at 17:00.
 
-## Round 2 (15 Nov, about 13:15): do these now
+## Round 3 (15 Nov, about 14:45): freeze moved to 18:00. Push everything by 17:15.
+
+Round 2 is reviewed and good (thank you). **Push to a branch `codex/round3`, not to `main`**; the coordinator merges. Boundaries: backend and docs only. The coordinator is editing `backend/app/nisar_api.py` and `backend/processing/nisar_flood/` this round, so **don't edit those**; put your routes in a new `backend/app/downloads_api.py`. Register it in `main.py` with one import and one `include_router` line. The full backend suite must pass before each push. See "Round 4 additions" at the end of `docs/API_CONTRACT.md` for the shapes.
+
+**Don't regenerate the real NISAR product** on the laptop: the validation results are bound to its manifest hash (see the v6 section).
+
+### R3.1 Briefings tell the real story (about 45 min)
+- Update `backend/processing/briefing_place/` (EN and FIL templates) to the v6 framing. The NISAR layer is "open water outside the usual water", never "flooding".
+- Add one IMERG sentence for the latest pass, from `data/cache/climate/imerg_passes.json`: rain in the last 24 h and 48 h and hours since heavy rain.
+- Add one sentence on what NISAR can't see (flooded streets look bright; passes at about 05:30 Manila).
+- Ground motion: "not available yet".
+- Every number must trace to a fact field. Update the tests in `tests/test_spot_briefing.py`. Mark FIL as pending review.
+
+### R3.2 Downloads (about 45 min)
+`GET /downloads` and `GET /downloads/{id}` in `downloads_api.py`. List and serve, read-only, with a whitelist:
+- the flood-rhythm count and half-mask GeoTIFFs (from the real product folder, if present; otherwise omit the entry, never fake it);
+- the per-pass open-water CSV (date, km², valid fraction, maturity, product ID);
+- the IMERG pass CSV;
+- the soil-moisture pass CSV;
+- the validation JSON;
+- the timelapse GIF (R3.3).
+
+Each entry has a CC-BY-4.0 licence line and attribution (NASA–ISRO NISAR via ASF, NASA GPM IMERG, NASA OPERA, and so on), plus `dataKind`. Add tests.
+
+### R3.3 Season timelapse GIF (about 45 min)
+`scripts/28_nisar_timelapse.py` builds `data/cache/nisar/timelapse.gif` from the **real** product's `hh_<date>.png` and `pass_<date>.png`. Each frame shows the HH backscatter in greyscale with the open-water overlay, a caption ("NISAR L-band · 10 Aug 2026 · 05:30 Manila"), a bar for the 48-hour IMERG rain before the pass, and an attribution line. About 1.2 s per frame, 11 frames, at most about 8 MB. If the real product is missing, exit with a clear message; never use the synthetic demo. Serve it at `GET /api/v1/nisar/timelapse.gif` from `downloads_api.py`.
+
+### R3.4 CI is green on GitHub (about 15 min)
+Check the GitHub Actions runs for `main` in Jonnywik/NASA-SA-Final (`.github/workflows/ci.yml`). Fix the workflow if it fails, for example on the Python version, missing system packages or `npm run test:api`. Don't skip tests.
+
+## Round 2 (15 Nov, about 13:15) (DONE, reviewed)
 
 **State:** T1 was run by the coordinator on real data and is published. T2 was attempted and stopped: ionosphere noise, undocumented phase sign, 4-month record. NISAR soil moisture and NASA GPM IMERG rain were added. Antigravity's A6 redesign is merged. Read the "v6 decision" section of `docs/SUBMISSION_SCOPE.md` and the runbook sections "Real run results", "Ground motion (T2)" and "Soil moisture" first. Work on `main` in `Jonnywik/NASA-SA-Final`, backend and docs only (Antigravity owns `frontend/`). Pull before you start, and run the full backend suite before each push.
 

@@ -260,4 +260,52 @@ def make_router(output_root, read_public_events):
             "warnings": list(manifest.get("warnings", [])) + ["The explanation is general radar-physics text and still needs reviewer sign-off."],
         }
 
+    # -- Round 4: exploratory layers and soil moisture, served from small committed caches ------------------
+    cache_root = root.parent / "cache" / "nisar"
+    extra_dir = cache_root / "extra"
+    sm_dir = cache_root / "soil_moisture"
+    EXTRA_DOCS = {"rain-response": "rain_response.json", "coherence-change": "coherence_change.json"}
+
+    def read_doc(path: Path, what: str) -> dict:
+        if not path.is_file():
+            raise _error(404, "data_unavailable", f"{what} has not been computed yet")
+        try:
+            return json.loads(path.read_text())
+        except (OSError, ValueError):
+            raise _error(503, "upstream_unavailable", f"the cached {what} file could not be read")
+
+    @router.get("/nisar/rain-response")
+    def rain_response(area: str = "camanava_2026"):
+        known_area(area)
+        return read_doc(extra_dir / EXTRA_DOCS["rain-response"], "the rain-response layer")
+
+    @router.get("/nisar/coherence-change")
+    def coherence_change(area: str = "camanava_2026"):
+        known_area(area)
+        return read_doc(extra_dir / EXTRA_DOCS["coherence-change"], "the coherence-change layer")
+
+    @router.get("/nisar/soil-moisture")
+    def soil_moisture(area: str = "camanava_2026"):
+        known_area(area)
+        doc = read_doc(sm_dir / "manifest.json", "NISAR soil moisture")
+        passes = [{**p, "overlayUrl": f"{PREFIX}/nisar/extra/{p['overlay'][:-4]}.png"} if p.get("overlay") else p
+                  for p in doc.get("passes", [])]
+        return {**doc, "passes": passes}
+
+    def extra_path(name: str) -> Path | None:
+        if name in ("rain_response", "coherence_change"):
+            return extra_dir / f"{name}.png"
+        if re.fullmatch(r"sm_\d{8}", name):
+            return sm_dir / f"{name}.png"
+        return None
+
+    @router.get("/nisar/extra/{filename}")
+    def extra_overlay(filename: str):
+        if not filename.endswith(".png"):
+            raise _error(422, "invalid_request", "Only .png overlays are served here")
+        path = extra_path(filename[:-4])
+        if path is None or not path.is_file():
+            raise _error(404, "data_unavailable", "Unknown or missing overlay")
+        return FileResponse(path, media_type="image/png", headers={"X-Tanaw-Data-Kind": "derived", "Cache-Control": "public, max-age=300"})
+
     return router

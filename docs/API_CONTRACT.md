@@ -213,3 +213,19 @@ Served from `backend/data/cache/climate/imerg_passes.json`, which `scripts/31_fe
 - The values above are illustrative of the shape only; read the real file.
 - **Totals are `null` if any half-hour in the window is missing.** `hoursSinceRain` is `null` when no half-hour reached the threshold; the note says which.
 - `series=false` drops the half-hourly series and keeps only the totals.
+
+## Round 4 additions (15 Nov, about 14:45; freeze moved to 18:00)
+
+All of these serve **small committed caches** under `backend/data/cache/`, so they work on any machine without a token. Each response has the usual `dataKind`, `source`, `generatedAt`, `nativeResolution`, `warnings` and `limitations`. Overlay PNGs are RGBA with `bounds: [[S, W], [N, E]]`.
+
+### Coordinator: `nisar_api.py`
+- **`GET /nisar/rain-response?area=`** returns a map of how strongly NISAR HH backscatter follows rain. It is the per-pixel Spearman ρ between HH dB and the 48-hour IMERG rain before each of the 11 passes. Fields: `overlayUrl`, `bounds`, `legend: [{value, color}]` (diverging, ρ −1 to +1), `nPasses`, `stats: {medianRho, shareAbove05, shareBelowMinus05}`, `byLandCover: [{class, name, medianRho, cells}]`, `method`. Exploratory, `dataKind: "derived"`.
+- **`GET /nisar/coherence-change?area=`** returns the interferometric coherence drop on the pair spanning the 8 Aug storm (17 Jul → 10 Aug), compared with the median coherence of the other 8 pairs, at 80 m. Fields: `stormPair: {reference, secondary}`, `calmPairs: [...]`, `overlayUrl`, `bounds`, `legend`, `stats: {km2DropOver03, medianDrop}`, `byLandCover`, `method`. Exploratory. A drop can come from water, vegetation change, construction or noise; it is never called "flooding".
+- **`GET /nisar/soil-moisture?area=`** returns the SME2 per-pass statistics and overlays (`passes[].overlayUrl`, `legend`, `bounds`, `rainComparison`).
+- **`GET /nisar/extra/{name}.png`** serves only the overlay names listed by the three endpoints above.
+
+### Codex: new `downloads_api.py` plus briefing updates
+- **`GET /downloads?area=`** lists the downloadable real layers: `[{id, title, format: "GeoTIFF"|"GeoJSON"|"CSV"|"GIF", sizeBytes, licence: "CC-BY-4.0", dataKind, url}]`.
+- **`GET /downloads/{id}`** returns the file, with the right `Content-Disposition`. Only listed ids are served.
+- **`GET /nisar/timelapse.gif?area=`** (registered from `downloads_api.py`) returns an animated GIF of the 11 real passes: HH backscatter with the open-water overlay, a date and Manila-time caption, and a small IMERG 48-hour rain bar. Built by `scripts/28_nisar_timelapse.py` into `backend/data/cache/nisar/timelapse.gif` (keep it under about 8 MB).
+- **Briefing** (`/briefing/place`): update to the v6 story, adding the IMERG rain facts for the latest pass. No "flooding" wording for the open-water layer.

@@ -1,4 +1,4 @@
-# Antigravity task list for 15 Nov 2026 (current: Round 3, A8)
+# Antigravity task list for 15 Nov 2026 (current: Round 3 A8, then Round 4 A9; freeze 18:00)
 
 Antigravity: read `AGENTS.md` first for context, rules and how to run. This file gives you a **short list of small, needed tasks** that don't overlap with Codex (`docs/CODEX_TASKS.md`), which is working on the backend and the real NISAR run.
 
@@ -12,6 +12,27 @@ Coding freezes at 17:00 Manila time. Each task is meant to take 30–90 minutes.
 - **Before each push:** `cd frontend && npm run lint && npm run build` must pass.
 - **Rules from `AGENTS.md` section 2 apply in full.** No invented numbers, stories or references. Synthetic data keeps its badge. Say "exposure", not "damage". Say "line-of-sight motion", not "sinking".
 - **Running the app:** start the backend with `cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000`, then the frontend with `cd frontend && npm run dev`. Don't use fixture mode for checking; it's for development only.
+
+## Round 4 (15 Nov, about 14:45): A9, after A8. Freeze moved to 18:00; push by 17:15.
+
+Finish and push A8 first. Then, on the same branch `antigravity/a8-polish` (push after each item), wire in the new backend features. Endpoints are in "Round 4 additions" at the end of `docs/API_CONTRACT.md`. The coordinator builds the NISAR ones and Codex builds downloads and the timelapse; until an endpoint exists it returns 404, so **show the existing unavailable state and never fake data**.
+
+### A9.1 Two new NISAR overlays in Map tools (about 60 min)
+Add two overlay options, one at a time as before:
+- **"Rain response"** from `/nisar/rain-response`: a diverging legend (ρ −1 to +1), titled "How strongly radar brightness follows rain (11 passes)". Findings card: median ρ, the share above 0.5, and the by-land-cover table. Caption: "Exploratory. Brighter after rain usually means wetter ground or vegetation; it is not a flood map."
+- **"Storm coherence loss"** from `/nisar/coherence-change`: a legend for coherence drop, titled "Coherence loss across the 8 Aug storm (17 Jul → 10 Aug pair) vs calm pairs". Findings card: km² with a drop over 0.3, and the by-land-cover table. Caption: "Exploratory. Loss can come from water, vegetation change, construction or noise; never call it flooding."
+- Both: NISAR badge, sources and limitations in the Limits drawer, Filipino strings pending review.
+
+### A9.2 Soil-moisture card (about 30 min)
+In Season, add a small card from `/nisar/soil-moisture` for the selected pass if available: the median m³/m³ and "recommended retrievals for N % of cells (farmland at the edges; none in the dense city)". Add an optional overlay toggle. Null means "not available for this pass".
+
+### A9.3 Downloads and timelapse (about 30 min)
+- A **"Download data"** item in the Settings/Sources area listing `/downloads` entries, with title, format, size and licence.
+- In Season, a **"Download timelapse (GIF)"** button using `/nisar/timelapse.gif`.
+- Hide both if the endpoint returns 404.
+
+### A9.4 Re-check and screenshots (about 20 min)
+Lint, build and `test:api` must pass. Add screenshots of the two new overlays and the soil-moisture card from the laptop to `frontend/screenshots/v2-real/`.
 
 ## Round 3 (15 Nov, about 14:20): A8, final polish on real data. Push by 16:30.
 

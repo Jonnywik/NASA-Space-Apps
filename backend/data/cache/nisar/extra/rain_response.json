@@ -1,0 +1,140 @@
+{
+ "schemaVersion": "1.0",
+ "area": "camanava_2026",
+ "dataKind": "derived",
+ "generatedAt": "2026-11-15T06:38:57Z",
+ "title": "How strongly NISAR radar brightness follows rain",
+ "method": "Per 50 m cell, Spearman rank correlation between NISAR L2 GCOV HH backscatter (dB, 5x5 mean of 10 m samples) and the 48-hour NASA GPM IMERG rain before each pass. WorldCover water cells are excluded.",
+ "nPasses": 11,
+ "passDates": [
+  "2026-06-23",
+  "2026-07-05",
+  "2026-07-17",
+  "2026-08-10",
+  "2026-08-22",
+  "2026-09-03",
+  "2026-09-15",
+  "2026-09-27",
+  "2026-10-09",
+  "2026-10-21",
+  "2026-11-02"
+ ],
+ "rain48hMm": [
+  5.2,
+  7.06,
+  0.26,
+  96.55,
+  10.2,
+  29.12,
+  19.1,
+  6.6,
+  8.04,
+  3.23,
+  5.38
+ ],
+ "overlayUrl": "/api/v1/nisar/extra/rain_response.png",
+ "bounds": [
+  [
+   14.598555,
+   120.877591
+  ],
+  [
+   14.821714,
+   121.042126
+  ]
+ ],
+ "legend": [
+  {
+   "value": -1.0,
+   "color": "#2166AC"
+  },
+  {
+   "value": -0.5,
+   "color": "#92C5DE"
+  },
+  {
+   "value": 0.0,
+   "color": "#F7F7F7"
+  },
+  {
+   "value": 0.5,
+   "color": "#F4A582"
+  },
+  {
+   "value": 1.0,
+   "color": "#B35806"
+  }
+ ],
+ "stats": {
+  "cells": 113087,
+  "medianRho": 0.655,
+  "shareAbove05": 0.701,
+  "shareBelowMinus05": 0.003
+ },
+ "byLandCover": [
+  {
+   "class": 10,
+   "name": "Tree cover",
+   "cells": 20402,
+   "median": 0.682
+  },
+  {
+   "class": 20,
+   "name": "Shrubland",
+   "cells": 82,
+   "median": 0.482
+  },
+  {
+   "class": 30,
+   "name": "Grassland",
+   "cells": 7659,
+   "median": 0.7
+  },
+  {
+   "class": 40,
+   "name": "Cropland",
+   "cells": 5295,
+   "median": 0.591
+  },
+  {
+   "class": 50,
+   "name": "Built-up",
+   "cells": 74923,
+   "median": 0.645
+  },
+  {
+   "class": 60,
+   "name": "Bare / sparse",
+   "cells": 1014,
+   "median": 0.627
+  },
+  {
+   "class": 90,
+   "name": "Herbaceous wetland",
+   "cells": 333,
+   "median": 0.509
+  },
+  {
+   "class": 95,
+   "name": "Mangroves",
+   "cells": 210,
+   "median": 0.591
+  }
+ ],
+ "nativeResolution": {
+  "x": 50,
+  "y": 50,
+  "units": "m"
+ },
+ "source": {
+  "name": "NASA-ISRO NISAR L2 GCOV (ASF) and NASA GPM IMERG Late Run V07 (GES DISC)",
+  "url": "https://nisar-docs.asf.alaska.edu/"
+ },
+ "warnings": [],
+ "limitations": [
+  "Exploratory: 11 passes; with n = 11 a cell needs |rho| above about 0.6 to stand out from chance.",
+  "Brighter after rain usually means wetter soil or vegetation. It is not a flood map; flooded streets also look bright.",
+  "IMERG rain is one value for about 11 km cells, not street-level rain.",
+  "Provisional NISAR products; the 2021 WorldCover classes may not match 2026 land cover."
+ ]
+}

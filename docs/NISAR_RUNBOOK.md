@@ -227,3 +227,19 @@ Until then, Ground motion shows "not available yet", and priority zones (which n
 - Rain-driven urban flooding is not visible in these 05:30 passes: flooded streets look bright (double-bounce), and on 10 Aug the main storm peaked about 46 hours before the pass.
 
 Exploratory: n = 11, one study area, provisional NISAR products, and IMERG is a satellite estimate at about 11 km.
+
+## Two exploratory layers from cached real data (15 Nov 2026, about 15:00, coordinator)
+
+`scripts/26_nisar_extras.py` builds both layers in seconds from data already cached by scripts 20, 24 and 31, with no download. It writes small files to `data/cache/nisar/extra/` (committed), served by `GET /api/v1/nisar/rain-response`, `GET /api/v1/nisar/coherence-change` and `GET /api/v1/nisar/extra/{name}.png`. Tests: `tests/test_nisar_extras.py`.
+
+- **Rain response:** per 50 m cell, Spearman ρ between NISAR HH backscatter and the 48-hour IMERG rain before each of the 11 passes, with WorldCover water excluded. **Median ρ = 0.65; 70 % of land cells have ρ > 0.5.** The response is similar across built-up (0.65), tree cover (0.68), grassland (0.70) and cropland (0.59): the whole area "wets up" to the radar after storms. With n = 11, |ρ| above about 0.6 stands out from chance. **Not a flood map.**
+- **Storm coherence loss:** NISAR GUNW HH coherence at 80 m, calculated as the median of the 8 calm 12-day pairs minus the pair 17 Jul → 10 Aug, which spans the 8–9 Aug storm. **Median loss 0.06; 4.8 km² of land lost more than 0.3.** Loss is largest in vegetated classes (cropland 0.12, trees 0.11, mangroves 0.11) and smallest in built-up areas (0.055). Caveat: the storm pair spans 24 days and the calm pairs 12, so part of the loss is expected anyway. Loss can come from water, vegetation change, construction or noise; **never call it flooding.**
+- **NISAR soil moisture** is now served at `GET /api/v1/nisar/soil-moisture`, with per-pass overlays.
+
+### Correction: the backscatter-vs-rain check
+The cached GCOV windows (`data/raw/nisar_windows/*.npz`, written by script 20) store **HH in dB**, not linear power. The first quick check of "backscatter tracks rain" took the logarithm of those dB values. It was recomputed correctly: change from each pixel's median dB, averaged over WorldCover classes.
+- Against 7-day NASA POWER rain, Spearman **ρ = +0.80 for built-up land (p = 0.003)**, the same value as stated before, and +0.84 for other land.
+- Against 48-hour IMERG rain, **ρ = +0.93 (built-up) and +0.95 (other land)**, both p < 0.001.
+- After the 8 Aug storm (10 Aug pass), built-up land averaged **+0.63 dB** above its seasonal median.
+
+The published statement (ρ = 0.80) stands. No other result used the flawed calculation.
