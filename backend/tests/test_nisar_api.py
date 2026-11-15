@@ -184,7 +184,7 @@ class NisarApiTests(unittest.TestCase):
         self.assertEqual(len(body["bounds"]), 2)
 
     def test_polarization_errors(self):
-        for query in ("", "?date=", "?date=2026-7-2", "?date=notadate", "?date=2026-13-01"):
+        for query in ("", "?date=", "?date=2026-7-2", "?date=20260702", "?date=notadate", "?date=2026-13-01"):
             r = self.client.get("/api/v1/nisar/polarization" + query)
             self.assertEqual((r.status_code, self.code(r)), (422, "invalid_request"), query)
         r = self.client.get("/api/v1/nisar/polarization?date=2026-07-30")

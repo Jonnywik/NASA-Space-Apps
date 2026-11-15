@@ -14,14 +14,19 @@ def _digest(obj) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def _rounded_or_none(value, digits: int):
+    # A pass with no valid pixels has null areas (never 0): hash them as null, not as a failure.
+    return None if value is None else round(float(value), digits)
+
+
 def product_fingerprint(manifest: dict) -> str | None:
     try:
         rule = manifest["rule"]
         return _digest({
             "area": manifest["area"], "dataKind": manifest["dataKind"],
             "rule": [round(float(rule["hhThresholdDb"]), 2), round(float(rule["hvThresholdDb"]), 2)],
-            "passes": sorted([p["id"], p["productId"], round(float(p["floodedKm2"]), 3),
-                              round(float(p["permanentWaterKm2"]), 3), round(float(p["validKm2"]), 2)]
+            "passes": sorted([p["id"], p["productId"], _rounded_or_none(p["floodedKm2"], 3),
+                              _rounded_or_none(p["permanentWaterKm2"], 3), round(float(p["validKm2"]), 2)]
                              for p in manifest["passes"]),
             "halfOrMoreKm2": round(float(manifest["rhythm"]["halfOrMoreKm2"]), 3),
         })

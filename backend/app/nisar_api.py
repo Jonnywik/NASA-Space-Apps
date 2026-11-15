@@ -243,7 +243,9 @@ def make_router(output_root, read_public_events):
     def polarization_view(area: str = Query("camanava_2026"), date: str | None = Query(None)):
         manifest = load(area)
         try:
-            when = _date.fromisoformat(date or "")
+            if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", date or ""):
+                raise ValueError(date)
+            when = _date.fromisoformat(date)
         except ValueError:
             raise _error(422, "invalid_request", "date is required as YYYY-MM-DD") from None
         match = next((p for p in manifest["passes"] if p["date"] == when.isoformat()), None)

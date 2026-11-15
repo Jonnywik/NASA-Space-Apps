@@ -26,6 +26,20 @@ class ProductBindingTest(unittest.TestCase):
         self.path.write_text(json.dumps(regenerated, indent=3))
         self.assertTrue(bound_to_product(recorded, self.path))
 
+    def test_product_with_a_no_data_pass_still_binds_after_regeneration(self):
+        # the pipeline writes null areas (never 0) for a pass with no valid pixels; that must not disable binding
+        with_gap = json.loads(json.dumps(MANIFEST))
+        with_gap["passes"].append({"id": "20260705", "productId": "P2", "floodedKm2": None,
+                                   "permanentWaterKm2": None, "validKm2": 0.0, "missingReason": "no valid pixels"})
+        recorded = {"productFingerprint": product_fingerprint(with_gap)}
+        self.assertIsNotNone(recorded["productFingerprint"])
+        self.path.write_text(json.dumps({**with_gap, "generatedAt": "2026-11-15T09:00:00Z"}))
+        self.assertTrue(bound_to_product(recorded, self.path))
+        changed = json.loads(json.dumps(with_gap))
+        changed["passes"][1]["validKm2"] = 12.0
+        self.path.write_text(json.dumps(changed))
+        self.assertFalse(bound_to_product(recorded, self.path))
+
     def test_changed_science_does_not_match(self):
         recorded = {"productFingerprint": product_fingerprint(MANIFEST)}
         changed = json.loads(json.dumps(MANIFEST))

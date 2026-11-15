@@ -116,7 +116,11 @@ def make_router(output_root, read_public_events, places_root=None):
         if level not in ('city', 'barangay'):
             raise _err(422, 'invalid_request', "level must be 'city' or 'barangay'")
         d = nisar_dir()
-        raster = d / (RHYTHM_FILE if mask == 'rhythm_half' else PRIORITY_FILE)
+        half = d / 'rhythm_half.tif'
+        if mask == 'rhythm_half' and half.exists():
+            raster = half
+        else:
+            raster = d / (RHYTHM_FILE if mask == 'rhythm_half' else PRIORITY_FILE)
         if not raster.exists():
             raise _err(404, 'data_unavailable', f'{mask} raster not available yet ({raster.name})')
         need(level)
@@ -140,8 +144,9 @@ def make_router(output_root, read_public_events, places_root=None):
                 res = exposure_for_mask(arr, level, root=root)
             else:
                 res = exposure_for_mask(str(raster), level, root=root)
-        except (ValueError, OSError) as exc:
-            raise _err(422, 'invalid_request', f'could not read mask: {exc}')
+        except (ValueError, OSError):
+            # The mask is product data, not client input: never echo the library's text or server paths.
+            raise _err(404, 'data_unavailable', f'{mask} raster could not be read; rebuild the NISAR product')
         kind = 'synthetic' if nm.get('dataKind') == 'synthetic' else 'derived'
         out = base(kind)
         out['warnings'] += res['warnings']

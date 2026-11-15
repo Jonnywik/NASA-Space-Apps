@@ -50,6 +50,18 @@ class SpotTests(unittest.TestCase):
         self.assertTrue(any('not available because product missing' in x for x in brief['sentences']))
         self.assertEqual(client.get('/api/v1/briefing/place?lon=120.957&lat=14.665&lang=fr').status_code, 422)
 
+    def test_unreadable_rainfall_cache_gives_a_plain_reason_not_a_python_repr(self):
+        from processing.climate.store import write_cache
+        write_cache('power_daily', {'unexpected': 1}, {}, cache_dir=Path(self.tmp.name))  # hash-valid, wrong shape
+        point = {'floodCount': 0, 'floodCountReason': None, 'validCount': 1, 'permanentWater': False,
+                 'possibleFloodedVegetationPasses': 0, 'perPass': [{'date': '2026-06-23', 'state': 'dry'}],
+                 'cellCenter': {'lon': 120.957, 'lat': 14.665}, 'source': {'name': 'NISAR'},
+                 'dataKind': 'derived', 'nativeResolution': '30 m', 'generatedAt': '2026-01-01'}
+        body = self.client(point).get('/api/v1/spot-check', params={'lon': 120.957, 'lat': 14.665}).json()
+        self.assertIsNone(body['streams']['rainfall']['value'])
+        self.assertEqual(body['streams']['rainfall']['reason'], 'NASA POWER rainfall cache is unreadable')
+        self.assertNotIn("'values'", json.dumps(body))
+
     def test_synthetic_and_exports(self):
         point = {'floodCount': 2, 'floodCountReason': None, 'validCount': 3, 'permanentWater': False,
                  'possibleFloodedVegetationPasses': 0, 'perPass': [{'date': '2026-06-23', 'state': 'water'}],

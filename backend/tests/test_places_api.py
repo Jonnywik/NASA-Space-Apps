@@ -110,6 +110,27 @@ class PlacesApiTests(unittest.TestCase):
         r = self.c.get('/api/v1/places/exposure?level=city')
         self.assertEqual({z['placeId'] for z in r.json()['zones']}, {'T1', 'T2'})
 
+    def test_exposure_reads_rhythm_half_tif_when_rhythm_tif_is_absent(self):
+        self.nisar()
+        d = self.out / 'camanava_2026' / 'nisar'
+        (d / 'rhythm.tif').unlink()
+        # same mask as test_exposure_rhythm_half, written as NISAR's own rhythm_half.tif (1 = flooded on >= half of valid passes)
+        write_raster(d / 'rhythm_half.tif', np.array([[0, 0, 1, 1], [1, 1, 255, 1], [0, 0, 0, 0], [0, 0, 0, 1]], 'uint8'), nodata=255)
+        r = self.c.get('/api/v1/places/exposure?area=camanava_2026&mask=rhythm_half')
+        self.assertEqual(r.status_code, 200)
+        z = {x['placeId']: x for x in r.json()['zones']}
+        self.assertEqual(z['T1-1']['population'], 50 + 60)
+        self.assertEqual(z['T2-1']['population'], 30 + 40 + 80)
+        self.assertEqual(z['T2-2']['population'], 160)
+
+    def test_unreadable_mask_is_data_unavailable_without_leaking_library_or_paths(self):
+        self.nisar()
+        (self.out / 'camanava_2026' / 'nisar' / 'rhythm.tif').write_bytes(b'not a tiff')
+        r = self.c.get('/api/v1/places/exposure?area=camanava_2026&mask=rhythm_half')
+        self.assertEqual((r.status_code, code(r)), (404, 'data_unavailable'))
+        self.assertNotIn(str(self.out), r.text)
+        self.assertNotIn('supported file format', r.text)
+
     def test_missing_cache_is_data_unavailable(self):
         app = FastAPI()
         empty = Path(self.tmp.name) / 'empty'

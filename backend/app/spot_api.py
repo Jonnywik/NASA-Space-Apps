@@ -86,8 +86,11 @@ def make_router(output_root, read_public_events, places_root=None, climate_root=
                 warnings.append('Recent NASA POWER data includes sources other than MERRA-2 and may be revised.')
             if entry.get('lastRefreshError'):
                 warnings.append('The latest rainfall cache refresh failed; an older cache is shown.')
-        except (OSError, ValueError, KeyError, TypeError) as exc:
+        except ValueError as exc:
             streams['rainfall'] = stream(reason=str(exc))
+        except (OSError, KeyError, TypeError):
+            # a bare KeyError would show its Python repr ("'values'") to the user
+            streams['rainfall'] = stream(reason='NASA POWER rainfall cache is unreadable')
         try:
             imerg = json.loads((climate / 'imerg_passes.json').read_text(encoding='utf-8'))
             if imerg['area'] != AREA or not isinstance(imerg['passes'], list):
@@ -115,8 +118,10 @@ def make_router(output_root, read_public_events, places_root=None, climate_root=
                                        m.get('source') or m.get('sources') or m.get('sourceBasis') or {'runId': m.get('runId')}, m['dataKind'], m.get('nativeResolutionMetres') or m.get('nativeResolution') or m.get('grid'),
                                        'mm', generatedAt=m.get('generatedAt'), dataStatus=m.get('dataStatus'))
             limits.extend(m.get('limitations', [])); warnings.extend(m.get('warnings', []))
-        except (catalog.ProductUnavailable, ValueError, OSError, KeyError) as exc:
+        except (catalog.ProductUnavailable, ValueError) as exc:
             streams['motion'] = stream(reason=str(exc) or 'line-of-sight motion is unavailable')
+        except (OSError, KeyError):
+            streams['motion'] = stream(reason='line-of-sight motion is unavailable')
         priority_meta = None
         try:
             folder = root / AREA / 'nisar'

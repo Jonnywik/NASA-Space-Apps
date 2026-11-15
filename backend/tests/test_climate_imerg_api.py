@@ -38,6 +38,15 @@ class ImergApiTests(unittest.TestCase):
         r = self.client().get("/api/v1/climate/imerg/passes", params={"area": "camanava_2026", "series": "false"})
         self.assertNotIn("series", r.json()["passes"][0])
 
+    def test_series_flag_errors_use_the_detail_object_shape(self):
+        r = self.client().get("/api/v1/climate/imerg/passes", params={"area": "camanava_2026", "series": "maybe"})
+        self.assertEqual(r.status_code, 422)
+        self.assertEqual(r.json()["detail"]["code"], "invalid_request")
+        for value, kept in (("1", True), ("no", False), ("FALSE", False), ("yes", True)):
+            r = self.client().get("/api/v1/climate/imerg/passes", params={"area": "camanava_2026", "series": value})
+            self.assertEqual(r.status_code, 200, value)
+            self.assertEqual("series" in r.json()["passes"][0], kept, value)
+
     def test_missing_cache_is_data_unavailable(self):
         r = self.client(write=False).get("/api/v1/climate/imerg/passes", params={"area": "camanava_2026"})
         self.assertEqual(r.status_code, 404)

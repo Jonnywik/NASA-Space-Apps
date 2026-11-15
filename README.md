@@ -38,6 +38,59 @@ For NISAR passes on 15 September, 9 October and 2 November, agreement with OPERA
 
 Changing both thresholds by -1, 0 and +1 dB yields half-or-more areas of 0.0230, 0.3721 and 0.3588 km². Permanent water is recalculated for each threshold, so the results are not necessarily monotonic and are not a confidence interval.
 
+## Run it yourself
+
+A fresh clone does not include the derived NISAR product (`backend/data/output/camanava_2026/nisar/`, 376 MB). Download it separately as **tanaw-data-camanava_2026-v1**, which matches commit `ce42105`.
+
+- Download: `<PACKAGE_URL>`. It is one zip, or four `.part00`–`.part03` files to join first. See [docs/DATA_PACKAGE.md](docs/DATA_PACKAGE.md).
+- Size: 392,437,688 bytes.
+- SHA-256: `3290a66b2fc115bd666c1f199c17c7e5d0c6f978132264eb28335219110a2cfa`
+
+You do not need an Earthdata login to run the app. Basemap tiles and the dependency installs need internet access. Ground motion and priority zones are unavailable and stay marked as such. Without the package, the NISAR map, passes, spot check, validation, timelapse and raster downloads report "unavailable".
+
+You need Python 3.12 or later, Node 20 and Git.
+
+**Windows (PowerShell)**, from the folder that holds the downloaded zip:
+
+```powershell
+git clone https://github.com/Jonnywik/NASA-SA-Final.git
+cd NASA-SA-Final
+Get-FileHash -Algorithm SHA256 ..\tanaw-data-camanava_2026-v1.zip
+Expand-Archive -Path ..\tanaw-data-camanava_2026-v1.zip -DestinationPath .
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -r backend\requirements.txt
+cd backend
+..\.venv\Scripts\python -m uvicorn app.main:app --port 8000
+```
+
+In a second PowerShell window, from `NASA-SA-Final`:
+
+```powershell
+cd frontend
+npm ci
+npm run dev
+```
+
+**macOS / Linux**:
+
+```bash
+git clone https://github.com/Jonnywik/NASA-SA-Final.git
+cd NASA-SA-Final
+sha256sum ../tanaw-data-camanava_2026-v1.zip   # macOS: shasum -a 256
+unzip ../tanaw-data-camanava_2026-v1.zip
+python3 -m venv .venv
+.venv/bin/python -m pip install -r backend/requirements.txt
+cd backend && ../.venv/bin/python -m uvicorn app.main:app --port 8000
+```
+
+In a second terminal, from `NASA-SA-Final`, run `cd frontend && npm ci && npm run dev`.
+
+Open http://localhost:3000. To run a production build instead of the dev server, use `npm run build` and then `npm start`. Check the checksum before you unzip.
+
+Unzip the package at the repository root. It only creates `backend/data/output/camanava_2026/`. Do not regenerate or edit those files, or the bound validation and timelapse results will report "unavailable".
+
+A clean-checkout run is recorded in [docs/DATA_PACKAGE.md](docs/DATA_PACKAGE.md). It used Linux and the dev server.
+
 ## Reproduce locally on Windows
 
 Use Python 3.12 and Node 20. An Earthdata account and access to ASF and NASA GES DISC are needed for remote reads. Set `EARTHDATA_TOKEN` privately in the **same PowerShell session** used for processing; never save or print it in the repository. Range reads require network access. Script 20 replaces the existing local NISAR output. Fresh catalogue queries can select newly released products, so retain the committed manifest to reproduce the recorded selection; compare it with the refreshed manifest before using new results.

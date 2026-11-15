@@ -389,9 +389,12 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
                                 "dates are the first and last scenes over the study bounding box"]}
 
     @router.get("/climate/imerg/passes")
-    def imerg_passes(area: str = AREA_ID, series: bool = True):
+    def imerg_passes(area: str = AREA_ID, series: str = "true"):
         """NASA GPM IMERG half-hourly rain in the hours before each NISAR pass (written by scripts/31)."""
         check_area(area)
+        flag = series.strip().lower()
+        if flag not in ("true", "1", "yes", "on", "false", "0", "no", "off"):
+            raise err(422, "invalid_request", "series must be true or false")
         path = cache / "imerg_passes.json"
         if not path.is_file():
             raise err(404, "data_unavailable", "IMERG rain before NISAR passes has not been fetched (run scripts/31_fetch_imerg_passes.py)")
@@ -399,7 +402,7 @@ def make_router(output_root, read_public_events, cache_dir: Path | None = None):
             doc = json.loads(path.read_text())
         except (OSError, ValueError):
             raise err(503, "upstream_unavailable", "the cached IMERG file could not be read")
-        if not series:
+        if flag in ("false", "0", "no", "off"):
             doc = {**doc, "passes": [{k: v for k, v in p.items() if k != "series"} for p in doc.get("passes", [])]}
         return doc
 
