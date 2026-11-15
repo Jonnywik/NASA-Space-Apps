@@ -1,0 +1,21 @@
+# Independent validation source review
+
+Reviewed 15 November 2026. These are candidate references, not measured agreement. No observed NISAR raster was available and no comparison was run.
+
+## OPERA DSWx-S1
+
+[PO.DAAC's version 1 collection](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1) describes Sentinel-1-derived surface water at 30 m, near-global land coverage, 6–12 day revisit, a record starting 1 December 2023, and forward production from September 2024. It maps open inland water bodies greater than 3 hectares and 200 m wide; it is not a ground-truth flood map. The collection footprint includes the study latitude, but this does not establish a granule covering CAMANAVA on a date within two days of a selected NISAR pass. **Catalogue check (coordinator, 15 Nov 2026, NASA CMR, collection `C2949811996-POCLOUD`, bbox 120.88,14.60,121.04,14.82, 21 Jun–4 Nov 2026):** 40 granules, all on MGRS tile `T51PTS`. Within ±2 days they match **10 of the 11** NISAR track-140 A passes: 23 Jun (4 granules), 5 Jul (2), 17 Jul (1), 10 Aug (1), 22 Aug (1), 3 Sep (2), 15 Sep (1), 9 Oct (2), 21 Oct (1), 2 Nov (2). 27 Sep has no match. This was first reported by the Antigravity agent and independently recomputed here. It establishes catalogue availability only: no DSWx raster has been downloaded (Earthdata Login is required) and no agreement has been computed.
+
+The collection provides a granule listing, download links and a suggested DOI citation. [PO.DAAC's access tutorial](https://forum.earthdata.nasa.gov/viewtopic.php?t=3895) requires an Earthdata Login account for scripted cloud access; no authenticated download was attempted. NASA's [open-data guidance](https://wiki.earthdata.nasa.gov/spaces/ESDSWG/pages/378738424/A%2BPractical%2BGuide%2Bfor%2BOpen%2BFree%2BFAIR%2BNASA%2BEarth%2BScience%2BData%2BProducts) describes its open-data policy, but does not establish a specific licence for this product. Check the collection and granule terms and cite the dataset before reuse; the product contains modified Copernicus Sentinel data. Normalize its classes and exclude invalid pixels using the linked product specification before comparing total water to total water.
+
+## PhilSA flood maps
+
+[PhilSA's 3 September 2026 announcement](https://philsa.gov.ph/news/satellite-data-show-flood-extents-in-regions-1-2-3-4a-4b-car-and-ncr-due-to-enhanced-habagat/) links maps and shapefiles for 26, 30 and 31 August, including parts of NCR on 26 and 31 August. It describes a Sentinel-1 composite, warns that urban and vegetated flooding can be underestimated, and says the maps require ground validation. Exact CAMANAVA coverage, download accessibility, authentication and reuse terms were not verified; contact PhilSA or inspect the files and their terms before redistribution.
+
+The checked-in track 140 A/frame 009 catalogue selection lists 22 August and 3 September as its adjacent GCOV dates. The published 26, 30 and 31 August map dates are at least three calendar days from either, outside `60_validation.py`'s two-day limit. A different track would need its own verified coverage and dates. Further, mapped flood extent and a total-water raster have different meanings: establish compatible flood-only classes, survey extent and valid dry areas before calculating a confusion matrix.
+
+## Historical motion
+
+[Eco et al. (2020)](https://www.jscimedcentral.com/public/assets/articles/environmentalscience-8-1068.pdf) is open access and reports historical 2003–2011 Envisat/ALOS InSAR results over CAMANAVA, including a maximum 4.2 cm/year subsidence rate. It is contextual evidence, not a coincident ground-truth raster; the article is copyrighted by its authors, so check figure and data reuse terms. Compare only qualitatively after checking reference areas, sign, geometry, period, and vertical versus line-of-sight motion. The paper cannot validate a 2026 four-month NISAR rate directly.
+
+The repository's existing 2022–2025 Sentinel-1 event rasters are earlier regional context, not date-matched references for the 2026 NISAR season. WorldCover 2021 is a static land-cover reference, not independent observed 2026 flood evidence. No suitable already-present independent raster was identified.

@@ -764,6 +764,39 @@ export const fil = {
   "radar.bands.tip": "mas malalim ang abot ng L-band sa halaman. Ibabaw ang binabasa ng C-band.",
 };
 
+Object.assign(en, {
+  "briefing.title": "Place briefing",
+  "briefing.facts": "Exports use the same point facts, sources and missing-data reasons as this card.",
+  "briefing.en": "Briefing (EN)",
+  "briefing.fil": "Briefing (FIL)",
+  "briefing.csv": "Download CSV",
+  "briefing.review": "Filipino translation: pending your review.",
+  "spot.priority.yes": "This point is inside a priority zone under the stated thresholds.",
+  "spot.priority.no": "This point is outside the priority zones under the stated thresholds.",
+  "spot.exposure.scope": "People and buildings in the priority zone within the containing barangay (not at this single point).",
+  "validation.title": "Independent comparison",
+  "validation.lead": "Agreement requires observed NISAR and a separate reference on a nearby date. Missing comparisons are not accuracy scores.",
+  "validation.pixels": "Jointly valid pixels",
+  "validation.accuracy": "Agreement fraction",
+  "sources.title": "Data sources and credits",
+});
+Object.assign(fil, {
+  "briefing.title": "Buod para sa lugar",
+  "briefing.facts": "Ang mga export ay gumagamit ng parehong datos sa puntong ito, sanggunian, at dahilan ng nawawalang datos gaya ng card na ito.",
+  "briefing.en": "Buod (EN)",
+  "briefing.fil": "Buod (FIL)",
+  "briefing.csv": "I-download ang CSV",
+  "briefing.review": "Salin sa Filipino: hinihintay ang iyong pagsusuri.",
+  "spot.priority.yes": "Nasa loob ng prayoridad na sona ang puntong ito ayon sa nakasaad na mga threshold.",
+  "spot.priority.no": "Nasa labas ng mga prayoridad na sona ang puntong ito ayon sa nakasaad na mga threshold.",
+  "spot.exposure.scope": "Mga tao at gusali sa prayoridad na sona sa loob ng barangay na kinaroroonan ng punto (hindi sa puntong ito lamang).",
+  "validation.title": "Paghahambing sa hiwalay na sanggunian",
+  "validation.lead": "Kailangan ang aktuwal na obserbasyon ng NISAR at hiwalay na sanggunian sa malapit na petsa. Ang kawalan ng paghahambing ay hindi sukatan ng katumpakan.",
+  "validation.pixels": "Mga pixel na parehong may wastong datos",
+  "validation.accuracy": "Bahagi ng magkatugmang resulta",
+  "sources.title": "Mga pinagkunan ng datos at pagkilala",
+});
+
 export const DICT = { en, fil };
 
 export function translate(lang, key, vars) {

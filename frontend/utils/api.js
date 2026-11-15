@@ -72,7 +72,11 @@ function queryString(params = {}) {
   return s ? `?${s}` : "";
 }
 
-async function request(path, params, label) {
+async function request(path, params, label, responseType = "json") {
+  // Composed facts cannot be mixed with a map supplied by unrelated development fixtures.
+  if (FIXTURES_ON && ["/api/v1/spot-check", "/api/v1/briefing/place", "/api/v1/validation"].includes(path)) {
+    throw new ApiError("This result is unavailable with synthetic frontend fixtures; use the backend data mode.", { status: 404, code: "data_unavailable" });
+  }
   if (process.env.NEXT_PUBLIC_USE_FIXTURES === "1" || process.env.NEXT_PUBLIC_USE_FIXTURES === "nisar") {
     const nisarOnly = process.env.NEXT_PUBLIC_USE_FIXTURES === "nisar";
     if (!nisarOnly || path.startsWith("/api/v1/nisar") || path.startsWith("/api/v1/ground-motion")) {
@@ -109,7 +113,7 @@ async function request(path, params, label) {
       detail,
     });
   }
-  return res.json();
+  return responseType === "blob" ? res.blob() : res.json();
 }
 
 // Backend picture/file addresses come without the server name; add it here.
@@ -347,4 +351,20 @@ export async function getPlaceBoundaries(level = "barangay") {
 // population / buildings are null (with populationUnavailableReason / buildingsUnavailableReason) when absent.
 export async function getPlaceExposure(area, mask, level = "barangay") {
   return request(`${V1}/places/exposure`, { area, mask, level }, "Could not load exposure");
+}
+
+export async function getSpotCheck(lon, lat) {
+  return request(`${V1}/spot-check`, { lon, lat }, "Could not load the spot check");
+}
+
+export async function getPlaceBriefing(lon, lat, lang = "en") {
+  return request(`${V1}/briefing/place`, { lon, lat, lang }, "Could not load the briefing");
+}
+
+export async function exportPlaceBriefing(lon, lat, lang, format) {
+  return request(`${V1}/briefing/place`, { lon, lat, lang, format }, "Could not export the briefing", "blob");
+}
+
+export async function getValidation(area = AREA_ID) {
+  return request(`${V1}/validation`, { area }, "Could not load validation");
 }

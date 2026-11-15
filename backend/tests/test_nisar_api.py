@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.nisar_api import make_router
+from processing.nisar_flood.constants import COLOR_VEGETATION, COLOR_WATER
 from processing.nisar_flood import pipeline
 from nisar_fixtures import build_product
 
@@ -40,6 +41,10 @@ class NisarApiTests(unittest.TestCase):
         for key in ("area", "sensor", "product", "track", "direction", "frame", "polarizations", "rule", "passes", "bounds",
                     "source", "generatedAt", "warnings", "limitations", "units", "nativeResolution"):
             self.assertIn(key, body)
+        self.assertEqual(body["legend"], [
+            {"id": "flood_water", "label": "Flood water", "color": COLOR_WATER},
+            {"id": "possible_flooded_vegetation", "label": "Possible flooded vegetation", "color": COLOR_VEGETATION},
+        ])
         self.assertEqual(body["direction"], "descending")
         self.assertEqual(body["polarizations"], ["HH", "HV"])
         self.assertEqual(set(body["rule"]), {"description", "hhThresholdDb", "hvThresholdDb", "calibration"})

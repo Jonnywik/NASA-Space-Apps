@@ -1,1 +1,86 @@
-[]
+[
+  {
+    "id": "groundwater-subsidence",
+    "title": "Hypothesis: groundwater extraction and ground motion",
+    "titleFil": "Haypotesis: pagkuha ng tubig sa ilalim ng lupa at paggalaw ng lupa",
+    "summary": "Groundwater over-extraction may contribute to land subsidence in CAMANAVA and the Bulacan coast.",
+    "summaryFil": "Maaaring mag-ambag sa paglubog ng lupa sa CAMANAVA at baybayin ng Bulacan ang labis na pagkuha ng tubig sa ilalim ng lupa.",
+    "evidence": [
+      {
+        "label": "Ground motion",
+        "mode": "motion"
+      }
+    ],
+    "references": [
+      {
+        "title": "Eco et al. (2020), Disaster in Slow Motion, JSM Environmental Science & Ecology 8(1):1068",
+        "url": "https://www.jscimedcentral.com/journal-article-info/JSM-Environmental-Science-and-Ecology/Disaster-in-Slow-Motion:-Widespread-Land-Subsidence-in-and-Around-Metro-Manila,-Philippines-Quantified-By-Insar-Time-Series-Analysis-5350"
+      }
+    ]
+  },
+  {
+    "id": "subsidence-flood-exposure",
+    "title": "Hypothesis: subsidence and flood exposure",
+    "titleFil": "Haypotesis: paglubog ng lupa at pagkakalantad sa baha",
+    "summary": "Land subsidence may increase exposure to flooding and tidal incursions in coastal Metro Manila.",
+    "summaryFil": "Maaaring tumaas ang pagkakalantad sa baha at pagpasok ng tubig-dagat dahil sa paglubog ng lupa sa baybayin ng Metro Manila.",
+    "evidence": [
+      {
+        "label": "Ground motion",
+        "mode": "motion"
+      },
+      {
+        "label": "Flood rhythm",
+        "mode": "rhythm"
+      }
+    ],
+    "references": [
+      {
+        "title": "Eco et al. (2020), Disaster in Slow Motion, JSM Environmental Science & Ecology 8(1):1068",
+        "url": "https://www.jscimedcentral.com/journal-article-info/JSM-Environmental-Science-and-Ecology/Disaster-in-Slow-Motion:-Widespread-Land-Subsidence-in-and-Around-Metro-Manila,-Philippines-Quantified-By-Insar-Time-Series-Analysis-5350"
+      }
+    ]
+  },
+  {
+    "id": "tidal-drainage",
+    "title": "Hypothesis: tides and drainage",
+    "titleFil": "Haypotesis: pagtaas ng tubig-dagat at daluyan ng tubig",
+    "summary": "High tides and river backflow may delay drainage in Malabon and Navotas.",
+    "summaryFil": "Maaaring maantala ang pagdaloy ng tubig sa Malabon at Navotas dahil sa pagtaas ng tubig-dagat at pagbalik ng tubig sa ilog.",
+    "evidence": [
+      {
+        "label": "Flood rhythm",
+        "mode": "rhythm"
+      }
+    ],
+    "references": [
+      {
+        "title": "Maynilad Water Services, Valenzuela Sewerage System Environmental Assessment, p. 49, World Bank E2677 V8",
+        "url": "https://documents.worldbank.org/curated/en/169381468295521077/pdf/E26770V80P113800Box385202B00PUBLIC0.pdf"
+      }
+    ]
+  },
+  {
+    "id": "impervious-runoff",
+    "title": "Hypothesis: urban surfaces and runoff",
+    "titleFil": "Haypotesis: mga ibabaw sa lungsod at pag-agos ng tubig-ulan",
+    "summary": "Urban expansion and impervious surfaces may increase runoff.",
+    "summaryFil": "Maaaring dumami ang tubig-ulang umaagos sa ibabaw dahil sa paglawak ng lungsod at mga ibabaw na hindi nasisipsipan ng tubig.",
+    "evidence": [
+      {
+        "label": "Flood rhythm",
+        "mode": "rhythm"
+      },
+      {
+        "label": "Rainfall history",
+        "mode": "history"
+      }
+    ],
+    "references": [
+      {
+        "title": "US Environmental Protection Agency, Urbanization – Hydrology",
+        "url": "https://www.epa.gov/caddis/urbanization-hydrology"
+      }
+    ]
+  }
+]

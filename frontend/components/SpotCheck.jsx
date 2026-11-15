@@ -1,27 +1,58 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import PixelChart from "./PixelChart";
-import { Caveats, Section, SourceLine, StateNote, fmt } from "./ui";
-import { AREA_ID, getGroundMotionPoint, getNisarPoint, getPassRainfall, locatePlace } from "../utils/api";
+import { Caveats, KindBadge, Section, SourceLine, StateNote, fmt } from "./ui";
+import { classifyError, exportPlaceBriefing, getPlaceBriefing, getSpotCheck } from "../utils/api";
 import { useLang } from "../utils/LangContext";
 import { useReportLimits } from "../utils/LimitsContext";
 import { useTier } from "../utils/useTier";
 
 const STATE_GLYPH = { water: "■", dry: "□", nodata: "▨" };
 
+function streamTier(tier, key, wrap) {
+  const stream = tier.data?.streams?.[key];
+  if (!stream) return tier;
+  if (stream.value == null) return { state: "unavailable", data: null, error: { detail: { message: stream.reason } } };
+  return { state: "ready", data: { ...stream, ...(wrap ? wrap(stream.value) : stream.value) }, error: null };
+}
+
 // U2 spot check: one clicked point, every value with its source, missing values with a reason.
-export default function SpotCheck({ point, placeHint, passDates, selectedDate, onClose, onCopy, copied, onHelp }) {
-  const { t } = useLang();
+export default function SpotCheck({ point, placeHint, selectedDate, onClose, onCopy, copied, onHelp }) {
+  const { t, lang } = useLang();
   const { lon, lat } = point;
-  const nisar = useTier(() => getNisarPoint(AREA_ID, lon, lat), [lon, lat]);
-  const locate = useTier(() => locatePlace(lon, lat), [lon, lat]);
-  const rain = useTier(passDates?.length ? () => getPassRainfall(AREA_ID, passDates) : null, [passDates?.join(",")]);
-  const los = useTier(() => getGroundMotionPoint(AREA_ID, lon, lat), [lon, lat]);
-  useReportLimits("spot-nisar", t("spot.nisar"), nisar.data);
-  useReportLimits("spot-locate", t("spot.place"), locate.data);
-  useReportLimits("spot-rain", t("spot.rain"), rain.data);
-  useReportLimits("spot-los", t("spot.los"), los.data);
+  const spot = useTier(() => getSpotCheck(lon, lat), [lon, lat]);
+  const briefing = useTier(() => getPlaceBriefing(lon, lat, "fil"), [lon, lat]);
+  const [exportState, setExportState] = useState({ state: "idle" });
+  const nisar = streamTier(spot, "nisar");
+  const locate = streamTier(spot, "place");
+  const rain = streamTier(spot, "rainfall", (passes) => ({ passes }));
+  const los = streamTier(spot, "motion", (point) => ({ point }));
+  const priority = spot.data?.streams?.priority;
+  const exposure = spot.data?.streams?.exposure;
+  useReportLimits("spot", t("spot.title"), spot.data);
+
+  async function exportBriefing(language, format) {
+    const tab = format === "html" ? window.open("", "_blank") : null;
+    if (tab) tab.opener = null;
+    setExportState({ state: "loading" });
+    try {
+      const blob = await exportPlaceBriefing(lon, lat, language, format);
+      const url = URL.createObjectURL(blob);
+      if (format === "html" && tab) tab.location.href = url;
+      else {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `tanaw-${lon}-${lat}-${language}.${format}`;
+        link.click();
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setExportState({ state: "idle" });
+    } catch (error) {
+      tab?.close();
+      setExportState({ state: classifyError(error), error });
+    }
+  }
 
   const nd = nisar.data;
   const ld = locate.data;
@@ -50,6 +81,24 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
           </button>
         </div>
       </div>
+
+      <Section title={t("briefing.title")} kind={briefing.data?.dataKind} testId="place-briefing">
+        <StateNote tier={briefing} label={t("briefing.title")} />
+        {briefing.data && (
+          <>
+            <p className="mb-2 text-[11px] text-slate-300">{t("briefing.facts")}</p>
+            {briefing.data.translationStatus && <p className="mb-2 text-[11px] text-amber-100" data-testid="translation-review">{t("briefing.review")}</p>}
+            <div className="flex flex-wrap gap-2">
+              {[["en", "html", "briefing.en"], ["fil", "html", "briefing.fil"], [lang, "csv", "briefing.csv"]].map(([language, format, label]) => (
+                <button key={label} type="button" disabled={exportState.state === "loading"} onClick={() => exportBriefing(language, format)} className="rounded-md border border-sky-400 bg-sky-600/30 px-2 py-1.5 text-xs font-semibold text-white hover:bg-sky-600/50 disabled:opacity-50" data-testid={`export-${format}-${language}`}>
+                  {t(label)}
+                </button>
+              ))}
+            </div>
+            <StateNote tier={exportState} label={t("briefing.title")} />
+          </>
+        )}
+      </Section>
 
       <Section title={t("spot.place")} sensor="places" kind={ld?.dataKind}>
         {locate.state === "ready" ? (
@@ -204,6 +253,23 @@ export default function SpotCheck({ point, placeHint, passDates, selectedDate, o
           </>
         )}
       </Section>
+
+      <Section title={t("priority.title")} kind={priority?.dataKind} testId="spot-priority">
+        <p className="text-xs text-slate-200">{priority?.value == null ? priority?.reason ?? t("spot.noValue") : t(priority.value ? "spot.priority.yes" : "spot.priority.no")}</p>
+        {exposure?.value ? (
+          <>
+            <p className="mt-2 text-[11px] text-slate-300">{t("spot.exposure.scope")}</p>
+            <dl className="mt-1 grid grid-cols-2 gap-1 text-xs text-slate-100">
+              {[["exposure.population", "population", "populationReason"], ["exposure.buildings", "buildings", "buildingsReason"]].map(([label, key, reason]) => (
+                <React.Fragment key={key}><dt>{t(label)}</dt><dd>{fmt(exposure.value[key], 0) ?? exposure.value[reason] ?? t("spot.noValue")}</dd></React.Fragment>
+              ))}
+            </dl>
+            <KindBadge kind={exposure.dataKind} />
+          </>
+        ) : <p className="mt-2 text-[11px] text-slate-400">{exposure?.reason ?? t("spot.noValue")}</p>}
+        {spot.data && <details className="mt-2 text-[11px] text-slate-300"><summary className="cursor-pointer">{t("sources.title")}</summary><pre className="mt-1 whitespace-pre-wrap break-all">{JSON.stringify({ priority: priority?.source, exposure: exposure?.source }, null, 2)}</pre></details>}
+      </Section>
+      <Caveats data={spot.data} />
     </div>
   );
 }

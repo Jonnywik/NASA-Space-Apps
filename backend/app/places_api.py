@@ -9,6 +9,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Query
 
 from processing.places import BBOX, PLACES_DIR, STUDY_AREA_ID, gazetteer, path_for
+from processing.priority.provenance import load_priority
 
 NISAR_DIR = 'nisar'
 RHYTHM_FILE = 'rhythm.tif'
@@ -124,6 +125,11 @@ def make_router(output_root, read_public_events, places_root=None):
             if (d / name).exists():
                 nm = _read(d / name)
                 break
+        if mask == 'priority':
+            try:
+                nm = load_priority(d)
+            except (OSError, ValueError, TypeError, AttributeError, KeyError):
+                raise _err(404, 'data_unavailable', 'priority mask provenance is missing, invalid or stale') from None
         from processing.places.exposure import exposure_for_mask, rhythm_mask
         try:
             if mask == 'rhythm_half' and (d / 'rhythm_half.tif').exists():

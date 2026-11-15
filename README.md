@@ -1,110 +1,87 @@
 # Tanaw
 
-[![CI](https://github.com/Jonnywik/NASA-Space-Apps/actions/workflows/ci.yml/badge.svg)](https://github.com/Jonnywik/NASA-Space-Apps/actions/workflows/ci.yml)
+[![CI](https://github.com/Jonnywik/NASA-SA-Final/actions/workflows/ci.yml/badge.svg)](https://github.com/Jonnywik/NASA-SA-Final/actions/workflows/ci.yml)
 
-
-**Tanaw** is an entry to NASA Space Apps "Dancing with the SARs". We grew up wading through the floods of CAMANAVA (Caloocan, Malabon, Navotas, Valenzuela) and the Bulacan coast north of it, one of the most flood-prone and fastest-sinking urban coasts in the Philippines. NASA-ISRO's NISAR satellite revisits the area about every 12 days. Tanaw is an interactive map that uses those L-band radar passes to show how often each place flooded during the 2026 wet season and how the ground moved, then turns that into plain-language briefings for the people who live there.
-
-The project is mid-build. Everything below describes what Tanaw is planned to do for the submission, not what is finished.
+Tanaw is a work-in-progress NASA Space Apps entry for exploring flood and land-motion data in CAMANAVA and the Bulacan coast.
 
 ## Limitations first
 
-- **Work in progress.** Features are planned for the submission. None is marked complete in this README yet.
-- **Real data only.** No silent sample data, no Sentinel-1 relabelled as NISAR, and no number without a source.
-- **NISAR files are not yet read.** The catalogue (NASA CMR) lists the 2026 GCOV and GUNW products over the study area, but the actual files are still to be read and processed. See [docs/DATA_MANIFEST.md](docs/DATA_MANIFEST.md).
-- **Provisional data.** Most NISAR products in the season are labelled Provisional by the provider.
-- **Short record.** The NISAR season is only a few months and about 11 passes on one track. Flood counts are not a long-term flood frequency.
-- **Line-of-sight motion.** Ground motion from InSAR is along the satellite's line of sight, not true vertical, unless ascending and descending tracks are combined.
-- **Exposure, not damage.** Priority zones show who and what is in flood-prone, sinking places. They are not damage or risk estimates.
-- **Rain-to-flood and scenarios are exploratory.** With about 11 passes no model is fitted, and scenarios are not forecasts.
-- **Different sensors are never merged.** Sentinel-1 (C-band) and Landsat are shown as context and are not combined numerically with NISAR (L-band).
-- **Hypotheses only.** Explanations for flooding and sinking are labelled hypotheses, not causes.
+- **No real NISAR run yet.** Earthdata access is deferred. The catalogue contains real granule metadata, but no NISAR flood, motion or priority result has been verified from those files. Generated flood fixtures are explicitly synthetic and are not observations.
+- **Validation remains incomplete.** No independent agreement or threshold-sensitivity result can be claimed without real NISAR outputs. See [validation](docs/VALIDATION.md).
+- **Motion is line-of-sight**, not necessarily vertical motion. A short seasonal record is not a long-term rate. Exposure is not damage, and conditional scenarios are not predictions.
+- NASA POWER, Open-Meteo and places caches contain retrieved data; their resolution, age and coverage limit interpretation. OSM building completeness is unknown. Sentinel-1 is separate context, never relabelled as NISAR.
+- Filipino text awaits the user's review; the complete [review sheet](docs/FIL_REVIEW.md) includes UI strings, hypotheses and briefing templates. No personal stories are invented. Frontend integration builds, but visual and keyboard checks remain unverified because laptop browser control stopped; no public demo was deployed.
 
 ## Challenge mapping
 
-Feature codes refer to [docs/SUBMISSION_SCOPE.md](docs/SUBMISSION_SCOPE.md).
+Statuses describe software and available evidence, not a verified submission. Feature codes are in [the scope](docs/SUBMISSION_SCOPE.md).
 
 | Challenge asks for | Tanaw | Status |
 |---|---|---|
-| Interactive app using **NISAR** to track and visualize surface change | N1 Flood rhythm, N2 animation, N3 ground motion: all NISAR | in progress |
-| Floodplains extending and retracting | N1 and N2: flood extent on every pass, June–November 2026 | in progress |
-| Coastal subsidence and land deformation | N3: GUNW InSAR over the Manila Bay coast | in progress |
-| Agricultural lands and crop changes | N4: L-band flooded vegetation in the Bulacan fields and fishponds | in progress |
-| Change maps, time-series animations, dashboards | N2 animation, U1 swipe, U2 spot check, U3 story mode | in progress |
-| Accessible to a broad audience | U3 story mode, U5 "How radar sees", U6 briefings in English and Filipino, U4 barangay search | in progress |
-| Open-source and actionable | MIT licence, public demo, priority zones, briefing export, downloads | in progress |
-| Study area such as a hometown or flooded neighbourhood | The team's own CAMANAVA, with P2 personal stories | in progress |
-| Free NISAR data | ASF NISAR GCOV and GUNW (Provisional/V1), recorded in a manifest | in progress |
-| Supplemental optical and GIS layers | WorldCover, WorldPop, OSM buildings, municipal boundaries, NASA POWER rainfall, Sentinel-1 history | in progress |
-| Hypothesize physical drivers | N6: labelled hypotheses, each with a checked reference | in progress |
-| Which polarizations show the change | N5: HH vs HV vs ratio, explained | in progress |
-| Other frequencies from other sensors | C2: Sentinel-1 C-band context | in progress |
-| Time series plus ancillary population and vegetation data | N1–N3 with WorldPop and WorldCover | in progress |
-| Human drivers | N6 (groundwater pumping, reclamation, fishponds), C1 exposure | in progress |
-| Personal context and stories | P2 and U7 "Our stories" pins | in progress |
-| Interactive summary | U1 swipe, U3 story mode, the public web map | in progress |
-| Future NISAR applications | P3 | in progress |
-
-## Features (planned for the submission)
-
-- **Flood rhythm (N1, N2):** how many of the season's NISAR passes saw water at each place, with a pass-by-pass animation and a chart against NASA POWER rainfall.
-- **Ground motion (N3):** cumulative line-of-sight displacement from chained 12-day GUNW pairs, with a time series per point.
-- **Flooded vegetation, polarizations, hypotheses (N4–N6):** HH/HV/ratio views and labelled hypotheses for why this is happening.
-- **Priority zones and context (C1–C5):** places that flood often and are sinking, with population, buildings and barangay; Sentinel-1 then-and-now; rain-to-flood response; validation against independent sources.
-- **History and future conditions (F1–F5):** timeline from 2000, rainfall history, optical then-and-now, seasonal outlook and conditional scenarios.
-- **Experience (U1–U10):** swipe and spot check, guided Story Mode, find-my-barangay search, "How radar sees" cards, briefings in English and Filipino, "Our stories" pins, a public static demo and downloads.
+| NISAR surface change, flood extent and animation | Flood rhythm and pass views | Done with synthetic data; real processing blocked |
+| Coastal deformation | GUNW processing and line-of-sight series | Partial; real motion unverified |
+| Agricultural and vegetation change | Flooded vegetation and polarization processing | Done with synthetic data; real results unverified |
+| Maps, time series and accessible summaries | Workspace, search, spot check and bilingual briefing | Software integrated and built; browser and Filipino review pending |
+| Actionable information | Priority-mask and exposure software, briefing exports | Partial; no observed priority result |
+| Supplemental GIS and rainfall | Places and climate caches and processing | Done with retrieved data; subject to source limitations |
+| Independent validation | Comparison software and source research | Partial; no real NISAR comparison |
+| Physical drivers and personal context | Referenced hypotheses and team stories | Four sourced hypotheses integrated; hypotheses are not findings; stories require team-authored text |
+| Other sensors and future applications | Sentinel-1 context and future ideas | Partial; separate from NISAR |
+| Open source and public access | MIT licence; public demo | Partial; demo not verified |
 
 ## Data sources
 
-Provenance, licences and retrieval dates are tracked in [docs/DATA_MANIFEST.md](docs/DATA_MANIFEST.md).
+See [the data manifest](docs/DATA_MANIFEST.md) for sources, dates, hashes and gaps. The default NISAR catalogue selection is track 140 ascending, frame 009; catalogue coverage does not prove usable pixel coverage.
 
-- NISAR L2 GCOV and GUNW via the [Alaska Satellite Facility (ASF) DAAC](https://asf.alaska.edu/) (collections found through [NASA CMR](https://cmr.earthdata.nasa.gov/))
-- [NASA POWER](https://power.larc.nasa.gov/) daily rainfall
-- [Open-Meteo](https://open-meteo.com/) seasonal forecast and historical APIs
-- [WorldPop](https://www.worldpop.org/) population
-- [OpenStreetMap](https://www.openstreetmap.org/) buildings and places
-- [ESA WorldCover](https://esa-worldcover.org/) land cover
-- [Sentinel-1](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-1) for regional context only
+## Reproduce locally on Windows
 
-## Quick start
+From PowerShell at the repository root, install Python 3.12 and Node 20, then:
 
-Backend (Python 3.12), from the repository root:
-
-```bash
+```powershell
 python -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements-dev.txt
+.\.venv\Scripts\python -m pip install -r backend/requirements-dev.txt
 cd backend
-uvicorn app.main:app --reload
+..\.venv\Scripts\python -m uvicorn app.main:app --reload
 ```
 
-Frontend (Node 20), in a second terminal:
+In a second PowerShell window at the repository root:
 
-```bash
+```powershell
 cd frontend
 npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). API documentation is served at `/docs` on the backend.
+Open http://localhost:3000; backend API documentation is at http://127.0.0.1:8000/docs. The frontend defaults to that API; NEXT_PUBLIC_USE_FIXTURES=1 enables synthetic frontend fixtures for development.
 
-Downloading NISAR files needs a free NASA Earthdata login. Set the token as an environment variable and never commit it:
+To generate **synthetic development flood output** from the cached catalogue dates, with the backend stopped, run from `backend/`:
 
-```bash
-export EARTHDATA_TOKEN=...
+```powershell
+..\.venv\Scripts\python scripts/22_nisar_synthetic_demo.py
 ```
+
+This creates synthetic pixels, not NISAR observations, and refuses to replace an observed product unless forced. Climate and places caches can be refreshed with scripts 30_fetch_climate.py and 40_fetch_places.py; refreshing may change data and requires network access. Their existing manifests record the retrieved versions. Real NISAR processing requires Earthdata access, first-file checks and calibration described in [the runbook](docs/NISAR_RUNBOOK.md); it has not been performed for this build. Thus there is no sequence yet that reproduces submitted real NISAR products.
 
 ## Tests
 
-```bash
+From the repository root:
+
+```powershell
 cd backend
-python -m unittest discover -s tests
+..\.venv\Scripts\python -m unittest discover -s tests
 cd ../frontend
 npm run lint
+npm run test:api
 npm run build
 ```
 
-The same checks run in GitHub Actions (`.github/workflows/ci.yml`).
+CI is configured in .github/workflows/ci.yml; run results depend on the current checkout.
+
+## Integration checks and recording
+
+The spot-check card uses `/api/v1/spot-check` for its facts. It offers English and Filipino printable HTML briefings and a CSV download. The real cached boundary lookup places the test point `120.957, 14.665` in Niugan, City of Malabon. Exports were checked directly against those API facts; unavailable NISAR, motion and priority values remain missing with reasons. The Independent comparison card stays unavailable until a compatible observed comparison exists.
+
+The pass legend now uses the backend renderer's shared colours. Data credits are reachable in the Limits drawer. Source findings and unresolved coverage checks are in [SOURCE_REVIEW.md](docs/SOURCE_REVIEW.md); the remaining laptop and recording checks are in [INTEGRATION_CHECK.md](docs/INTEGRATION_CHECK.md). These checks do not establish a working observed NISAR submission.
 
 ## Repository layout
 

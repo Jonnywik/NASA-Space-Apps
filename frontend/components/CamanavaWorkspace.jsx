@@ -15,6 +15,7 @@ import SeasonPanel from "./SeasonPanel";
 import SpotCheck from "./SpotCheck";
 import StoryTour from "./StoryTour";
 import TimeBar from "./TimeBar";
+import ValidationPanel from "./ValidationPanel";
 import { fmt } from "./ui";
 import {
   AREA_ID,
@@ -33,6 +34,7 @@ import {
   getScenarios,
   getSeasonRank,
   getTimelineAvailability,
+  getValidation,
   searchPlaces,
 } from "../utils/api";
 import { useLang } from "../utils/LangContext";
@@ -135,6 +137,7 @@ function Workspace({ onRegional }) {
 
   const needRhythm = useLatched(mode === "rhythm" || mode === "motion");
   const rhythmTier = useTier(needRhythm ? () => getNisarRhythm(AREA_ID) : null, [needRhythm]);
+  const validationTier = useTier(needRhythm ? () => getValidation(AREA_ID) : null, [needRhythm]);
   const needRhythmTable = useLatched(mode === "rhythm");
   const exposureRhythm = useTier(needRhythmTable ? () => getPlaceExposure(AREA_ID, "rhythm_half") : null, [needRhythmTable]);
   const needMotion = useLatched(mode === "motion");
@@ -159,6 +162,7 @@ function Workspace({ onRegional }) {
     ["passes", t("season.title"), passesTier.data],
     ["rain", t("season.rain"), rainTier.data],
     ["rhythm", t("rhythm.title"), rhythmTier.data],
+    ["validation", t("validation.title"), validationTier.data],
     ["exp-rhythm", t("exposure.title"), exposureRhythm.data],
     ["motion", t("motion.title"), motionTier.data],
     ["exp-priority", t("priority.title"), exposurePriority.data],
@@ -177,7 +181,7 @@ function Workspace({ onRegional }) {
     if (scenarios.data?.scenarios?.length && !scenarioId) setScenarioId(scenarios.data.scenarios[0].id);
   }, [scenarios.data, scenarioId]);
 
-  // optional public JSON: N6 hypotheses and U7 "Our stories" (both ship empty)
+  // Referenced N6 hypotheses and optional team-authored U7 stories.
   useEffect(() => {
     fetchJsonArray("/hypotheses.json").then(setHypotheses);
     fetchJsonArray("/stories.json").then((list) =>
@@ -528,7 +532,6 @@ function Workspace({ onRegional }) {
                   key={`${point.lon.toFixed(5)},${point.lat.toFixed(5)}`}
                   point={point}
                   placeHint={placeHint}
-                  passDates={passDates}
                   selectedDate={passes[passIdx]?.date}
                   onClose={() => {
                     setPoint(null);
@@ -581,12 +584,14 @@ function Workspace({ onRegional }) {
                 {mode === "rhythm" && (
                   <>
                     <RhythmPanel tier={rhythmTier} exposureTier={exposureRhythm} onHelp={openHelp} onPlace={onZone} />
+                    <ValidationPanel tier={validationTier} />
                     <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
                   </>
                 )}
                 {mode === "motion" && (
                   <>
                     <MotionPanel tier={motionTier} scale={losScale} rhythmUnder={rhythmUnder} onRhythmUnder={setRhythmUnder} priorityTier={exposurePriority} onHelp={openHelp} onPlace={onZone} />
+                    <ValidationPanel tier={validationTier} />
                     <HypothesesPanel items={hypotheses} onMode={(m) => MODES.includes(m) && goMode(m)} />
                   </>
                 )}

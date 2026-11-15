@@ -45,6 +45,18 @@ export default function LimitsDrawer({ open, onClose }) {
             <li key={i}>{t(`limits.standing.${i}`)}</li>
           ))}
         </ul>
+        <h3 className="mt-4 text-sm font-semibold text-yellow-100">{t("sources.title")}</h3>
+        <ul className="mt-1 list-disc space-y-1 pl-5 text-xs text-slate-200" data-testid="data-credits">
+          {[
+            ["NASA–ISRO NISAR · ASF", "https://asf.alaska.edu/datasets/daac/nisar/"],
+            ["NASA POWER", "https://power.larc.nasa.gov/"],
+            ["WorldPop 2020 · CC BY 4.0", "https://www.worldpop.org/"],
+            ["OpenStreetMap contributors · ODbL", "https://www.openstreetmap.org/copyright"],
+            ["ESA WorldCover · CC BY 4.0", "https://esa-worldcover.org/en/data-access"],
+            ["HDX Philippines COD-AB", "https://data.humdata.org/dataset/cod-ab-phl"],
+            ["Open-Meteo / ECMWF", "https://open-meteo.com/en/docs/seasonal-forecast-api"],
+          ].map(([label, url]) => <li key={url}><a href={url} target="_blank" rel="noreferrer" className="text-sky-300 underline">{label}</a></li>)}
+        </ul>
         <h3 className="mt-4 text-sm font-semibold text-yellow-100">{t("limits.fromApi")}</h3>
         {list.length === 0 && <p className="mt-1 text-sm text-slate-300">{t("limits.none")}</p>}
         {list.map(([key, e]) => (

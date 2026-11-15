@@ -17,6 +17,7 @@ from fastapi.responses import FileResponse
 
 from processing.nisar_flood import polarization
 from processing.nisar_flood.geo import Grid
+from processing.nisar_flood.constants import COLOR_VEGETATION, COLOR_WATER
 
 PREFIX = "/api/v1"
 NAME_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -145,6 +146,10 @@ def make_router(output_root, read_public_events):
             "verification": manifest.get("verification"),
             "studyAreaKm2": manifest["passes"][0].get("studyAreaKm2") if manifest["passes"] else None,
             "units": {"area": "km2", "backscatter": "dB"},
+            "legend": [
+                {"id": "flood_water", "label": "Flood water", "color": COLOR_WATER},
+                {"id": "possible_flooded_vegetation", "label": "Possible flooded vegetation", "color": COLOR_VEGETATION},
+            ],
             "passes": entries,
             "bounds": manifest["bounds"],
         }
